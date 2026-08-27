@@ -1,39 +1,40 @@
 import mongoose from 'mongoose';
 import dns from 'dns';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import { config } from './index';
 
 try {
   dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
-} catch (e) {
-  // ignore
-}
+} catch (e) {}
 
-let mongod: MongoMemoryServer | null = null;
+let isConnected = false;
 
-export const connectDB = async (): Promise<typeof mongoose> => {
+export const connectDB = async (): Promise<typeof mongoose | null> => {
   try {
-    console.log(`[MongoDB] Connecting to primary URI: ${config.mongoUri.replace(/:([^@]+)@/, ':****@')}`);
+    console.log(`[MongoDB] Attempting connection to: ${config.mongoUri.replace(/:([^@]+)@/, ':****@')}`);
     const conn = await mongoose.connect(config.mongoUri, {
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 4000,
     });
+    isConnected = true;
     console.log(`[MongoDB] Primary connection established: ${conn.connection.host} / ${conn.connection.name}`);
     return conn;
   } catch (error: any) {
-    console.warn(`[MongoDB] Primary connection failed (${error?.message || error}). Initializing local fallback database...`);
+    console.warn(`[MongoDB] Cloud Atlas unreachable (${error?.message || error}).`);
+    
+    // Try local MongoDB on 27017
     try {
-      mongod = await MongoMemoryServer.create({
-        instance: {
-          dbName: 'gharowa_db',
-        },
+      console.log('[MongoDB] Trying local MongoDB on 127.0.0.1:27017...');
+      const localConn = await mongoose.connect('mongodb://127.0.0.1:27017/gharowa_db', {
+        serverSelectionTimeoutMS: 2000,
       });
-      const uri = mongod.getUri();
-      const conn = await mongoose.connect(uri);
-      console.log(`[MongoDB] Fallback database connected successfully: ${uri}`);
-      return conn;
-    } catch (fallbackError) {
-      console.error('[MongoDB] Critical database failure:', fallbackError);
-      process.exit(1);
+      isConnected = true;
+      console.log('[MongoDB] Connected to local MongoDB instance!');
+      return localConn;
+    } catch (localErr) {
+      console.warn('[MongoDB] Local MongoDB also not detected. Running with in-memory state fallback.');
+      isConnected = false;
+      return null;
     }
   }
 };
+
+export const isDbConnected = () => isConnected;

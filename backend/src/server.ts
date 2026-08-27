@@ -7,10 +7,12 @@ import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 
 import { config } from './config';
-import { connectDB } from './config/db';
+import { connectDB, isDbConnected } from './config/db';
 import { initSocket } from './sockets';
 import routes from './routes';
 import { errorHandler } from './middleware/errorHandler';
+import { MenuItem } from './models';
+import { seedDatabase } from './scripts/seed';
 
 const app = express();
 const server = http.createServer(app);
@@ -48,14 +50,10 @@ if (config.nodeEnv === 'development') {
 
 // Rate Limiter for general API
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: 1000,
   standardHeaders: true,
   legacyHeaders: false,
-  message: {
-    success: false,
-    message: 'অতিরিক্ত অনুরোধ করা হয়েছে, অনুগ্রহ করে একটু পরে চেষ্টা করুন / Too many requests, please try again later.',
-  },
 });
 
 app.use('/api', apiLimiter);
@@ -75,19 +73,21 @@ app.get('/', (req, res) => {
 // 4. Centralized Error Handler
 app.use(errorHandler);
 
-import { MenuItem } from './models';
-import { seedDatabase } from './scripts/seed';
-
 // 5. Connect Database & Start Server
 const startServer = async () => {
   try {
-    await connectDB();
+    const conn = await connectDB();
 
-    // Auto-seed if empty
-    const itemCount = await MenuItem.countDocuments();
-    if (itemCount === 0) {
-      console.log('[Server] Database is empty. Seeding initial Gharowa 1972 data...');
-      await seedDatabase();
+    if (conn) {
+      try {
+        const itemCount = await MenuItem.countDocuments();
+        if (itemCount === 0) {
+          console.log('[Server] Database is empty. Seeding initial Gharowa 1972 data...');
+          await seedDatabase();
+        }
+      } catch (e) {
+        console.warn('[Server] Auto-seed skipped:', e);
+      }
     }
 
     server.listen(config.port, () => {
@@ -100,7 +100,6 @@ const startServer = async () => {
     });
   } catch (error) {
     console.error('Failed to start server:', error);
-    process.exit(1);
   }
 };
 
