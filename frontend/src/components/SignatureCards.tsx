@@ -35,7 +35,7 @@ export default function SignatureCards() {
   ];
 
   return (
-    <section className="py-16 bg-obsidian-600/50 relative">
+    <section className="py-12 bg-white border-y border-slate-200/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {cards.map((card, idx) => {
@@ -43,24 +43,22 @@ export default function SignatureCards() {
             return (
               <div
                 key={idx}
-                className="group relative p-7 rounded-3xl bg-obsidian-400 border border-gold-500/15 hover:border-gold-500/50 transition-all duration-300 hover:shadow-gold hover:-translate-y-1 overflow-hidden"
+                className="group relative p-7 rounded-3xl bg-warm-50/70 border border-slate-200 hover:border-traditional-300 transition-all duration-300 hover:shadow-card-hover hover:-translate-y-0.5 overflow-hidden"
               >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gold-500/5 rounded-bl-full pointer-events-none group-hover:bg-gold-500/10 transition-colors" />
-
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 rounded-2xl bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-gold-400 group-hover:bg-gold-500 group-hover:text-obsidian-950 transition-all shadow-inner-gold">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-traditional-700 shadow-sm group-hover:bg-traditional-700 group-hover:text-white transition-all">
                     <Icon className="w-6 h-6" />
                   </div>
-                  <span className="text-[10px] font-bold text-gold-400 uppercase tracking-wider bg-gold-500/10 px-2.5 py-1 rounded-full border border-gold-500/20">
+                  <span className="text-[10px] font-bold text-traditional-800 uppercase tracking-wider bg-traditional-50 px-2.5 py-1 rounded-full border border-traditional-200">
                     {card.badge}
                   </span>
                 </div>
 
-                <h3 className="text-lg font-bold text-white font-bengali group-hover:text-gold-300 transition-colors">
+                <h3 className="text-lg font-bold text-slate-900 font-bengali group-hover:text-traditional-700 transition-colors">
                   {language === 'bn' ? card.titleBn : card.titleEn}
                 </h3>
 
-                <p className="text-xs text-gray-400 mt-2.5 leading-relaxed font-bengali">
+                <p className="text-xs text-slate-600 mt-2 leading-relaxed font-bengali">
                   {language === 'bn' ? card.descBn : card.descEn}
                 </p>
               </div>

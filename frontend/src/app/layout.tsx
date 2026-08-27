@@ -1,31 +1,9 @@
 import type { Metadata } from 'next';
-import { Hind_Siliguri, Inter, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import CartDrawer from '../components/CartDrawer';
-import { MessageCircle, ShoppingBag } from 'lucide-react';
-
-const hindSiliguri = Hind_Siliguri({
-  subsets: ['bengali', 'latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-hind-siliguri',
-  display: 'swap',
-});
-
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['600', '700', '800'],
-  variable: '--font-playfair',
-  display: 'swap',
-});
+import { MessageCircle } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'ঘরোয়া হোটেল এন্ড রেস্টুরেন্ট (Since 1972) — মতিঝিল, ঢাকা',
@@ -71,7 +49,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // LocalBusiness Schema for SEO
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Restaurant',
@@ -105,15 +82,21 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="bn" className="dark">
+    <html lang="bn">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"
+          rel="stylesheet"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body
-        className={`${hindSiliguri.variable} ${inter.variable} ${playfair.variable} bg-obsidian-500 text-gray-100 antialiased selection:bg-gold-500 selection:text-obsidian-950`}
+        className="bg-[#FAFAF9] text-slate-800 antialiased selection:bg-traditional-700 selection:text-white"
       >
         <Navbar />
 
@@ -128,7 +111,7 @@ export default function RootLayout({
             href="https://wa.me/8801973255888"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-between shadow-2xl border border-emerald-400/40 backdrop-blur-md"
+            className="w-full py-3 px-4 rounded-2xl bg-traditional-700 hover:bg-traditional-800 text-white font-bold text-xs flex items-center justify-between shadow-2xl border border-traditional-600 backdrop-blur-md"
           >
             <div className="flex items-center gap-2">
               <MessageCircle className="w-5 h-5 fill-current" />

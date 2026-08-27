@@ -46,7 +46,7 @@ export default function ReservationForm() {
           particleCount: 70,
           spread: 60,
           origin: { y: 0.6 },
-          colors: ['#F59E0B', '#10B981'],
+          colors: ['#B91C1C', '#D97706', '#10B981'],
         });
       }
     } catch (err: any) {
@@ -57,32 +57,32 @@ export default function ReservationForm() {
   };
 
   return (
-    <div className="p-6 sm:p-8 rounded-3xl bg-obsidian-400 border border-gold-500/25 shadow-gold-lg text-white">
+    <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-card text-slate-800">
       {!successReservation ? (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex items-center gap-2 mb-2">
-            <span className="p-2 rounded-xl bg-gold-500/10 border border-gold-500/30 text-gold-400">
+            <span className="p-2 rounded-xl bg-traditional-50 border border-traditional-200 text-traditional-700">
               <Calendar className="w-5 h-5" />
             </span>
             <div>
-              <h3 className="text-lg font-bold text-white font-bengali">
+              <h3 className="text-lg font-bold text-slate-900 font-bengali">
                 {language === 'bn' ? 'টেবিল বুকিং করুন' : 'Book a Dining Table'}
               </h3>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-slate-500">
                 {language === 'bn' ? 'ফ্যামিলি বা কর্পোরেট লাঞ্চ ও ডিনারের জন্য আগে থেকেই টেবিল কনফার্ম করুন।' : 'Reserve your table in advance for family & corporate dining.'}
               </p>
             </div>
           </div>
 
           {errorMsg && (
-            <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/40 text-rose-300 text-xs">
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs">
               {errorMsg}
             </div>
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1">
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 {language === 'bn' ? 'আপনার নাম *' : 'Name *'}
               </label>
               <input
@@ -91,12 +91,12 @@ export default function ReservationForm() {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder={language === 'bn' ? 'উদা: আরিফুর রহমান' : 'Arifur Rahman'}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-obsidian-300 border border-gold-500/20 text-xs text-white focus:outline-none focus:border-gold-500"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-traditional-600"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1">
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 {language === 'bn' ? 'মোবাইল নম্বর *' : 'Phone Number *'}
               </label>
               <input
@@ -105,14 +105,14 @@ export default function ReservationForm() {
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 placeholder="01XXXXXXXXX"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-obsidian-300 border border-gold-500/20 text-xs text-white focus:outline-none focus:border-gold-500"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-traditional-600"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1">
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 {language === 'bn' ? 'তারিখ *' : 'Date *'}
               </label>
               <input
@@ -120,18 +120,18 @@ export default function ReservationForm() {
                 required
                 value={formData.date}
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl bg-obsidian-300 border border-gold-500/20 text-xs text-white focus:outline-none focus:border-gold-500"
+                className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-traditional-600"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1">
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 {language === 'bn' ? 'সময় স্লট *' : 'Time Slot *'}
               </label>
               <select
                 value={formData.timeSlot}
                 onChange={(e) => setFormData({ ...formData, timeSlot: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl bg-obsidian-300 border border-gold-500/20 text-xs text-white focus:outline-none focus:border-gold-500"
+                className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-traditional-600"
               >
                 <option value="12:30">দুপুর ১২:৩০ (Lunch)</option>
                 <option value="13:30">দুপুর ১:৩০ (Lunch)</option>
@@ -143,7 +143,7 @@ export default function ReservationForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1">
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 {language === 'bn' ? 'অতিথি সংখ্যা' : 'Guests'}
               </label>
               <input
@@ -152,19 +152,19 @@ export default function ReservationForm() {
                 max="50"
                 value={formData.guestCount}
                 onChange={(e) => setFormData({ ...formData, guestCount: parseInt(e.target.value, 10) || 1 })}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-obsidian-300 border border-gold-500/20 text-xs text-white focus:outline-none focus:border-gold-500"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-traditional-600"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-300 mb-1">
+            <label className="block text-xs font-bold text-slate-700 mb-1">
               {language === 'bn' ? 'বসার পছন্দ (Seating Preference)' : 'Seating'}
             </label>
             <select
               value={formData.seatingPreference}
               onChange={(e) => setFormData({ ...formData, seatingPreference: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-obsidian-300 border border-gold-500/20 text-xs text-white focus:outline-none focus:border-gold-500"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-traditional-600"
             >
               <option value="family_ac">ফ্যামিলি এসি জোন (Family AC)</option>
               <option value="main_hall">মেইন ডাইনিং হল (Main Hall)</option>
@@ -174,22 +174,22 @@ export default function ReservationForm() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-300 mb-1">
+            <label className="block text-xs font-bold text-slate-700 mb-1">
               {language === 'bn' ? 'বিশেষ অনুরোধ (ঐচ্ছিক)' : 'Special Requests'}
             </label>
             <input
               type="text"
               value={formData.specialRequests}
               onChange={(e) => setFormData({ ...formData, specialRequests: e.target.value })}
-              placeholder={language === 'bn' ? 'উদা: নিরিবিলি কর্নার টেবিল, জন্মদিনের সাজসজ্জা' : 'Quiet corner, Birthday arrangement'}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-obsidian-300 border border-gold-500/20 text-xs text-white focus:outline-none focus:border-gold-500"
+              placeholder={language === 'bn' ? 'উদা: নিরিবিলি কর্নার টেবিল' : 'Quiet corner, etc.'}
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-traditional-600"
             />
           </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 rounded-2xl bg-gold-500 hover:bg-gold-400 text-obsidian-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-gold transition-all disabled:opacity-50"
+            className="w-full py-3.5 rounded-2xl bg-traditional-700 hover:bg-traditional-800 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-red transition-all disabled:opacity-50"
           >
             {isLoading ? (
               <>
@@ -206,23 +206,23 @@ export default function ReservationForm() {
         </form>
       ) : (
         <div className="text-center py-6 space-y-4">
-          <div className="w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 flex items-center justify-center mx-auto">
+          <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto">
             <CheckCircle2 className="w-7 h-7" />
           </div>
 
-          <h3 className="text-xl font-bold text-white font-bengali">
+          <h3 className="text-xl font-bold text-slate-900 font-bengali">
             বুকিং অনুরোধ গৃহীত হয়েছে!
           </h3>
-          <p className="text-xs text-gold-400 font-mono font-bold">
+          <p className="text-xs text-traditional-700 font-mono font-bold">
             Reservation ID: {successReservation.reservationNumber}
           </p>
-          <p className="text-xs text-gray-400 max-w-sm mx-auto">
+          <p className="text-xs text-slate-600 max-w-sm mx-auto">
             আমাদের মতিঝিল ব্রাঞ্চ থেকে শীঘ্রই ফোন করে আপনার টেবিল চূড়ান্ত কনফার্ম করা হবে।
           </p>
 
           <button
             onClick={() => setSuccessReservation(null)}
-            className="px-5 py-2 rounded-xl bg-obsidian-300 hover:bg-obsidian-200 text-xs font-semibold text-gray-200"
+            className="px-5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700"
           >
             আরেকটি বুকিং করুন
           </button>

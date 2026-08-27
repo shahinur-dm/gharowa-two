@@ -56,24 +56,20 @@ export default function HeritageTimeline() {
   ];
 
   return (
-    <section className="py-20 bg-obsidian-500 relative overflow-hidden">
-      {/* Ambient background glow */}
-      <div className="absolute top-1/2 left-0 w-80 h-80 bg-gold-500/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-gold-500/5 rounded-full blur-3xl pointer-events-none" />
-
+    <section className="py-20 bg-warm-50/60 border-y border-slate-200/80 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-400 text-xs font-semibold">
-            <Sparkles className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-traditional-50 border border-traditional-200 text-traditional-800 text-xs font-bold">
+            <Sparkles className="w-3.5 h-3.5 text-traditional-600" />
             <span>{language === 'bn' ? 'আমাদের গৌরবময় পথচলা' : 'Our Glorious Journey'}</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white font-bengali">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 font-bengali">
             {language === 'bn' ? '১৯৭২ থেকে ২০২৬: অর্ধশতাব্দীর ঐতিহ্যের গল্প' : '1972 to 2026: 50+ Years of Culinary Legacy'}
           </h2>
 
-          <p className="text-xs sm:text-sm text-gray-400 font-bengali leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 font-bengali leading-relaxed">
             {language === 'bn'
               ? 'মতিঝিলের প্রাণকেন্দ্রে প্রতিটি পদ রান্না হয় ঐতিহ্য, সততা ও খাঁটি দেশি স্বাদের অঙ্গীকারে।'
               : 'At the heart of Motijheel, every dish is cooked with love, heritage, and genuine Bangladeshi flavors.'}
@@ -82,8 +78,8 @@ export default function HeritageTimeline() {
 
         {/* Timeline Grid */}
         <div className="relative">
-          {/* Central Line for Desktop */}
-          <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 top-8 bottom-8 w-0.5 bg-gradient-to-b from-transparent via-gold-500/40 to-transparent" />
+          {/* Central Line */}
+          <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 top-8 bottom-8 w-0.5 bg-traditional-200" />
 
           <div className="space-y-8 lg:space-y-12">
             {timelineEvents.map((item, index) => {
@@ -100,25 +96,25 @@ export default function HeritageTimeline() {
                   {/* Content Card */}
                   <div className="w-full lg:w-1/2">
                     <div
-                      className={`p-6 sm:p-7 rounded-3xl bg-obsidian-400/90 border border-gold-500/20 hover:border-gold-500/45 transition-all duration-300 hover:shadow-gold ${
+                      className={`p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 hover:border-traditional-300 transition-all duration-300 shadow-sm hover:shadow-card-hover ${
                         isEven ? 'lg:text-right' : 'lg:text-left'
                       }`}
                     >
                       <div
-                        className={`flex items-center gap-2 mb-3 ${
+                        className={`flex items-center gap-2 mb-2.5 ${
                           isEven ? 'lg:justify-end' : 'lg:justify-start'
                         }`}
                       >
-                        <span className="text-[11px] font-bold text-gold-400 bg-gold-500/10 px-2.5 py-1 rounded-full border border-gold-500/20">
+                        <span className="text-[11px] font-bold text-traditional-800 bg-traditional-50 px-2.5 py-1 rounded-full border border-traditional-200">
                           {item.tag}
                         </span>
                       </div>
 
-                      <h3 className="text-lg font-bold text-white font-bengali">
+                      <h3 className="text-lg font-bold text-slate-900 font-bengali">
                         {language === 'bn' ? item.titleBn : item.titleEn}
                       </h3>
 
-                      <p className="text-xs text-gray-400 mt-2 leading-relaxed font-bengali">
+                      <p className="text-xs text-slate-600 mt-2 leading-relaxed font-bengali">
                         {language === 'bn' ? item.descBn : item.descEn}
                       </p>
                     </div>
@@ -126,17 +122,17 @@ export default function HeritageTimeline() {
 
                   {/* Year Node */}
                   <div className="relative flex items-center justify-center shrink-0 z-10">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-400 via-gold-600 to-amber-900 p-0.5 shadow-gold animate-float">
-                      <div className="w-full h-full bg-obsidian-500 rounded-[14px] flex flex-col items-center justify-center">
-                        <Icon className="w-4 h-4 text-gold-400 mb-0.5" />
-                        <span className="text-[11px] font-bold font-mono text-white">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-traditional-700 to-amber-700 p-0.5 shadow-md">
+                      <div className="w-full h-full bg-white rounded-[14px] flex flex-col items-center justify-center">
+                        <Icon className="w-4 h-4 text-traditional-700 mb-0.5" />
+                        <span className="text-[11px] font-bold font-mono text-slate-900">
                           {item.year}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Empty placeholder for Desktop balance */}
+                  {/* Empty placeholder */}
                   <div className="hidden lg:block w-1/2" />
                 </div>
               );
