@@ -770,7 +770,7 @@ export const seedDatabase = async () => {
       aboutTitleBn: 'আমাদের গল্প',
       aboutTitleEn: 'Our Story',
       aboutDescBn: '১৯৭২ সালে মতিঝিলের প্রাণকেন্দ্রে শুরু হয় ঘরোয়ার যাত্রা। বিগত ৫ দশকেরও বেশি সময় ধরে আমরা ধরে রেখেছি খাঁটি ঢাকাইয়া রান্নার অতুলনীয় ঐতিহ্য ও স্বাদ।',
-      aboutDescEn: 'Khichuri House started with a simple goal — to serve authentic Bengali flavors with the best quality and love. Our Mutton Khichuri is our signature dish loved by thousands.',
+      aboutDescEn: 'Gharowa Hotel & Restaurant started in 1972 with a simple goal — to serve authentic Bengali flavors with the best quality and love. Our Mutton Khichuri is our signature dish loved by thousands.',
       aboutImageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop',
       aboutStats: [
         { labelBn: 'বছরের অভিজ্ঞতা', labelEn: 'Years Experience', value: '10+' },

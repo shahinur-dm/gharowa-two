@@ -8,11 +8,11 @@ import {
   Clock,
   MessageCircle,
   Mail,
-  Sparkles,
   ChevronRight,
   ShieldCheck,
 } from 'lucide-react';
 import { useLanguageStore } from '../store/languageStore';
+import GharowaLogo from './GharowaLogo';
 
 export default function Footer() {
   const { language } = useLanguageStore();
@@ -27,15 +27,13 @@ export default function Footer() {
           {/* 1. Brand Logo & Philosophy */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/15 border border-white/30 flex items-center justify-center text-white font-serif font-bold text-xl shadow-inner">
-                GH
-              </div>
+              <GharowaLogo size={46} variant="header" />
               <div>
                 <h3 className="text-base font-bold text-white font-serif">
-                  Khichuri House
+                  Gharowa
                 </h3>
                 <p className="text-[11px] text-amber-300 font-semibold font-mono">
-                  {language === 'bn' ? 'ঘরোয়া রেস্টুরেন্ট • ১৯৭২' : 'Authentic Bengali Taste • Since 1972'}
+                  Hotel & Restaurant (Since 1972)
                 </p>
               </div>
             </div>
@@ -43,7 +41,7 @@ export default function Footer() {
             <p className="text-xs text-white/70 leading-relaxed font-light font-bengali">
               {language === 'bn'
                 ? '১৯৭২ সাল থেকে ঢাকার মতিঝিলের ঐতিহ্যবাহী খাসির ভুনা খিচুড়ি, লেগ খিচুড়ি, স্পেশাল কাচ্চি ও বোরহানি। ৫০+ বছরের বিশ্বস্ত স্বাদ।'
-                : 'Authentic Bengali Taste. Made with Love and 50+ Years of Culinary Heritage in Motijheel, Dhaka.'}
+                : '50+ Years of Authentic Culinary Heritage in Motijheel, Dhaka. Famous for our Mutton Bhuna Khichuri & Kacchi.'}
             </p>
 
             <div className="flex items-center gap-2 text-xs text-amber-300 bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/20 w-fit">
@@ -67,19 +65,25 @@ export default function Footer() {
               <li>
                 <Link href="/menu" className="hover:text-amber-300 flex items-center gap-1.5 transition-colors">
                   <ChevronRight className="w-3 h-3 text-amber-400" />
-                  {language === 'bn' ? 'আমাদের মেনু' : 'Menu'}
+                  {language === 'bn' ? 'মেনু' : 'Menu'}
                 </Link>
               </li>
               <li>
                 <Link href="/about" className="hover:text-amber-300 flex items-center gap-1.5 transition-colors">
                   <ChevronRight className="w-3 h-3 text-amber-400" />
-                  {language === 'bn' ? 'আমাদের গল্প ও পরিচিতি' : 'About Us'}
+                  {language === 'bn' ? 'আমাদের সম্পর্কে' : 'About Us'}
                 </Link>
               </li>
               <li>
-                <Link href="/#chef-owner" className="hover:text-amber-300 flex items-center gap-1.5 transition-colors">
+                <Link href="/#chef" className="hover:text-amber-300 flex items-center gap-1.5 transition-colors">
                   <ChevronRight className="w-3 h-3 text-amber-400" />
-                  {language === 'bn' ? 'শেফ ও কর্ণধার' : 'Chef & Owner'}
+                  {language === 'bn' ? 'শেফ' : 'Chef'}
+                </Link>
+              </li>
+              <li>
+                <Link href="/#owner" className="hover:text-amber-300 flex items-center gap-1.5 transition-colors">
+                  <ChevronRight className="w-3 h-3 text-amber-400" />
+                  {language === 'bn' ? 'কর্ণধার' : 'Owner'}
                 </Link>
               </li>
               <li>
@@ -150,7 +154,7 @@ export default function Footer() {
               </p>
               <p className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>১০:০০ AM – ১১:০০ PM (প্রতিদিন)</span>
+                <span>সকাল ৭:০০ - রাত ১১:৩০ (প্রতিদিন)</span>
               </p>
             </div>
           </div>
@@ -158,7 +162,7 @@ export default function Footer() {
 
         {/* Bottom Copyright & Admin link */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50">
-          <p>© 2026 Khichuri House / Gharowa Hotel & Restaurant. All Rights Reserved.</p>
+          <p>© 1972 - 2026 Gharowa Hotel & Restaurant. All Rights Reserved.</p>
           <div className="flex items-center gap-4">
             <Link href="/admin/login" className="hover:text-amber-300 text-white/60 transition-colors">
               Admin ERP & POS Login

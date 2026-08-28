@@ -16,15 +16,15 @@ export default function AboutStorySection({ settings }: AboutStoryProps) {
 
   const title =
     language === 'bn'
-      ? settings?.aboutTitleBn || 'আমাদের গল্প'
-      : settings?.aboutTitleEn || 'Our Story';
+      ? settings?.aboutTitleBn || 'আমাদের ঐতিহ্য ও গল্প'
+      : settings?.aboutTitleEn || 'Our Heritage Story';
 
   const description =
     language === 'bn'
       ? settings?.aboutDescBn ||
-        '১৯৭২ সালে মতিঝিলের প্রাণকেন্দ্রে শুরু হয় ঘরোয়ার যাত্রা। বিগত ৫ দশকেরও বেশি সময় ধরে আমরা ধরে রেখেছি খাঁটি ঢাকাইয়া রান্নার অতুলনীয় ঐতিহ্য ও স্বাদ।'
+        '১৯৭২ সালে মতিঝিলের প্রাণকেন্দ্রে শুরু হয় ঘরোয়া হোটেল এন্ড রেস্টুরেন্টের ঐতিহাসিক যাত্রা। বিগত ৫ দশকেরও বেশি সময় ধরে আমরা ধরে রেখেছি খাঁটি ঢাকাইয়া রান্নার অতুলনীয় ঐতিহ্য ও স্বাদ।'
       : settings?.aboutDescEn ||
-        'Khichuri House started with a simple goal — to serve authentic Bengali flavors with the best quality and love. Our Mutton Khichuri is our signature dish loved by thousands.';
+        'Gharowa Hotel & Restaurant started in 1972 with a simple goal — to serve authentic Bangladeshi flavors with the highest quality and love. Our Mutton Khichuri is our signature dish celebrated by generations.';
 
   const aboutImage =
     settings?.aboutImageUrl ||
@@ -33,9 +33,9 @@ export default function AboutStorySection({ settings }: AboutStoryProps) {
   const stats = settings?.aboutStats && settings.aboutStats.length > 0
     ? settings.aboutStats
     : [
-        { labelBn: 'বছরের অভিজ্ঞতা', labelEn: 'Years Experience', value: '10+' },
-        { labelBn: 'সন্তুষ্ট গ্রাহক', labelEn: 'Happy Customers', value: '50K+' },
-        { labelBn: 'তাজা উপাদান', labelEn: 'Fresh Ingredients', value: '100%' },
+        { labelBn: 'বছরের ঐতিহ্য', labelEn: 'Years Heritage', value: '50+' },
+        { labelBn: 'সন্তুষ্ট ভোজনরসিক', labelEn: 'Happy Customers', value: '100K+' },
+        { labelBn: 'খাঁটি উপাদান', labelEn: 'Fresh Ingredients', value: '100%' },
         { labelBn: 'গ্রাহক রেটিং', labelEn: 'Customer Rating', value: '4.9 ★' },
       ];
 
@@ -63,7 +63,7 @@ export default function AboutStorySection({ settings }: AboutStoryProps) {
                 href="/about"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-[#900C19] font-bold text-xs shadow-md hover:bg-amber-50 transition-all"
               >
-                <span>{language === 'bn' ? 'আমাদের বিস্তারিত জানুন' : 'Learn More About Us'}</span>
+                <span>{language === 'bn' ? 'আমাদের ইতিহাস জানুন' : 'Learn More About Us'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -74,7 +74,7 @@ export default function AboutStorySection({ settings }: AboutStoryProps) {
             <div className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden border-2 border-white/20 shadow-xl">
               <Image
                 src={aboutImage}
-                alt="Khichuri House Restaurant Dining"
+                alt="Gharowa Hotel & Restaurant Dining"
                 fill
                 className="object-cover hover:scale-105 transition-transform duration-500"
               />

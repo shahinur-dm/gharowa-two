@@ -5,8 +5,9 @@ import { api } from '../lib/api';
 import { MenuItem, RestaurantSettings } from '../types';
 import HeroSection from '../components/HeroSection';
 import FeaturedDishes from '../components/FeaturedDishes';
-import WhyChooseUs from '../components/WhyChooseUs';
+import HomeMenuSection from '../components/HomeMenuSection';
 import AboutStorySection from '../components/AboutStorySection';
+import WhyChooseUs from '../components/WhyChooseUs';
 import ChefAndOwnerSection from '../components/ChefAndOwnerSection';
 import ContactSection from '../components/ContactSection';
 
@@ -41,23 +42,26 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="space-y-4 pb-16">
-      {/* 1. Mutton Khichuri Hero Section with 2D Pouring Animation */}
+    <div className="space-y-2 pb-16">
+      {/* 1. Hero Section (Mutton Khichuri + 2D Pouring Animation) */}
       <HeroSection settings={settings} />
 
-      {/* 2. Popular & Featured Dishes Section */}
+      {/* 2. Popular Dishes (Directly Below Hero with View All & Carousel) */}
       <FeaturedDishes dishes={dishes} />
 
-      {/* 3. Why Choose Us (4 Value Pillars) */}
-      <WhyChooseUs />
+      {/* 3. Our Menu (Category Filter Pills & Responsive Grid matching Reference 2) */}
+      <HomeMenuSection dishes={dishes} />
 
-      {/* 4. Our Story / About Us Section */}
+      {/* 4. About Us / Our Story with Heritage Stats */}
       <AboutStorySection settings={settings} />
 
-      {/* 5. Chef & Owner Section */}
+      {/* 5. Why Choose Us (4 Value Pillars) */}
+      <WhyChooseUs />
+
+      {/* 6. Chef & Owner Section */}
       <ChefAndOwnerSection settings={settings} />
 
-      {/* 6. Contact Us Section */}
+      {/* 7. Contact Us Section with Form & Coordinates */}
       <ContactSection settings={settings} />
     </div>
   );

@@ -54,7 +54,7 @@ export default function ChefAndOwnerSection({ settings }: ChefAndOwnerProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
         {/* Chef Card */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 hover:border-red-200 shadow-sm hover:shadow-card-hover transition-all duration-300 flex flex-col sm:flex-row gap-6 items-center">
+        <div id="chef" className="scroll-mt-24 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 hover:border-red-200 shadow-sm hover:shadow-card-hover transition-all duration-300 flex flex-col sm:flex-row gap-6 items-center">
           <div className="relative w-36 sm:w-44 aspect-square rounded-2xl overflow-hidden border-2 border-[#900C19]/20 shadow-md shrink-0">
             <Image
               src={chefImage}
@@ -88,7 +88,7 @@ export default function ChefAndOwnerSection({ settings }: ChefAndOwnerProps) {
         </div>
 
         {/* Owner Card */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 hover:border-red-200 shadow-sm hover:shadow-card-hover transition-all duration-300 flex flex-col sm:flex-row gap-6 items-center">
+        <div id="owner" className="scroll-mt-24 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 hover:border-red-200 shadow-sm hover:shadow-card-hover transition-all duration-300 flex flex-col sm:flex-row gap-6 items-center">
           <div className="relative w-36 sm:w-44 aspect-square rounded-2xl overflow-hidden border-2 border-amber-600/20 shadow-md shrink-0">
             <Image
               src={ownerImage}

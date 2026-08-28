@@ -119,7 +119,7 @@ const RestaurantSettingsSchema = new Schema<IRestaurantSettings>(
     aboutTitleBn: { type: String, default: 'আমাদের গল্প' },
     aboutTitleEn: { type: String, default: 'Our Story' },
     aboutDescBn: { type: String, default: '১৯৭২ সাল থেকে ঢাকার মতিঝিলের প্রাণকেন্দ্রে খাঁটি ঐতিহ্যবাহী স্বাদের বিশ্বস্ত ঠিকানা। খাসির ভুনা খিচুড়ি ও কাচ্চির ঐতিহ্যে আমরা আপসহীন।' },
-    aboutDescEn: { type: String, default: 'Khichuri House started with a simple goal — to serve authentic Bengali flavors with the best quality and love. Our Mutton Khichuri is our signature dish loved by thousands.' },
+    aboutDescEn: { type: String, default: 'Gharowa Hotel & Restaurant started in 1972 with a simple goal — to serve authentic Bengali flavors with the highest quality and love. Our Mutton Khichuri is our signature dish loved by thousands.' },
     aboutImageUrl: { type: String, default: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop' },
     aboutStats: {
       type: [

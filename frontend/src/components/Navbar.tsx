@@ -11,12 +11,12 @@ import {
   X,
   Languages,
   Shield,
-  Sparkles,
   ChevronRight,
 } from 'lucide-react';
 import { useLanguageStore } from '../store/languageStore';
 import { useCartStore } from '../store/cartStore';
 import { toBanglaNumber } from '../lib/bangla';
+import GharowaLogo from './GharowaLogo';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -43,7 +43,8 @@ export default function Navbar() {
     { href: '/', labelBn: 'হোম', labelEn: 'Home' },
     { href: '/menu', labelBn: 'মেনু', labelEn: 'Menu' },
     { href: '/about', labelBn: 'আমাদের সম্পর্কে', labelEn: 'About Us' },
-    { href: '/#chef-owner', labelBn: 'শেফ ও কর্ণধার', labelEn: 'Chef & Owner' },
+    { href: '/#chef', labelBn: 'শেফ', labelEn: 'Chef' },
+    { href: '/#owner', labelBn: 'কর্ণধার', labelEn: 'Owner' },
     { href: '/contact', labelBn: 'যোগাযোগ', labelEn: 'Contact Us' },
   ];
 
@@ -58,17 +59,15 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            {/* Logo */}
+            {/* Exact Gharowa Logo & Brand Name */}
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-full bg-white/15 border border-white/30 flex items-center justify-center text-white font-serif font-bold text-xl group-hover:scale-105 transition-transform shadow-inner">
-                <span>GH</span>
-              </div>
+              <GharowaLogo size={42} variant="header" className="group-hover:scale-105 transition-transform" />
               <div className="flex flex-col">
-                <span className="text-lg sm:text-xl font-extrabold text-white tracking-wide font-serif">
-                  Khichuri House
+                <span className="text-base sm:text-lg font-extrabold text-white tracking-wide font-serif leading-tight">
+                  Gharowa
                 </span>
-                <span className="text-[10px] text-amber-200/90 font-medium tracking-wider -mt-1">
-                  {language === 'bn' ? 'ঐতিহ্যবাহী স্বাদ • ১৯৭২' : 'GHAROWA RESTAURANT • SINCE 1972'}
+                <span className="text-[10px] text-amber-200/90 font-medium tracking-wider font-bengali">
+                  {language === 'bn' ? 'হোটেল এন্ড রেস্টুরেন্ট • ১৯৭২' : 'Hotel & Restaurant'}
                 </span>
               </div>
             </Link>
@@ -81,7 +80,7 @@ export default function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
                       isActive
                         ? 'bg-white/20 text-white shadow-sm'
                         : 'text-white/85 hover:text-white hover:bg-white/10'
@@ -158,9 +157,12 @@ export default function Navbar() {
           <div className="fixed top-0 right-0 bottom-0 w-[82%] max-w-sm bg-[#800A15] text-white p-6 pt-20 flex flex-col justify-between shadow-2xl border-l border-white/15 overflow-y-auto">
             <div className="space-y-6">
               <div className="pb-4 border-b border-white/15 flex items-center justify-between">
-                <div>
-                  <h3 className="font-serif font-bold text-base text-white">Khichuri House</h3>
-                  <p className="text-xs text-amber-300">ঘরোয়া হোটেল এন্ড রেস্টুরেন্ট</p>
+                <div className="flex items-center gap-2.5">
+                  <GharowaLogo size={36} variant="header" />
+                  <div>
+                    <h3 className="font-serif font-bold text-sm text-white">Gharowa</h3>
+                    <p className="text-[10px] text-amber-300">Hotel & Restaurant</p>
+                  </div>
                 </div>
                 <button
                   onClick={toggleLanguage}
@@ -179,7 +181,7 @@ export default function Navbar() {
                     <Link
                       key={link.href}
                       href={link.href}
-                      className={`px-4 py-3 rounded-xl text-sm font-semibold flex items-center justify-between transition-all ${
+                      className={`px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-between transition-all ${
                         isActive
                           ? 'bg-white/25 text-white font-bold'
                           : 'text-white/85 hover:bg-white/10 hover:text-white'
