@@ -15,6 +15,8 @@ import {
   User,
   Info,
   Layers,
+  FileText,
+  Eye,
 } from 'lucide-react';
 import { api } from '../../../lib/api';
 import { RestaurantSettings } from '../../../types';
@@ -22,7 +24,7 @@ import ImageUploadField from '../../../components/ImageUploadField';
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<RestaurantSettings | null>(null);
-  const [activeTab, setActiveTab] = useState<'hero' | 'about' | 'chef_owner' | 'general'>('hero');
+  const [activeTab, setActiveTab] = useState<'hero' | 'about' | 'chef_owner' | 'general' | 'menu_board'>('hero');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -78,7 +80,7 @@ export default function AdminSettingsPage() {
             <span>Website CMS & Restaurant Configuration</span>
           </h1>
           <p className="text-xs text-gray-400 mt-1">
-            হিরো সেকশন, শেফ, কর্ণধার, আবাউট গল্প এবং যোগাযোগ সেটিংস পরিবর্তন করুন
+            হিরো সেকশন, শেফ, কর্ণধার, আবাউট গল্প, মেনু বোর্ড ও যোগাযোগ সেটিংস পরিবর্তন করুন
           </p>
         </div>
 
@@ -129,6 +131,19 @@ export default function AdminSettingsPage() {
         >
           <Award className="w-3.5 h-3.5 text-amber-300" />
           <span>Chef & Owner CMS</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('menu_board')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+            activeTab === 'menu_board'
+              ? 'bg-[#900C19] text-white shadow-md'
+              : 'bg-slate-900 text-gray-400 hover:text-white border border-slate-800'
+          }`}
+        >
+          <FileText className="w-3.5 h-3.5 text-amber-300" />
+          <span>Menu Board Image CMS</span>
         </button>
 
         <button
@@ -205,7 +220,7 @@ export default function AdminSettingsPage() {
                   rows={2}
                   value={settings.heroSubtitleBn || ''}
                   onChange={(e) => setSettings({ ...settings, heroSubtitleBn: e.target.value })}
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
                 />
               </div>
 
@@ -217,7 +232,7 @@ export default function AdminSettingsPage() {
                   rows={2}
                   value={settings.heroSubtitleEn || ''}
                   onChange={(e) => setSettings({ ...settings, heroSubtitleEn: e.target.value })}
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
                 />
               </div>
             </div>
@@ -431,7 +446,40 @@ export default function AdminSettingsPage() {
           </div>
         )}
 
-        {/* TAB 4: GENERAL & CONTACT SETTINGS */}
+        {/* TAB 4: MENU BOARD IMAGE CMS */}
+        {activeTab === 'menu_board' && (
+          <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-6">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <FileText className="w-4 h-4 text-amber-400" />
+                <span>Restaurant Menu Board / Price List Image (খাবারের মূল্য তালিকা বোর্ড)</span>
+              </h3>
+
+              <label className="flex items-center gap-2 cursor-pointer text-xs">
+                <input
+                  type="checkbox"
+                  checked={settings.isMenuBoardEnabled ?? true}
+                  onChange={(e) => setSettings({ ...settings, isMenuBoardEnabled: e.target.checked })}
+                  className="w-4 h-4 rounded text-amber-500"
+                />
+                <span className="text-gray-300 font-semibold">মেনু পেজে বোর্ড বাটন সক্রিয় রাখুন</span>
+              </label>
+            </div>
+
+            <p className="text-xs text-gray-400">
+              রেস্তোরাঁর ফিজিক্যাল মেনু বোর্ডের ছবি (যেমন: কালো ও সোনালী মূল্য তালিকা বোর্ড) আপলোড করতে পারেন। মেনু পেজে গ্রাহকরা ইচ্ছা করলে মূল বোর্ড ছবি প্রিভিউ দেখতে পারবেন।
+            </p>
+
+            <ImageUploadField
+              label="Menu Board Image (মূল্য তালিকা বোর্ডের ছবি আপলোড করুন)"
+              value={settings.menuBoardImageUrl || ''}
+              onChange={(url) => setSettings({ ...settings, menuBoardImageUrl: url })}
+              helperText="Upload official physical menu board photo or enter URL."
+            />
+          </div>
+        )}
+
+        {/* TAB 5: GENERAL & CONTACT SETTINGS */}
         {activeTab === 'general' && (
           <div className="space-y-6">
             {/* Phone & WhatsApp */}

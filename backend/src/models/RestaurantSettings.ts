@@ -68,10 +68,15 @@ export interface IRestaurantSettings extends Document {
   ownerQuoteBn?: string;
   ownerQuoteEn?: string;
   ownerImageUrl?: string;
+  // Menu Board Image CMS
+  menuBoardImageUrl?: string;
+  isMenuBoardEnabled?: boolean;
 }
 
 const RestaurantSettingsSchema = new Schema<IRestaurantSettings>(
   {
+    menuBoardImageUrl: { type: String, default: '' },
+    isMenuBoardEnabled: { type: Boolean, default: true },
     restaurantNameBn: { type: String, default: 'ঘরোয়া হোটেল এন্ড রেস্টুরেন্ট' },
     restaurantNameEn: { type: String, default: 'Gharowa Hotel & Restaurant' },
     taglineBn: { type: String, default: '১৯৭২ থেকে ঢাকার হৃদয়ে ঐতিহ্যের স্বাদ' },

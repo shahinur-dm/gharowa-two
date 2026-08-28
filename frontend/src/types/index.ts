@@ -232,6 +232,9 @@ export interface RestaurantSettings {
   ownerQuoteBn?: string;
   ownerQuoteEn?: string;
   ownerImageUrl?: string;
+  // Menu Board Image CMS
+  menuBoardImageUrl?: string;
+  isMenuBoardEnabled?: boolean;
 }
 
 export interface AdminUser {

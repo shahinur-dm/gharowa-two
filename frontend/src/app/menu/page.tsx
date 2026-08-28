@@ -2,8 +2,20 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, Sparkles, Filter, Utensils, ChevronRight, ArrowUpDown, Loader2 } from 'lucide-react';
-import { MenuItem, MenuCategory } from '../../types';
+import Image from 'next/image';
+import {
+  Search,
+  Sparkles,
+  Filter,
+  Utensils,
+  ChevronRight,
+  ArrowUpDown,
+  Loader2,
+  FileText,
+  X,
+  Eye,
+} from 'lucide-react';
+import { MenuItem, MenuCategory, RestaurantSettings } from '../../types';
 import { useLanguageStore } from '../../store/languageStore';
 import { useCartStore } from '../../store/cartStore';
 import DishCard from '../../components/DishCard';
@@ -15,36 +27,35 @@ export default function MenuPage() {
 
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [settings, setSettings] = useState<RestaurantSettings | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortBy, setSortBy] = useState<'default' | 'price_asc' | 'price_desc' | 'rating'>('default');
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [visibleCount, setVisibleCount] = useState<number>(16);
+  const [visibleCount, setVisibleCount] = useState<number>(20);
+  const [isMenuBoardModalOpen, setIsMenuBoardModalOpen] = useState<boolean>(false);
 
   const defaultCategories = [
     { _id: 'cat-all', nameBn: 'সব খাবার', nameEn: 'All', slug: 'all', displayOrder: 0, isActive: true },
-    { _id: 'cat-1', nameBn: 'খিচুড়ি', nameEn: 'Khichuri', slug: 'khichuri', displayOrder: 1, isActive: true },
-    { _id: 'cat-2', nameBn: 'কাচ্চি ও বিরিয়ানি', nameEn: 'Biryani', slug: 'biryani', displayOrder: 2, isActive: true },
-    { _id: 'cat-3', nameBn: 'তেহারি', nameEn: 'Tehari', slug: 'tehari', displayOrder: 3, isActive: true },
-    { _id: 'cat-4', nameBn: 'পোলাও', nameEn: 'Polao', slug: 'polao', displayOrder: 4, isActive: true },
-    { _id: 'cat-5', nameBn: 'খাসির মাংস', nameEn: 'Mutton', slug: 'mutton', displayOrder: 5, isActive: true },
-    { _id: 'cat-6', nameBn: 'গরুর মাংস', nameEn: 'Beef', slug: 'beef', displayOrder: 6, isActive: true },
-    { _id: 'cat-7', nameBn: 'চিকেন', nameEn: 'Chicken', slug: 'chicken', displayOrder: 7, isActive: true },
-    { _id: 'cat-8', nameBn: 'মাছের পদ', nameEn: 'Fish', slug: 'fish', displayOrder: 8, isActive: true },
-    { _id: 'cat-9', nameBn: 'সাদা ভাত ও ফ্রাইড রাইস', nameEn: 'Rice', slug: 'rice', displayOrder: 9, isActive: true },
-    { _id: 'cat-10', nameBn: 'স্ন্যাক্স ও সমুচা', nameEn: 'Snacks', slug: 'snacks', displayOrder: 10, isActive: true },
-    { _id: 'cat-11', nameBn: 'পানীয় ও বোরহানি', nameEn: 'Drinks', slug: 'drinks', displayOrder: 11, isActive: true },
-    { _id: 'cat-12', nameBn: 'মিষ্টি ও ডেজার্ট', nameEn: 'Desserts', slug: 'desserts', displayOrder: 12, isActive: true },
-    { _id: 'cat-13', nameBn: 'স্পেশাল কম্বো', nameEn: 'Combos', slug: 'combos', displayOrder: 13, isActive: true },
+    { _id: 'cat-1', nameBn: 'খিচুড়ি ও বিরিয়ানি', nameEn: 'Khichuri & Biryani', slug: 'khichuri-biryani', displayOrder: 1, isActive: true },
+    { _id: 'cat-2', nameBn: 'সকালের নাস্তা', nameEn: 'Breakfast', slug: 'breakfast', displayOrder: 2, isActive: true },
+    { _id: 'cat-3', nameBn: 'দুপুর ও রাতের খাবার', nameEn: 'Lunch & Dinner', slug: 'main-course', displayOrder: 3, isActive: true },
+    { _id: 'cat-4', nameBn: 'মাছের পদ', nameEn: 'Fish Items', slug: 'fish', displayOrder: 4, isActive: true },
+    { _id: 'cat-5', nameBn: 'কাবাব ও শর্মা', nameEn: 'Kabab & Shawarma', slug: 'kabab-grill', displayOrder: 5, isActive: true },
+    { _id: 'cat-6', nameBn: 'শাক ও ভর্তা', nameEn: 'Vorta & Greens', slug: 'vorta-greens', displayOrder: 6, isActive: true },
+    { _id: 'cat-7', nameBn: 'নান, পরটা ও ভাত', nameEn: 'Breads & Rice', slug: 'breads-rice', displayOrder: 7, isActive: true },
+    { _id: 'cat-8', nameBn: 'ডেজার্ট ও মিষ্টি', nameEn: 'Desserts', slug: 'desserts', displayOrder: 8, isActive: true },
+    { _id: 'cat-9', nameBn: 'পানীয় ও বোরহানি', nameEn: 'Drinks & Juices', slug: 'drinks', displayOrder: 9, isActive: true },
   ];
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const [catRes, itemRes]: [any, any] = await Promise.all([
+        const [catRes, itemRes, setRes]: [any, any, any] = await Promise.all([
           api.get('/menu/categories'),
           api.get('/menu/items'),
+          api.get('/settings'),
         ]);
 
         if (catRes.success && catRes.data && catRes.data.length > 0) {
@@ -58,6 +69,10 @@ export default function MenuPage() {
 
         if (itemRes.success && itemRes.data && itemRes.data.length > 0) {
           setMenuItems(itemRes.data);
+        }
+
+        if (setRes.success && setRes.data) {
+          setSettings(setRes.data);
         }
       } catch (e) {
         console.warn('Error fetching menu items', e);
@@ -105,21 +120,37 @@ export default function MenuPage() {
       {/* 1. Header Banner matching Reference 3 */}
       <div className="bg-[#800A15] text-white py-12 px-4 text-center relative overflow-hidden border-b border-white/10">
         <div className="max-w-4xl mx-auto space-y-2 relative z-10">
+          <div className="text-[11px] font-extrabold tracking-widest text-amber-300 uppercase">
+            GHAROWA HOTEL & RESTAURANT • SINCE 1972
+          </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-serif tracking-tight">
-            {language === 'bn' ? 'আমাদের সম্পূর্ণ খাবার মেনু' : 'Our Menu'}
+            {language === 'bn' ? 'খাবারের সম্পূর্ণ মূল্য তালিকা ও মেনু' : 'Our Food Menu & Price List'}
           </h1>
           <p className="text-xs sm:text-sm text-white/80 max-w-xl mx-auto font-bengali">
             {language === 'bn'
-              ? '১৯৭২ সালের ঐতিহ্যবাহী খাসির ভুনা খিচুড়ি, কাচ্চি, তেহারি ও সুস্বাদু বাঙালি খাবার'
-              : 'Authentic 1972 recipes cooked with fresh ingredients and traditional spices.'}
+              ? 'মতিঝিলের ঐতিহ্যবাহী খাসির ভুনা খিচুড়ি, লেগ খিচুড়ি, কাচ্চি, সরিষা ইলিশ, কাবাব ও স্পেশাল বোরহানি।'
+              : 'Authentic 1972 recipes cooked with fresh ingredients and traditional spices in Motijheel, Dhaka.'}
           </p>
 
-          <div className="text-xs text-amber-200/80 font-medium flex items-center justify-center gap-1.5 pt-2">
-            <Link href="/" className="hover:text-white transition-colors">
-              {language === 'bn' ? 'হোম' : 'Home'}
-            </Link>
-            <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-            <span className="text-white font-bold">{language === 'bn' ? 'মেনু' : 'Menu'}</span>
+          <div className="flex items-center justify-center gap-4 pt-3">
+            <div className="text-xs text-amber-200/80 font-medium flex items-center justify-center gap-1.5">
+              <Link href="/" className="hover:text-white transition-colors">
+                {language === 'bn' ? 'হোম' : 'Home'}
+              </Link>
+              <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+              <span className="text-white font-bold">{language === 'bn' ? 'মেনু তালিকা' : 'Menu'}</span>
+            </div>
+
+            {/* Optional Menu Board Image Preview Trigger */}
+            {settings?.menuBoardImageUrl && settings?.isMenuBoardEnabled && (
+              <button
+                onClick={() => setIsMenuBoardModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 hover:bg-white/25 border border-white/30 text-white font-bold text-[11px] backdrop-blur-sm transition-all"
+              >
+                <FileText className="w-3.5 h-3.5 text-amber-300" />
+                <span>{language === 'bn' ? 'মূল্য তালিকা বোর্ড দেখুন' : 'View Menu Board'}</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -134,8 +165,8 @@ export default function MenuPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={language === 'bn' ? 'খাবার খুঁজুন (যেমন: খাসি, বিরিয়ানি)...' : 'Search dishes (e.g. mutton, biryani)...'}
-              className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#900C19] transition-all"
+              placeholder={language === 'bn' ? 'খাবার খুঁজুন (যেমন: খাসির ভুনা, কাচ্চি, বোরহানি)...' : 'Search dishes (e.g. mutton, kacchi, borhani)...'}
+              className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#900C19] transition-all font-bengali"
             />
           </div>
 
@@ -150,7 +181,7 @@ export default function MenuPage() {
               onChange={(e: any) => setSortBy(e.target.value)}
               className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:border-[#900C19]"
             >
-              <option value="default">{language === 'bn' ? 'জনপ্রিয়তা' : 'Popularity'}</option>
+              <option value="default">{language === 'bn' ? 'মেনু ক্রম' : 'Default Order'}</option>
               <option value="rating">{language === 'bn' ? 'সর্বোচ্চ রেটিং' : 'Highest Rated'}</option>
               <option value="price_asc">{language === 'bn' ? 'মূল্য: কম থেকে বেশি' : 'Price: Low to High'}</option>
               <option value="price_desc">{language === 'bn' ? 'মূল্য: বেশি থেকে কম' : 'Price: High to Low'}</option>
@@ -158,7 +189,7 @@ export default function MenuPage() {
           </div>
         </div>
 
-        {/* 3. Category Filter Pills matching Reference 3 */}
+        {/* 3. Category Filter Pills matching Reference 3 & Board */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
           {categories.map((cat) => {
             const isSelected = selectedCategory === cat.slug;
@@ -167,9 +198,9 @@ export default function MenuPage() {
                 key={cat._id}
                 onClick={() => {
                   setSelectedCategory(cat.slug);
-                  setVisibleCount(16);
+                  setVisibleCount(20);
                 }}
-                className={`px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 shadow-sm ${
+                className={`px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 shadow-sm font-bengali ${
                   isSelected
                     ? 'bg-[#900C19] text-white shadow-md scale-105'
                     : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
@@ -190,7 +221,7 @@ export default function MenuPage() {
         ) : displayedItems.length === 0 ? (
           <div className="py-16 text-center bg-white rounded-3xl border border-slate-200 p-8 space-y-3">
             <Utensils className="w-12 h-12 text-slate-300 mx-auto" />
-            <h3 className="text-base font-bold text-slate-800">
+            <h3 className="text-base font-bold text-slate-800 font-bengali">
               {language === 'bn' ? 'কোনো খাবার পাওয়া যায়নি' : 'No items found'}
             </h3>
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
@@ -211,7 +242,7 @@ export default function MenuPage() {
             {visibleCount < sortedItems.length && (
               <div className="text-center pt-8">
                 <button
-                  onClick={() => setVisibleCount((prev) => prev + 12)}
+                  onClick={() => setVisibleCount((prev) => prev + 16)}
                   className="px-8 py-3 rounded-full border-2 border-[#900C19] text-[#900C19] hover:bg-[#900C19] hover:text-white font-bold text-xs shadow-sm transition-all active:scale-95"
                 >
                   {language === 'bn'
@@ -223,6 +254,36 @@ export default function MenuPage() {
           </>
         )}
       </div>
+
+      {/* Optional Physical Menu Board Lightbox Modal */}
+      {isMenuBoardModalOpen && settings?.menuBoardImageUrl && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="relative max-w-4xl w-full bg-slate-950 rounded-3xl overflow-hidden shadow-2xl border border-white/20 p-4 space-y-3">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+              <div className="flex items-center gap-2 text-white text-xs font-bold font-serif">
+                <FileText className="w-4 h-4 text-amber-400" />
+                <span>Gharowa Hotel & Restaurant — Official Menu Board</span>
+              </div>
+              <button
+                onClick={() => setIsMenuBoardModalOpen(false)}
+                className="p-1.5 rounded-full bg-slate-800 text-gray-300 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-black">
+              <Image
+                src={settings.menuBoardImageUrl}
+                alt="Gharowa Hotel & Restaurant Official Price List Board"
+                fill
+                className="object-contain"
+                unoptimized
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
