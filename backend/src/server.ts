@@ -1,4 +1,5 @@
 import http from 'http';
+import path from 'path';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -57,6 +58,9 @@ const apiLimiter = rateLimit({
 });
 
 app.use('/api', apiLimiter);
+
+// Serve static uploads
+app.use('/uploads', express.static(path.join(process.cwd(), 'public', 'uploads')));
 
 // 3. Register Routes
 app.use('/api', routes);

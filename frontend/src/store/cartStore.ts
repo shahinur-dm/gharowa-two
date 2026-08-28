@@ -19,9 +19,16 @@ interface CartState {
   freeDeliveryThreshold: number;
 
   // Actions
-  addItem: (item: MenuItem, quantity?: number, notes?: string) => void;
-  removeItem: (itemId: string) => void;
-  updateQuantity: (itemId: string, quantity: number) => void;
+  addItem: (
+    item: MenuItem,
+    quantity?: number,
+    notes?: string,
+    selectedPortion?: { name: string; price: number },
+    selectedAddOns?: Array<{ name: string; price: number }>,
+    unitPrice?: number
+  ) => void;
+  removeItem: (itemId: string, portionName?: string) => void;
+  updateQuantity: (itemId: string, quantity: number, portionName?: string) => void;
   clearCart: () => void;
   openCart: () => void;
   closeCart: () => void;
@@ -46,42 +53,71 @@ export const useCartStore = create<CartState>()(
       deliveryCharge: 60,
       freeDeliveryThreshold: 1500,
 
-      addItem: (menuItem, quantity = 1, notes) => {
+      addItem: (menuItem, quantity = 1, notes, selectedPortion, selectedAddOns, unitPrice) => {
         set((state) => {
+          const calculatedUnitPrice =
+            unitPrice ||
+            (selectedPortion ? selectedPortion.price : menuItem.price) +
+              (selectedAddOns ? selectedAddOns.reduce((acc, a) => acc + a.price, 0) : 0);
+
+          const portionKey = selectedPortion?.name || 'default';
           const existingIndex = state.items.findIndex(
-            (i) => i.menuItem._id === menuItem._id
+            (i) =>
+              i.menuItem._id === menuItem._id &&
+              (i.selectedPortion?.name || 'default') === portionKey
           );
 
           if (existingIndex > -1) {
             const updated = [...state.items];
             updated[existingIndex].quantity += quantity;
             if (notes) updated[existingIndex].notes = notes;
+            if (selectedAddOns) updated[existingIndex].selectedAddOns = selectedAddOns;
+            updated[existingIndex].unitPrice = calculatedUnitPrice;
             return { items: updated, isCartOpen: true };
           }
 
           return {
-            items: [...state.items, { menuItem, quantity, notes }],
+            items: [
+              ...state.items,
+              {
+                menuItem,
+                quantity,
+                notes,
+                selectedPortion,
+                selectedAddOns,
+                unitPrice: calculatedUnitPrice,
+              },
+            ],
             isCartOpen: true,
           };
         });
       },
 
-      removeItem: (itemId) => {
+      removeItem: (itemId, portionName) => {
         set((state) => ({
-          items: state.items.filter((i) => i.menuItem._id !== itemId),
+          items: state.items.filter((i) => {
+            if (i.menuItem._id !== itemId) return true;
+            if (portionName && i.selectedPortion?.name !== portionName) return true;
+            return false;
+          }),
         }));
       },
 
-      updateQuantity: (itemId, quantity) => {
+      updateQuantity: (itemId, quantity, portionName) => {
         if (quantity <= 0) {
-          get().removeItem(itemId);
+          get().removeItem(itemId, portionName);
           return;
         }
 
         set((state) => ({
-          items: state.items.map((i) =>
-            i.menuItem._id === itemId ? { ...i, quantity } : i
-          ),
+          items: state.items.map((i) => {
+            const matchesId = i.menuItem._id === itemId;
+            const matchesPortion = !portionName || i.selectedPortion?.name === portionName;
+            if (matchesId && matchesPortion) {
+              return { ...i, quantity };
+            }
+            return i;
+          }),
         }));
       },
 
@@ -101,10 +137,10 @@ export const useCartStore = create<CartState>()(
       },
 
       getSubtotal: () => {
-        return get().items.reduce(
-          (total, item) => total + item.menuItem.price * item.quantity,
-          0
-        );
+        return get().items.reduce((total, item) => {
+          const itemPrice = item.unitPrice || item.menuItem.price;
+          return total + itemPrice * item.quantity;
+        }, 0);
       },
 
       getDiscount: () => {

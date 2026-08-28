@@ -1,5 +1,26 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
+export interface IPortionOption {
+  nameBn: string;
+  nameEn: string;
+  price: number;
+  servingSize: string;
+}
+
+export interface IAddOnOption {
+  nameBn: string;
+  nameEn: string;
+  price: number;
+}
+
+export interface INutritionFacts {
+  calories?: string;
+  protein?: string;
+  carbs?: string;
+  fat?: string;
+  fiber?: string;
+}
+
 export interface IMenuItem extends Document {
   nameBn: string;
   nameEn: string;
@@ -10,6 +31,7 @@ export interface IMenuItem extends Document {
   descriptionBn: string;
   descriptionEn: string;
   image: string;
+  galleryImages: string[];
   spiceLevel: number; // 0: None, 1: Mild, 2: Medium, 3: Hot
   isAvailable: boolean;
   isBestseller: boolean;
@@ -17,7 +39,44 @@ export interface IMenuItem extends Document {
   preparationTimeMinutes?: number;
   dietaryTags: string[];
   displayOrder: number;
+  rating: number;
+  reviewsCount: number;
+  portions: IPortionOption[];
+  addOns: IAddOnOption[];
+  nutritionFacts?: INutritionFacts;
+  aboutDishBn?: string;
+  aboutDishEn?: string;
 }
+
+const PortionOptionSchema = new Schema<IPortionOption>(
+  {
+    nameBn: { type: String, required: true },
+    nameEn: { type: String, required: true },
+    price: { type: Number, required: true, min: 0 },
+    servingSize: { type: String, default: '1 Person' },
+  },
+  { _id: false }
+);
+
+const AddOnOptionSchema = new Schema<IAddOnOption>(
+  {
+    nameBn: { type: String, required: true },
+    nameEn: { type: String, required: true },
+    price: { type: Number, required: true, min: 0 },
+  },
+  { _id: false }
+);
+
+const NutritionFactsSchema = new Schema<INutritionFacts>(
+  {
+    calories: { type: String, default: '450 kcal' },
+    protein: { type: String, default: '18 g' },
+    carbs: { type: String, default: '52 g' },
+    fat: { type: String, default: '15 g' },
+    fiber: { type: String, default: '2 g' },
+  },
+  { _id: false }
+);
 
 const MenuItemSchema = new Schema<IMenuItem>(
   {
@@ -30,6 +89,7 @@ const MenuItemSchema = new Schema<IMenuItem>(
     descriptionBn: { type: String, default: '', trim: true },
     descriptionEn: { type: String, default: '', trim: true },
     image: { type: String, required: true },
+    galleryImages: [{ type: String }],
     spiceLevel: { type: Number, default: 1, min: 0, max: 3 },
     isAvailable: { type: Boolean, default: true, index: true },
     isBestseller: { type: Boolean, default: false, index: true },
@@ -37,6 +97,13 @@ const MenuItemSchema = new Schema<IMenuItem>(
     preparationTimeMinutes: { type: Number, default: 15 },
     dietaryTags: [{ type: String }],
     displayOrder: { type: Number, default: 0 },
+    rating: { type: Number, default: 4.9, min: 1, max: 5 },
+    reviewsCount: { type: Number, default: 124 },
+    portions: [PortionOptionSchema],
+    addOns: [AddOnOptionSchema],
+    nutritionFacts: NutritionFactsSchema,
+    aboutDishBn: { type: String, default: '' },
+    aboutDishEn: { type: String, default: '' },
   },
   { timestamps: true }
 );

@@ -52,6 +52,7 @@ export const menuItemSchema = z.object({
   descriptionBn: z.string().default(''),
   descriptionEn: z.string().default(''),
   image: z.string().min(1, 'Image URL is required'),
+  galleryImages: z.array(z.string()).optional(),
   spiceLevel: z.number().min(0).max(3).default(1),
   isAvailable: z.boolean().default(true),
   isBestseller: z.boolean().default(false),
@@ -59,6 +60,38 @@ export const menuItemSchema = z.object({
   preparationTimeMinutes: z.number().default(15),
   dietaryTags: z.array(z.string()).default([]),
   displayOrder: z.number().default(0),
+  rating: z.number().optional(),
+  reviewsCount: z.number().optional(),
+  portions: z
+    .array(
+      z.object({
+        nameBn: z.string(),
+        nameEn: z.string(),
+        price: z.number(),
+        servingSize: z.string().default('1 Person'),
+      })
+    )
+    .optional(),
+  addOns: z
+    .array(
+      z.object({
+        nameBn: z.string(),
+        nameEn: z.string(),
+        price: z.number(),
+      })
+    )
+    .optional(),
+  nutritionFacts: z
+    .object({
+      calories: z.string().optional(),
+      protein: z.string().optional(),
+      carbs: z.string().optional(),
+      fat: z.string().optional(),
+      fiber: z.string().optional(),
+    })
+    .optional(),
+  aboutDishBn: z.string().optional(),
+  aboutDishEn: z.string().optional(),
 });
 
 export const couponSchema = z.object({

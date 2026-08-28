@@ -8,6 +8,7 @@ import couponRoutes from './couponRoutes';
 import dashboardRoutes from './dashboardRoutes';
 import settingsRoutes from './settingsRoutes';
 import customerRoutes from './customerRoutes';
+import uploadRoutes from './uploadRoutes';
 
 const router = Router();
 
@@ -20,6 +21,7 @@ router.use('/coupons', couponRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/settings', settingsRoutes);
 router.use('/customers', customerRoutes);
+router.use('/upload', uploadRoutes);
 
 router.get('/health', (req, res) => {
   res.status(200).json({
@@ -29,5 +31,4 @@ router.get('/health', (req, res) => {
     address: '9/C Motijheel C/A, Dhaka-1000',
   });
 });
-
 export default router;

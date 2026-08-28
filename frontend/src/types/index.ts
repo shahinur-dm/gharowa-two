@@ -10,6 +10,27 @@ export interface MenuCategory {
   isActive: boolean;
 }
 
+export interface PortionOption {
+  nameBn: string;
+  nameEn: string;
+  price: number;
+  servingSize: string;
+}
+
+export interface AddOnOption {
+  nameBn: string;
+  nameEn: string;
+  price: number;
+}
+
+export interface NutritionFacts {
+  calories?: string;
+  protein?: string;
+  carbs?: string;
+  fat?: string;
+  fiber?: string;
+}
+
 export interface MenuItem {
   _id: string;
   nameBn: string;
@@ -21,6 +42,7 @@ export interface MenuItem {
   descriptionBn: string;
   descriptionEn: string;
   image: string;
+  galleryImages?: string[];
   spiceLevel: number;
   isAvailable: boolean;
   isBestseller: boolean;
@@ -28,11 +50,29 @@ export interface MenuItem {
   preparationTimeMinutes?: number;
   dietaryTags: string[];
   displayOrder: number;
+  rating?: number;
+  reviewsCount?: number;
+  portions?: PortionOption[];
+  addOns?: AddOnOption[];
+  nutritionFacts?: NutritionFacts;
+  aboutDishBn?: string;
+  aboutDishEn?: string;
+}
+
+export interface SelectedAddOn {
+  name: string;
+  price: number;
 }
 
 export interface CartItem {
   menuItem: MenuItem;
   quantity: number;
+  selectedPortion?: {
+    name: string;
+    price: number;
+  };
+  selectedAddOns?: SelectedAddOn[];
+  unitPrice?: number;
   notes?: string;
 }
 
@@ -152,6 +192,46 @@ export interface RestaurantSettings {
     instagram?: string;
     youtube?: string;
   };
+  // Hero CMS
+  heroTitleBn?: string;
+  heroTitleEn?: string;
+  heroSubtitleBn?: string;
+  heroSubtitleEn?: string;
+  heroBadgeBn?: string;
+  heroBadgeEn?: string;
+  heroImageUrl?: string;
+  heroPouringImageUrl?: string;
+  heroBgPatternUrl?: string;
+  heroCtaTextBn?: string;
+  heroCtaTextEn?: string;
+  heroCtaLink?: string;
+  // About Us CMS
+  aboutTitleBn?: string;
+  aboutTitleEn?: string;
+  aboutDescBn?: string;
+  aboutDescEn?: string;
+  aboutImageUrl?: string;
+  aboutStats?: Array<{
+    labelBn: string;
+    labelEn: string;
+    value: string;
+  }>;
+  // Chef CMS
+  chefName?: string;
+  chefDesignation?: string;
+  chefBioBn?: string;
+  chefBioEn?: string;
+  chefExperience?: string;
+  chefSpecialty?: string;
+  chefImageUrl?: string;
+  // Owner CMS
+  ownerName?: string;
+  ownerDesignation?: string;
+  ownerStoryBn?: string;
+  ownerStoryEn?: string;
+  ownerQuoteBn?: string;
+  ownerQuoteEn?: string;
+  ownerImageUrl?: string;
 }
 
 export interface AdminUser {

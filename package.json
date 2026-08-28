@@ -1,0 +1,24 @@
+{
+  "name": "gharowa-hotel-restaurant",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Gharowa Hotel & Restaurant (Since 1972) - Full-Stack Website & ERP/POS",
+  "scripts": {
+    "dev": "npm run dev --prefix frontend",
+    "dev:all": "npm run dev --prefix backend & npm run dev --prefix frontend",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix frontend",
+    "start": "npm run start --prefix frontend"
+  },
+  "keywords": [
+    "gharowa",
+    "restaurant",
+    "khichuri",
+    "nextjs",
+    "pos",
+    "erp"
+  ],
+  "author": "Gharowa Hotel & Restaurant",
+  "license": "ISC"
+}

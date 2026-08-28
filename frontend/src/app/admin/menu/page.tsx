@@ -2,9 +2,23 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Utensils, Plus, Edit2, Trash2, Check, X, Sparkles, Flame, Star, ToggleLeft, ToggleRight } from 'lucide-react';
+import {
+  Utensils,
+  Plus,
+  Edit2,
+  Trash2,
+  Check,
+  X,
+  Sparkles,
+  Flame,
+  Star,
+  ToggleLeft,
+  ToggleRight,
+  Layers,
+} from 'lucide-react';
 import { api } from '../../../lib/api';
-import { MenuItem, MenuCategory } from '../../../types';
+import { MenuItem, MenuCategory, PortionOption, AddOnOption } from '../../../types';
+import ImageUploadField from '../../../components/ImageUploadField';
 
 export default function AdminMenuPage() {
   const [items, setItems] = useState<MenuItem[]>([]);
@@ -27,6 +41,12 @@ export default function AdminMenuPage() {
     isAvailable: true,
     isBestseller: false,
     isFeatured: false,
+    rating: 4.9,
+    reviewsCount: 124,
+    calories: '450 kcal',
+    protein: '18 g',
+    carbs: '52 g',
+    fat: '15 g',
   });
 
   const fetchData = async () => {
@@ -85,6 +105,12 @@ export default function AdminMenuPage() {
       isAvailable: true,
       isBestseller: false,
       isFeatured: false,
+      rating: 4.9,
+      reviewsCount: 124,
+      calories: '450 kcal',
+      protein: '18 g',
+      carbs: '52 g',
+      fat: '15 g',
     });
     setIsModalOpen(true);
   };
@@ -106,6 +132,12 @@ export default function AdminMenuPage() {
       isAvailable: item.isAvailable,
       isBestseller: item.isBestseller,
       isFeatured: item.isFeatured,
+      rating: item.rating || 4.9,
+      reviewsCount: item.reviewsCount || 124,
+      calories: item.nutritionFacts?.calories || '450 kcal',
+      protein: item.nutritionFacts?.protein || '18 g',
+      carbs: item.nutritionFacts?.carbs || '52 g',
+      fat: item.nutritionFacts?.fat || '15 g',
     });
     setIsModalOpen(true);
   };
@@ -119,6 +151,14 @@ export default function AdminMenuPage() {
         price: Number(formData.price),
         originalPrice: Number(formData.originalPrice) || undefined,
         spiceLevel: Number(formData.spiceLevel),
+        rating: Number(formData.rating),
+        reviewsCount: Number(formData.reviewsCount),
+        nutritionFacts: {
+          calories: formData.calories,
+          protein: formData.protein,
+          carbs: formData.carbs,
+          fat: formData.fat,
+        },
       };
 
       if (editingItem) {
@@ -145,192 +185,173 @@ export default function AdminMenuPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-12">
+    <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-white flex items-center gap-2">
-            <Utensils className="w-5 h-5 text-gold-400" />
-            <span>Menu Items Management (মেনু ব্যবস্থাপনা)</span>
+            <Utensils className="w-5 h-5 text-amber-400" />
+            <span>Food Menu & Products Management</span>
           </h1>
-          <p className="text-xs text-gray-400">
-            খাবারের মূল্য পরিবর্তন, নতুন পদ যুক্তকরণ এবং স্টক প্রাপ্যতা নিয়ন্ত্রণ
+          <p className="text-xs text-gray-400 mt-1">
+            খাবারের ছবি পরিবর্তন, আপলোড, মূল্য ও বৈশিষ্ট্যসমূহ সম্পাদনা করুন
           </p>
         </div>
 
         <button
           onClick={handleOpenAddModal}
-          className="px-4 py-2.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-obsidian-950 font-bold text-xs flex items-center gap-2 shadow-gold"
+          className="px-4 py-2.5 rounded-2xl bg-[#900C19] hover:bg-[#780813] text-white font-bold text-xs flex items-center gap-1.5 shadow-md transition-all active:scale-95"
         >
           <Plus className="w-4 h-4" />
-          <span>নতুন খাবার যোগ করুন</span>
+          <span>নতুন খাবার যোগ করুন (Add Dish)</span>
         </button>
       </div>
 
       {/* Items Table */}
-      <div className="rounded-2xl bg-obsidian-400 border border-gold-500/15 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-gray-300">
-            <thead className="bg-obsidian-300/80 text-gray-400 uppercase tracking-wider font-semibold border-b border-gold-500/10">
-              <tr>
-                <th className="p-4">Dish</th>
-                <th className="p-4">Category</th>
-                <th className="p-4">Price</th>
-                <th className="p-4">Spice</th>
-                <th className="p-4">Status</th>
-                <th className="p-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {isLoading ? (
+      {isLoading ? (
+        <div className="p-8 text-center text-xs text-gray-400">লোড হচ্ছে...</div>
+      ) : (
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs text-gray-300">
+              <thead className="bg-slate-950 text-gray-400 font-semibold border-b border-slate-800 uppercase tracking-wider text-[10px]">
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-gray-400">
-                    লোড হচ্ছে...
-                  </td>
+                  <th className="py-3 px-4">ছবি</th>
+                  <th className="py-3 px-4">খাবারের নাম</th>
+                  <th className="py-3 px-4">ক্যাটাগরি</th>
+                  <th className="py-3 px-4">মূল্য</th>
+                  <th className="py-3 px-4">রেটিং</th>
+                  <th className="py-3 px-4">স্ট্যাটাস</th>
+                  <th className="py-3 px-4 text-right">অ্যাকশন</th>
                 </tr>
-              ) : items.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="p-8 text-center text-gray-400">
-                    কোনো মেনু আইটেম পাওয়া যায়নি
-                  </td>
-                </tr>
-              ) : (
-                items.map((item) => {
-                  const catName =
-                    typeof item.category === 'object' && item.category
-                      ? item.category.nameBn
-                      : 'সাধারণ';
-                  return (
-                    <tr key={item._id} className="hover:bg-obsidian-300/40 transition-colors">
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-obsidian-600 shrink-0">
-                            <Image src={item.image} alt={item.nameEn} fill className="object-cover" />
-                          </div>
-                          <div>
-                            <strong className="text-white block font-bengali">{item.nameBn}</strong>
-                            <span className="text-[11px] text-gray-400">{item.nameEn}</span>
-                            {item.isBestseller && (
-                              <span className="inline-block text-[9px] font-bold text-gold-400 bg-gold-500/10 px-1.5 py-0.2 rounded border border-gold-500/20 ml-1">
-                                Bestseller
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-4 font-bengali">{catName}</td>
-                      <td className="p-4 font-mono font-bold text-gold-400">
-                        ৳{item.price}
-                        {item.originalPrice && item.originalPrice > item.price && (
-                          <span className="block text-[10px] text-gray-500 line-through">
-                            ৳{item.originalPrice}
-                          </span>
-                        )}
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center gap-0.5 text-red-500">
-                          {Array.from({ length: item.spiceLevel || 1 }).map((_, i) => (
-                            <Flame key={i} className="w-3.5 h-3.5 fill-current" />
-                          ))}
-                        </div>
-                      </td>
-                      <td className="p-4">
+              </thead>
+              <tbody className="divide-y divide-slate-800/60">
+                {items.map((item) => (
+                  <tr key={item._id} className="hover:bg-slate-800/40 transition-colors">
+                    <td className="py-3 px-4">
+                      <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-slate-800">
+                        <Image src={item.image} alt={item.nameEn} fill className="object-cover" />
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 font-semibold text-white">
+                      <div>{item.nameEn}</div>
+                      <div className="text-[11px] text-gray-400 font-bengali">{item.nameBn}</div>
+                    </td>
+                    <td className="py-3 px-4 text-gray-400">
+                      {typeof item.category === 'object' ? item.category.nameEn : item.category}
+                    </td>
+                    <td className="py-3 px-4 font-mono font-bold text-amber-300">
+                      ৳{item.price}
+                    </td>
+                    <td className="py-3 px-4 font-mono text-gray-300">
+                      ⭐ {item.rating || 4.9}
+                    </td>
+                    <td className="py-3 px-4">
+                      <button
+                        onClick={() => handleToggleAvailability(item._id)}
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                          item.isAvailable
+                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                            : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                        }`}
+                      >
+                        {item.isAvailable ? 'উপলব্ধ (Active)' : 'স্টক শেষ (Out)'}
+                      </button>
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
                         <button
-                          onClick={() => handleToggleAvailability(item._id)}
-                          className={`px-3 py-1 rounded-full text-[11px] font-bold flex items-center gap-1.5 transition-all ${
-                            item.isAvailable
-                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                              : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
-                          }`}
+                          onClick={() => handleOpenEditModal(item)}
+                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 transition-colors"
+                          title="সম্পাদনা করুন"
                         >
-                          <span className={`w-1.5 h-1.5 rounded-full ${item.isAvailable ? 'bg-emerald-400' : 'bg-rose-400'}`} />
-                          <span>{item.isAvailable ? 'Available' : 'Out of Stock'}</span>
+                          <Edit2 className="w-3.5 h-3.5" />
                         </button>
-                      </td>
-                      <td className="p-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <button
-                            onClick={() => handleOpenEditModal(item)}
-                            className="p-1.5 rounded-lg bg-obsidian-300 hover:bg-gold-500 hover:text-obsidian-950 text-gray-300 transition-colors"
-                            title="Edit Item"
-                          >
-                            <Edit2 className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteItem(item._id)}
-                            className="p-1.5 rounded-lg bg-obsidian-300 hover:bg-rose-500 hover:text-white text-gray-400 transition-colors"
-                            title="Delete Item"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+                        <button
+                          onClick={() => handleDeleteItem(item._id)}
+                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-900/50 text-rose-400 transition-colors"
+                          title="মুছে ফেলুন"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Add / Edit Modal */}
+      {/* Edit / Add Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-          <div className="relative w-full max-w-lg bg-obsidian-400 border border-gold-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl text-white space-y-4 my-8">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-5 right-5 p-2 rounded-full bg-obsidian-300 text-gray-400 hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </button>
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-2xl w-full shadow-2xl space-y-5 my-8 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <Utensils className="w-4 h-4 text-amber-400" />
+                <span>{editingItem ? 'খাবারের তথ্য সম্পাদনা' : 'নতুন খাবার যোগ করুন'}</span>
+              </h3>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="p-1.5 rounded-full bg-slate-800 text-gray-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
 
-            <h2 className="text-lg font-bold font-bengali text-white flex items-center gap-2">
-              <Utensils className="w-5 h-5 text-gold-400" />
-              <span>{editingItem ? 'মেনু আইটেম সম্পাদনা' : 'নতুন মেনু আইটেম যুক্ত করুন'}</span>
-            </h2>
+            <form onSubmit={handleSaveItem} className="space-y-4 text-xs">
+              {/* Image Uploader */}
+              <ImageUploadField
+                label="Food Image (খাবারের ছবি আপলোড বা URL)"
+                value={formData.image}
+                onChange={(url) => setFormData({ ...formData, image: url })}
+                helperText="Directly upload an image file or provide a web URL."
+              />
 
-            <form onSubmit={handleSaveItem} className="space-y-3.5 text-xs">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Names */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-semibold text-gray-300 mb-1">বাংলা নাম *</label>
+                  <label className="block font-semibold text-gray-300 mb-1">খাবারের নাম (বাংলা) *</label>
                   <input
                     type="text"
                     required
                     value={formData.nameBn}
                     onChange={(e) => setFormData({ ...formData, nameBn: e.target.value })}
-                    placeholder="খাসির ভুনা খিচুড়ি"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-obsidian-300 border border-gold-500/20 text-white focus:outline-none focus:border-gold-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
                   />
                 </div>
+
                 <div>
-                  <label className="block font-semibold text-gray-300 mb-1">English Name *</label>
+                  <label className="block font-semibold text-gray-300 mb-1">Food Name (English) *</label>
                   <input
                     type="text"
                     required
                     value={formData.nameEn}
                     onChange={(e) => setFormData({ ...formData, nameEn: e.target.value })}
-                    placeholder="Mutton Bhuna Khichuri"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-obsidian-300 border border-gold-500/20 text-white focus:outline-none focus:border-gold-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {/* Price & Category */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block font-semibold text-gray-300 mb-1">ক্যাটাগরি *</label>
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl bg-obsidian-300 border border-gold-500/20 text-white focus:outline-none focus:border-gold-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
                   >
                     {categories.map((c) => (
                       <option key={c._id} value={c._id}>
-                        {c.nameBn}
+                        {c.nameEn} ({c.nameBn})
                       </option>
                     ))}
                   </select>
                 </div>
+
                 <div>
                   <label className="block font-semibold text-gray-300 mb-1">মূল্য (BDT) *</label>
                   <input
@@ -338,79 +359,122 @@ export default function AdminMenuPage() {
                     required
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-obsidian-300 border border-gold-500/20 text-white focus:outline-none focus:border-gold-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono focus:outline-none focus:border-amber-400"
                   />
                 </div>
+
                 <div>
-                  <label className="block font-semibold text-gray-300 mb-1">অরিজিনাল প্রাইস (ঐচ্ছিক)</label>
+                  <label className="block font-semibold text-gray-300 mb-1">আগের মূল্য / ছাড় (BDT)</label>
                   <input
                     type="number"
                     value={formData.originalPrice}
                     onChange={(e) => setFormData({ ...formData, originalPrice: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-obsidian-300 border border-gold-500/20 text-white focus:outline-none focus:border-gold-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono focus:outline-none focus:border-amber-400"
                   />
                 </div>
               </div>
 
+              {/* Description */}
               <div>
-                <label className="block font-semibold text-gray-300 mb-1">ছবির লিঙ্ক (Image URL) *</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-obsidian-300 border border-gold-500/20 text-white focus:outline-none focus:border-gold-500 font-mono text-[11px]"
-                />
-              </div>
-
-              <div>
-                <label className="block font-semibold text-gray-300 mb-1">বাংলা বিবরণ</label>
+                <label className="block font-semibold text-gray-300 mb-1">বিবরণ (বাংলা / English)</label>
                 <textarea
                   rows={2}
                   value={formData.descriptionBn}
                   onChange={(e) => setFormData({ ...formData, descriptionBn: e.target.value })}
-                  className="w-full px-3.5 py-2 rounded-xl bg-obsidian-300 border border-gold-500/20 text-white focus:outline-none focus:border-gold-500 resize-none"
+                  className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-3 pt-2">
-                <label className="flex items-center gap-2 p-2.5 rounded-xl bg-obsidian-300 border border-gold-500/15 cursor-pointer">
+              {/* Rating & Nutrition */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div>
+                  <label className="block font-semibold text-gray-300 mb-1">রেটিং (1-5)</label>
                   <input
-                    type="checkbox"
-                    checked={formData.isAvailable}
-                    onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
-                    className="rounded text-gold-500"
+                    type="number"
+                    step="0.1"
+                    value={formData.rating}
+                    onChange={(e) => setFormData({ ...formData, rating: Number(e.target.value) })}
+                    className="w-full px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono"
                   />
-                  <span>উপলব্ধ (In Stock)</span>
-                </label>
+                </div>
+                <div>
+                  <label className="block font-semibold text-gray-300 mb-1">Calories</label>
+                  <input
+                    type="text"
+                    value={formData.calories}
+                    onChange={(e) => setFormData({ ...formData, calories: e.target.value })}
+                    className="w-full px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-gray-300 mb-1">Protein</label>
+                  <input
+                    type="text"
+                    value={formData.protein}
+                    onChange={(e) => setFormData({ ...formData, protein: e.target.value })}
+                    className="w-full px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-gray-300 mb-1">Carbs</label>
+                  <input
+                    type="text"
+                    value={formData.carbs}
+                    onChange={(e) => setFormData({ ...formData, carbs: e.target.value })}
+                    className="w-full px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono"
+                  />
+                </div>
+              </div>
 
-                <label className="flex items-center gap-2 p-2.5 rounded-xl bg-obsidian-300 border border-gold-500/15 cursor-pointer">
+              {/* Flags: Bestseller, Featured, Availability */}
+              <div className="flex flex-wrap items-center gap-6 pt-2">
+                <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={formData.isBestseller}
                     onChange={(e) => setFormData({ ...formData, isBestseller: e.target.checked })}
-                    className="rounded text-gold-500"
+                    className="w-4 h-4 rounded text-amber-500"
                   />
-                  <span>Bestseller</span>
+                  <span className="text-gray-300">Bestseller (বেস্টসেলার)</span>
                 </label>
 
-                <label className="flex items-center gap-2 p-2.5 rounded-xl bg-obsidian-300 border border-gold-500/15 cursor-pointer">
+                <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={formData.isFeatured}
                     onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
-                    className="rounded text-gold-500"
+                    className="w-4 h-4 rounded text-amber-500"
                   />
-                  <span>Featured</span>
+                  <span className="text-gray-300">Featured (জনপ্রিয়)</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.isAvailable}
+                    onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
+                    className="w-4 h-4 rounded text-emerald-500"
+                  />
+                  <span className="text-gray-300">Available (অর্ডারযোগ্য)</span>
                 </label>
               </div>
 
-              <button
-                type="submit"
-                className="w-full py-3 rounded-xl bg-gold-500 hover:bg-gold-400 text-obsidian-950 font-bold text-xs shadow-gold transition-all"
-              >
-                {editingItem ? 'সংরক্ষণ করুন / Update Dish' : 'যুক্ত করুন / Create Dish'}
-              </button>
+              {/* Action Buttons */}
+              <div className="flex gap-3 justify-end pt-4 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-5 py-2.5 rounded-xl bg-slate-800 text-gray-300 hover:text-white"
+                >
+                  বাতিল
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 rounded-xl bg-[#900C19] hover:bg-[#780813] text-white font-bold"
+                >
+                  সংরক্ষণ করুন (Save)
+                </button>
+              </div>
             </form>
           </div>
         </div>

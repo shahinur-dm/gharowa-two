@@ -171,63 +171,84 @@ export default function CartDrawer() {
                   </button>
                 </div>
               ) : (
-                items.map((item) => (
-                  <div
-                    key={item.menuItem._id}
-                    className="p-3 rounded-2xl bg-white border border-slate-200 flex gap-3 items-center shadow-sm"
-                  >
-                    {/* Item Image */}
-                    <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-slate-100 shrink-0">
-                      <Image
-                        src={item.menuItem.image}
-                        alt={item.menuItem.nameEn}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
+                items.map((item, idx) => {
+                  const linePrice = (item.unitPrice || item.menuItem.price) * item.quantity;
+                  const portionName = item.selectedPortion?.name;
+                  return (
+                    <div
+                      key={`${item.menuItem._id}-${portionName || 'default'}-${idx}`}
+                      className="p-3 rounded-2xl bg-white border border-slate-200 flex gap-3 items-start shadow-sm"
+                    >
+                      {/* Item Image */}
+                      <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-slate-100 shrink-0">
+                        <Image
+                          src={item.menuItem.image}
+                          alt={item.menuItem.nameEn}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
 
-                    {/* Details */}
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-xs font-bold text-slate-900 font-bengali truncate">
-                        {language === 'bn' ? item.menuItem.nameBn : item.menuItem.nameEn}
-                      </h4>
-                      <p className="text-[11px] font-extrabold text-traditional-700 font-mono mt-0.5">
-                        {formatPrice(item.menuItem.price * item.quantity, language)}
-                      </p>
+                      {/* Details */}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-xs font-bold text-slate-900 font-bengali truncate">
+                          {language === 'bn' ? item.menuItem.nameBn : item.menuItem.nameEn}
+                        </h4>
 
-                      {/* Quantity Controller */}
-                      <div className="flex items-center gap-2 mt-2">
-                        <div className="flex items-center bg-slate-100 rounded-lg border border-slate-200 p-0.5">
+                        {/* Portion badge & add-ons */}
+                        {item.selectedPortion && (
+                          <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                            {item.selectedPortion.name}
+                          </div>
+                        )}
+                        {item.selectedAddOns && item.selectedAddOns.length > 0 && (
+                          <div className="text-[10px] text-amber-700 font-medium">
+                            + {item.selectedAddOns.map((a) => a.name).join(', ')}
+                          </div>
+                        )}
+
+                        <p className="text-[11px] font-extrabold text-[#900C19] font-mono mt-1">
+                          {formatPrice(linePrice, language)}
+                        </p>
+
+                        {/* Quantity Controller */}
+                        <div className="flex items-center gap-2 mt-2">
+                          <div className="flex items-center bg-slate-100 rounded-lg border border-slate-200 p-0.5">
+                            <button
+                              onClick={() =>
+                                updateQuantity(item.menuItem._id, item.quantity - 1, portionName)
+                              }
+                              className="p-1 rounded text-slate-600 hover:text-slate-900 hover:bg-white"
+                              aria-label="Decrease"
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="px-2 text-xs font-bold text-slate-900 font-mono">
+                              {language === 'bn' ? toBanglaNumber(item.quantity) : item.quantity}
+                            </span>
+                            <button
+                              onClick={() =>
+                                updateQuantity(item.menuItem._id, item.quantity + 1, portionName)
+                              }
+                              className="p-1 rounded text-slate-600 hover:text-slate-900 hover:bg-white"
+                              aria-label="Increase"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </div>
+
                           <button
-                            onClick={() => updateQuantity(item.menuItem._id, item.quantity - 1)}
-                            className="p-1 rounded text-slate-600 hover:text-slate-900 hover:bg-white"
-                            aria-label="Decrease"
+                            onClick={() => removeItem(item.menuItem._id, portionName)}
+                            className="p-1 text-slate-400 hover:text-rose-600 transition-colors ml-auto"
+                            title="Remove item"
                           >
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className="px-2 text-xs font-bold text-slate-900 font-mono">
-                            {language === 'bn' ? toBanglaNumber(item.quantity) : item.quantity}
-                          </span>
-                          <button
-                            onClick={() => updateQuantity(item.menuItem._id, item.quantity + 1)}
-                            className="p-1 rounded text-slate-600 hover:text-slate-900 hover:bg-white"
-                            aria-label="Increase"
-                          >
-                            <Plus className="w-3 h-3" />
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
-
-                        <button
-                          onClick={() => removeItem(item.menuItem._id)}
-                          className="p-1 text-slate-400 hover:text-rose-600 transition-colors ml-auto"
-                          title="Remove item"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
                       </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
 
