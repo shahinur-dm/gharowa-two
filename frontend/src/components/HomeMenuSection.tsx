@@ -20,12 +20,17 @@ export default function HomeMenuSection({ dishes }: HomeMenuProps) {
     { key: 'All', labelBn: 'সবগুলো', labelEn: 'All' },
     { key: 'Khichuri', labelBn: 'খিচুড়ি', labelEn: 'Khichuri' },
     { key: 'Biryani', labelBn: 'বিরিয়ানি', labelEn: 'Biryani' },
-    { key: 'Rice', labelBn: 'পোলাও ও ভাত', labelEn: 'Rice' },
+    { key: 'Tehari', labelBn: 'তেহারি', labelEn: 'Tehari' },
+    { key: 'Polao', labelBn: 'পোলাও', labelEn: 'Polao' },
     { key: 'Mutton', labelBn: 'খাসি', labelEn: 'Mutton' },
-    { key: 'Chicken', labelBn: 'মুরগি', labelEn: 'Chicken' },
-    { key: 'Beef', labelBn: 'গরু', labelEn: 'Beef' },
+    { key: 'Beef', labelBn: 'গরুর মাংস', labelEn: 'Beef' },
+    { key: 'Chicken', labelBn: 'চিকেন', labelEn: 'Chicken' },
+    { key: 'Fish', labelBn: 'মাছের পদ', labelEn: 'Fish' },
+    { key: 'Rice', labelBn: 'ভাত', labelEn: 'Rice' },
+    { key: 'Snacks', labelBn: 'স্ন্যাক্স', labelEn: 'Snacks' },
     { key: 'Drinks', labelBn: 'পানীয় ও বোরহানি', labelEn: 'Drinks' },
     { key: 'Desserts', labelBn: 'ডেজার্ট', labelEn: 'Desserts' },
+    { key: 'Combos', labelBn: 'স্পেশাল কম্বো', labelEn: 'Combos' },
   ];
 
   const filteredDishes = useMemo(() => {
@@ -33,8 +38,8 @@ export default function HomeMenuSection({ dishes }: HomeMenuProps) {
     const catLower = activeCategory.toLowerCase();
     return dishes.filter((dish) => {
       const itemCat =
-        typeof dish.category === 'object'
-          ? (dish.category.nameEn || '').toLowerCase()
+        typeof dish.category === 'object' && dish.category
+          ? (dish.category.nameEn || dish.category.slug || '').toLowerCase()
           : (dish.category || '').toLowerCase();
       const name = (dish.nameEn || '').toLowerCase();
       return itemCat.includes(catLower) || name.includes(catLower);
