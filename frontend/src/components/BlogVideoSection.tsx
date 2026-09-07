@@ -36,6 +36,11 @@ export default function BlogVideoSection() {
     };
 
     fetchVideos();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('gharowa_cms_updated', fetchVideos);
+      return () => window.removeEventListener('gharowa_cms_updated', fetchVideos);
+    }
   }, []);
 
   if (!isLoading && videos.length === 0) {

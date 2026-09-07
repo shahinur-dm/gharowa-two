@@ -14,7 +14,7 @@ export async function GET() {
         .sort({ displayOrder: 1, createdAt: -1 })
         .lean();
 
-      if (reviews && reviews.length > 0) {
+      if (reviews) {
         return NextResponse.json(
           { success: true, count: reviews.length, data: reviews },
           {

@@ -198,6 +198,9 @@ export default function AdminMenuPage() {
       const res: any = await api.post('/menu/admin/items', duplicated);
       if (res.success && res.data) {
         setItems((prev) => [res.data, ...prev]);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('gharowa_cms_updated'));
+        }
       }
     } catch (e: any) {
       alert(e.message || 'Duplicate failed');
@@ -210,6 +213,9 @@ export default function AdminMenuPage() {
       const res: any = await api.delete(`/menu/admin/items/${id}`);
       if (res.success) {
         setItems((prev) => prev.filter((i) => i._id !== id));
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('gharowa_cms_updated'));
+        }
       }
     } catch (e: any) {
       alert(e.message || 'Delete failed');
@@ -236,12 +242,18 @@ export default function AdminMenuPage() {
         if (res.success && res.data) {
           setItems((prev) => prev.map((i) => (i._id === editingItem._id ? res.data : i)));
           setIsModalOpen(false);
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('gharowa_cms_updated'));
+          }
         }
       } else {
         const res: any = await api.post('/menu/admin/items', payload);
         if (res.success && res.data) {
           setItems((prev) => [res.data, ...prev]);
           setIsModalOpen(false);
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('gharowa_cms_updated'));
+          }
         }
       }
     } catch (err: any) {

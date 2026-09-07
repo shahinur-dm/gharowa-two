@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server';
+import { connectToDatabase } from '@/lib/mongodb';
+import { MediaAsset } from '@/models/MediaAsset';
+import { addStoreMediaItem } from '@/lib/serverStore';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -6,7 +9,7 @@ export const revalidate = 0;
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { image, filename } = body;
+    const { image, filename, category } = body;
 
     if (!image) {
       return NextResponse.json({ success: false, message: 'No image provided' }, { status: 400 });
@@ -17,6 +20,29 @@ export async function POST(request: Request) {
     const imageUrl = image.startsWith('http') || image.startsWith('data:')
       ? image
       : `data:image/jpeg;base64,${image}`;
+
+    const mediaData = {
+      _id: `m-${Date.now()}`,
+      id: `m-${Date.now()}`,
+      title: filename ? filename.replace(/[-_]/g, ' ') : 'Uploaded Image',
+      category: category || 'general',
+      url: imageUrl,
+      size: 'Uploaded Asset',
+      addedDate: new Date().toISOString().split('T')[0],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    try {
+      const db = await connectToDatabase();
+      if (db) {
+        await MediaAsset.create(mediaData);
+      }
+    } catch (e: any) {
+      console.warn('Media library auto-save notice:', e.message);
+    }
+
+    addStoreMediaItem(mediaData);
 
     return NextResponse.json(
       {
@@ -42,3 +68,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

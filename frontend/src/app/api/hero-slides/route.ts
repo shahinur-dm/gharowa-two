@@ -14,7 +14,7 @@ export async function GET() {
         .sort({ displayOrder: 1, createdAt: 1 })
         .lean();
 
-      if (slides && slides.length > 0) {
+      if (slides) {
         return NextResponse.json(
           { success: true, count: slides.length, data: slides },
           {

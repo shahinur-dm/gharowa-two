@@ -14,7 +14,7 @@ export async function GET() {
         .sort({ displayOrder: 1 })
         .lean();
 
-      if (categories && categories.length > 0) {
+      if (categories) {
         return NextResponse.json(
           { success: true, count: categories.length, data: categories },
           {

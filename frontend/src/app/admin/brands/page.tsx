@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { BrandPartner } from '../../../types';
 import { api } from '../../../lib/api';
+import ImageUploadField from '../../../components/ImageUploadField';
 
 export default function AdminBrandsPage() {
   const [brands, setBrands] = useState<BrandPartner[]>([]);
@@ -97,6 +98,9 @@ export default function AdminBrandsPage() {
           showToast('success', 'ব্র্যান্ড তথ্য সফলভাবে আপডেট হয়েছে');
           setIsModalOpen(false);
           fetchBrands();
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('gharowa_cms_updated'));
+          }
         } else {
           showToast('error', res.message || 'আপডেট করতে সমস্যা হয়েছে');
         }
@@ -106,6 +110,9 @@ export default function AdminBrandsPage() {
           showToast('success', 'নতুন ব্র্যান্ড সফলভাবে যোগ করা হয়েছে');
           setIsModalOpen(false);
           fetchBrands();
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('gharowa_cms_updated'));
+          }
         } else {
           showToast('error', res.message || 'যোগ করতে সমস্যা হয়েছে');
         }
@@ -126,6 +133,9 @@ export default function AdminBrandsPage() {
           prev.map((b) => (b._id === brand._id ? { ...b, isActive: updatedStatus } : b))
         );
         showToast('success', `ব্র্যান্ড ${updatedStatus ? 'সক্রিয় (Enabled)' : 'নিষ্ক্রিয় (Disabled)'} করা হয়েছে`);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('gharowa_cms_updated'));
+        }
       }
     } catch (err) {
       showToast('error', 'স্ট্যাটাস পরিবর্তন করা যায়নি');
@@ -139,6 +149,9 @@ export default function AdminBrandsPage() {
       if (res.success) {
         setBrands((prev) => prev.filter((b) => b._id !== deleteCandidate._id));
         showToast('success', 'ব্র্যান্ড সফলভাবে মুছে ফেলা হয়েছে');
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('gharowa_cms_updated'));
+        }
       } else {
         showToast('error', res.message || 'মুছে ফেলতে ব্যর্থ');
       }
@@ -330,29 +343,13 @@ export default function AdminBrandsPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  ব্র্যান্ডের লোগো লিঙ্ক (Logo Image URL) *
-                </label>
-                <input
-                  type="url"
-                  required
-                  value={formData.logoUrl}
-                  onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
-                  placeholder="https://... direct logo image url"
-                  className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C] focus:ring-1 focus:ring-[#EA580C]"
-                />
-                {formData.logoUrl && (
-                  <div className="mt-2 w-full h-20 rounded-xl bg-slate-50 border border-slate-200 p-2 flex items-center justify-center">
-                    <img
-                      src={formData.logoUrl}
-                      alt="Logo preview"
-                      className="max-h-full max-w-full object-contain"
-                      onError={(e) => ((e.target as HTMLElement).style.display = 'none')}
-                    />
-                  </div>
-                )}
-              </div>
+              <ImageUploadField
+                label="ব্র্যান্ডের লোগো (Brand Logo) *"
+                value={formData.logoUrl}
+                onChange={(url) => setFormData({ ...formData, logoUrl: url })}
+                category="logo"
+                helperText="Upload From Device অথবা Previous Photo Collection থেকে ব্র্যান্ড লোগো সিলেক্ট করুন।"
+              />
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">

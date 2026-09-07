@@ -22,7 +22,6 @@ export default function HomePage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        setIsLoading(true);
         const [dishesRes, settingsRes]: [any, any] = await Promise.all([
           api.get('/menu/items'),
           api.get('/settings'),
@@ -42,6 +41,11 @@ export default function HomePage() {
     };
 
     loadData();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('gharowa_cms_updated', loadData);
+      return () => window.removeEventListener('gharowa_cms_updated', loadData);
+    }
   }, []);
 
   return (

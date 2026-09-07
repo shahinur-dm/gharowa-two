@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { HeroSlide } from '../../../types';
 import { api } from '../../../lib/api';
+import ImageUploadField from '../../../components/ImageUploadField';
 
 export default function AdminHeroBannerPage() {
   const [slides, setSlides] = useState<HeroSlide[]>([]);
@@ -103,6 +104,9 @@ export default function AdminHeroBannerPage() {
           showToast('success', 'হিরো স্লাইড তথ্য সফলভাবে আপডেট হয়েছে');
           setIsModalOpen(false);
           fetchSlides();
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('gharowa_cms_updated'));
+          }
         } else {
           showToast('error', res.message || 'আপডেট করতে সমস্যা হয়েছে');
         }
@@ -112,6 +116,9 @@ export default function AdminHeroBannerPage() {
           showToast('success', 'নতুন হিরো স্লাইড সফলভাবে যোগ করা হয়েছে');
           setIsModalOpen(false);
           fetchSlides();
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('gharowa_cms_updated'));
+          }
         } else {
           showToast('error', res.message || 'যোগ করতে সমস্যা হয়েছে');
         }
@@ -132,6 +139,9 @@ export default function AdminHeroBannerPage() {
           prev.map((s) => (s._id === slide._id ? { ...s, isActive: updatedStatus } : s))
         );
         showToast('success', `স্লাইড ${updatedStatus ? 'সক্রিয় (Enabled)' : 'নিষ্ক্রিয় (Disabled)'} করা হয়েছে`);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('gharowa_cms_updated'));
+        }
       }
     } catch (err) {
       showToast('error', 'স্ট্যাটাস পরিবর্তন করা যায়নি');
@@ -344,52 +354,21 @@ export default function AdminHeroBannerPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  মূল খাবারের ছবির লিঙ্ক (Main Dish Image URL) *
-                </label>
-                <input
-                  type="url"
-                  required
-                  value={formData.mainImageUrl}
-                  onChange={(e) => setFormData({ ...formData, mainImageUrl: e.target.value })}
-                  placeholder="https://images.unsplash.com/... or direct dish image link"
-                  className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C] focus:ring-1 focus:ring-[#EA580C]"
-                />
-                {formData.mainImageUrl && (
-                  <div className="mt-2 w-full h-24 rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
-                    <img
-                      src={formData.mainImageUrl}
-                      alt="Main Dish preview"
-                      className="w-full h-full object-cover"
-                      onError={(e) => ((e.target as HTMLElement).style.display = 'none')}
-                    />
-                  </div>
-                )}
-              </div>
+              <ImageUploadField
+                label="মূল খাবারের ছবি (Main Dish Image) *"
+                value={formData.mainImageUrl}
+                onChange={(url) => setFormData({ ...formData, mainImageUrl: url })}
+                category="hero"
+                helperText="Upload From Device অথবা Previous Photo Collection থেকে ছবি নির্বাচন করুন।"
+              />
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  টপ-রাইট সাপোর্টিং ছবির লিঙ্ক (Optional Supporting Dish Image URL)
-                </label>
-                <input
-                  type="url"
-                  value={formData.supportingImageUrl}
-                  onChange={(e) => setFormData({ ...formData, supportingImageUrl: e.target.value })}
-                  placeholder="https://... breakfast thali / borhani / salad (ঐচ্ছিক)"
-                  className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
-                />
-                {formData.supportingImageUrl && (
-                  <div className="mt-2 w-28 h-16 rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
-                    <img
-                      src={formData.supportingImageUrl}
-                      alt="Supporting preview"
-                      className="w-full h-full object-cover"
-                      onError={(e) => ((e.target as HTMLElement).style.display = 'none')}
-                    />
-                  </div>
-                )}
-              </div>
+              <ImageUploadField
+                label="টপ-রাইট সাপোর্টিং ছবি (Optional Supporting Dish Image)"
+                value={formData.supportingImageUrl}
+                onChange={(url) => setFormData({ ...formData, supportingImageUrl: url })}
+                category="food"
+                helperText="ঐচ্ছিক সাপোর্টিং আইটেমের ছবি (যেমন বোরহানি/সালাদ)।"
+              />
 
               <div className="grid grid-cols-3 gap-3">
                 <div>

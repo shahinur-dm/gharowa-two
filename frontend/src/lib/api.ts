@@ -6,6 +6,8 @@ class ApiClient {
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
       ...(options.headers as Record<string, string>),
     };
 
@@ -16,6 +18,7 @@ class ApiClient {
     try {
       const url = `${API_BASE_URL}${endpoint}`;
       const response = await fetch(url, {
+        cache: 'no-store',
         ...options,
         headers,
       });

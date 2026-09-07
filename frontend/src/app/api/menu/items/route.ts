@@ -42,7 +42,7 @@ export async function GET(request: Request) {
 
         let items = await MenuItem.find(query).populate('category').sort({ displayOrder: 1 }).lean();
 
-        if (items && items.length > 0) {
+        if (items) {
           return NextResponse.json(
             { success: true, count: items.length, data: items },
             {

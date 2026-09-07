@@ -23,6 +23,11 @@ export default function TrustedBrandsSection() {
     };
 
     fetchBrands();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('gharowa_cms_updated', fetchBrands);
+      return () => window.removeEventListener('gharowa_cms_updated', fetchBrands);
+    }
   }, []);
 
   // Duplicate brands for seamless infinite right-to-left marquee

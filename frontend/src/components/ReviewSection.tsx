@@ -69,6 +69,11 @@ export default function ReviewSection() {
     };
 
     fetchReviews();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('gharowa_cms_updated', fetchReviews);
+      return () => window.removeEventListener('gharowa_cms_updated', fetchReviews);
+    }
   }, []);
 
   const scroll = (direction: 'left' | 'right') => {

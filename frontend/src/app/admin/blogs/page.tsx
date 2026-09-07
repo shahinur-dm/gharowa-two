@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { BlogVideo } from '../../../types';
 import { api } from '../../../lib/api';
+import ImageUploadField from '../../../components/ImageUploadField';
 
 export default function AdminBlogsPage() {
   const [videos, setVideos] = useState<BlogVideo[]>([]);
@@ -108,6 +109,9 @@ export default function AdminBlogsPage() {
           showToast('success', 'ভিডিও তথ্য সফলভাবে আপডেট হয়েছে');
           setIsModalOpen(false);
           fetchVideos();
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('gharowa_cms_updated'));
+          }
         } else {
           showToast('error', res.message || 'আপডেট করতে সমস্যা হয়েছে');
         }
@@ -117,6 +121,9 @@ export default function AdminBlogsPage() {
           showToast('success', 'নতুন ভিডিও সফলভাবে যোগ করা হয়েছে');
           setIsModalOpen(false);
           fetchVideos();
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('gharowa_cms_updated'));
+          }
         } else {
           showToast('error', res.message || 'যোগ করতে সমস্যা হয়েছে');
         }
@@ -137,6 +144,9 @@ export default function AdminBlogsPage() {
           prev.map((v) => (v._id === video._id ? { ...v, isActive: updatedStatus } : v))
         );
         showToast('success', `ভিডিও ${updatedStatus ? 'সক্রিয় (Enabled)' : 'নিষ্ক্রিয় (Disabled)'} করা হয়েছে`);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('gharowa_cms_updated'));
+        }
       }
     } catch (err) {
       showToast('error', 'স্ট্যাটাস পরিবর্তন করা যায়নি');
@@ -150,6 +160,9 @@ export default function AdminBlogsPage() {
       if (res.success) {
         setVideos((prev) => prev.filter((v) => v._id !== deleteCandidate._id));
         showToast('success', 'ভিডিও সফলভাবে মুছে ফেলা হয়েছে');
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('gharowa_cms_updated'));
+        }
       } else {
         showToast('error', res.message || 'মুছে ফেলতে ব্যর্থ');
       }
@@ -388,29 +401,13 @@ export default function AdminBlogsPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  থাম্বনেইল ইমেজ লিঙ্ক (Thumbnail Image URL) *
-                </label>
-                <input
-                  type="url"
-                  required
-                  value={formData.thumbnailUrl}
-                  onChange={(e) => setFormData({ ...formData, thumbnailUrl: e.target.value })}
-                  placeholder="https://images.unsplash.com/... or direct image link"
-                  className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C] focus:ring-1 focus:ring-[#EA580C]"
-                />
-                {formData.thumbnailUrl && (
-                  <div className="mt-2 w-full h-24 rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
-                    <img
-                      src={formData.thumbnailUrl}
-                      alt="Thumbnail preview"
-                      className="w-full h-full object-cover"
-                      onError={(e) => ((e.target as HTMLElement).style.display = 'none')}
-                    />
-                  </div>
-                )}
-              </div>
+              <ImageUploadField
+                label="থাম্বনেইল ইমেজ (Thumbnail Image) *"
+                value={formData.thumbnailUrl}
+                onChange={(url) => setFormData({ ...formData, thumbnailUrl: url })}
+                category="food"
+                helperText="Upload From Device অথবা Previous Photo Collection থেকে ব্লগ থাম্বনেইল নির্বাচন করুন।"
+              />
 
               <div className="grid grid-cols-2 gap-3">
                 <div>

@@ -110,6 +110,11 @@ export default function HeroSection({ settings }: HeroSectionProps) {
     };
 
     fetchHeroSlides();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('gharowa_cms_updated', fetchHeroSlides);
+      return () => window.removeEventListener('gharowa_cms_updated', fetchHeroSlides);
+    }
   }, [settings?.heroImageUrl, settings?.heroPouringImageUrl, title]);
 
   // Automatic slide rotation (ONE at a time with smooth transition)

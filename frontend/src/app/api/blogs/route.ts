@@ -14,7 +14,7 @@ export async function GET() {
         .sort({ displayOrder: 1, createdAt: -1 })
         .lean();
 
-      if (videos && videos.length > 0) {
+      if (videos) {
         return NextResponse.json(
           { success: true, count: videos.length, data: videos },
           {

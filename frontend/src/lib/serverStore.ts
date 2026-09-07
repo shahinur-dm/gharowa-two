@@ -300,45 +300,7 @@ export const initialMenuItems: MenuItemData[] = [
   },
 ];
 
-export const defaultSettings = {
-  logoUrl: '',
-  faviconUrl: '',
-  restaurantNameBn: 'ঘরোয়া হোটেল এন্ড রেস্টুরেন্ট',
-  restaurantNameEn: 'Gharowa Hotel & Restaurant',
-  taglineBn: '১৯৭২ সাল থেকে মতিঝিলের ঐতিহ্যের আসল স্বাদ',
-  taglineEn: '50+ Years of Authentic Culinary Heritage in Motijheel',
-  establishedYear: 1972,
-  phone: '01973255888',
-  whatsappNumber: '01973255888',
-  whatsappCountryCode: '+880',
-  isWhatsAppOrderActive: true,
-  whatsappOrderTemplate: `Hello Gharowa Hotel & Restaurant (Since 1972),\n\nI would like to place an order from your website:\n\n🍛 Food: {{product_name}}\n🔢 Quantity: {{quantity}}\n💰 Unit Price: ৳{{price}}\n💵 Total: ৳{{total}}\n\nPlease confirm availability and delivery details. Thank you!`,
-  email: 'info@gharowa.com',
-  addressBn: '৯/সি, মতিঝিল বা/এ (মেট্রোরেল স্টেশনের সন্নিকটে), ঢাকা-১০০০',
-  addressEn: '9/C Motijheel C/A (Near Metro Station), Dhaka-1000',
-  openingHoursBn: 'প্রতিদিন সকাল ৭:০০ - রাত ১১:৩০',
-  openingHoursEn: 'Everyday 7:00 AM - 11:30 PM',
-  standardDeliveryFee: 60,
-  freeDeliveryThreshold: 1000,
-  minOrderAmount: 150,
-  isOnlineOrderActive: true,
-  heroTitleBn: 'ঐতিহ্যবাহী খাসির ভুনা খিচুড়ি',
-  heroTitleEn: 'MUTTON KHICHURI',
-  heroSubtitleBn: 'আসল স্বাদ, মোহময় সুবাস ও নিপুণভাবে রান্না করা খাসির নরম মাংস।',
-  heroSubtitleEn: 'Traditional taste, rich aroma and perfectly cooked mutton.',
-  heroBadgeBn: 'খাঁটি ও ঐতিহ্যবাহী',
-  heroBadgeEn: 'AUTHENTIC',
-  heroImageUrl: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?q=80&w=1000&auto=format&fit=crop',
-  heroPouringImageUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?q=80&w=800&auto=format&fit=crop',
-  heroCtaTextBn: 'অর্ডার করুন',
-  heroCtaTextEn: 'Order Now',
-  heroCtaLink: '/menu',
-  seoTitle: 'ঘরোয়া হোটেল এন্ড রেস্টুরেন্ট (Since 1972) — মতিঝিল, ঢাকা',
-  seoDescription: '১৯৭২ সাল থেকে ঢাকার মতিঝিলের ঐতিহ্যবাহী খাসির ভুনা খিচুড়ি, লেগ খিচুড়ি, স্পেশাল কাচ্চি ও বোরহানি।',
-  ogTitle: 'ঘরোয়া হোটেল এন্ড রেস্টুরেন্ট (Since 1972) — মতিঝিল, ঢাকা',
-  ogDescription: '১৯৭২ সাল থেকে মতিঝিলের খাঁটি খাসির ভুনা খিচুড়ি ও কাচ্চির আসল ঠিকানা।',
-  ogImageUrl: '',
-};
+
 
 export interface BlogVideoData {
   _id: string;
@@ -526,12 +488,92 @@ export const initialCustomerReviews: CustomerReviewData[] = [
   },
 ];
 
+export const defaultSettings = {
+  logoUrl: '',
+  faviconUrl: '',
+  menuBoardImageUrl: '',
+  isMenuBoardEnabled: true,
+  restaurantNameBn: 'ঘরোয়া হোটেল এন্ড রেস্টুরেন্ট',
+  restaurantNameEn: 'Gharowa Hotel & Restaurant',
+  taglineBn: '১৯৭২ সাল থেকে মতিঝিলের ঐতিহ্যের আসল স্বাদ',
+  taglineEn: '50+ Years of Authentic Culinary Heritage in Motijheel',
+  establishedYear: 1972,
+  phone: '01973255888',
+  whatsappNumber: '01973255888',
+  whatsappCountryCode: '+880',
+  isWhatsAppOrderActive: true,
+  whatsappOrderTemplate:
+    'Hello Gharowa Hotel & Restaurant (Since 1972),\n\nI would like to place an order from your website:\n\n🍛 Food: {{product_name}}\n🔢 Quantity: {{quantity}}\n💰 Price: {{price}}\n💵 Total: {{total}}\n\nPlease confirm availability and delivery details. Thank you!',
+  email: 'info@gharowarestaurant.com',
+  addressBn: '৯/সি, মতিঝিল বা/এ (মেট্রোরেল স্টেশনের সন্নিকটে), ঢাকা-১০০০',
+  addressEn: '9/C Motijheel C/A (Near Metro Station), Dhaka-1000',
+  landmarkBn: 'মতিঝিল মেট্রোরেল স্টেশন সংলগ্ন',
+  landmarkEn: 'Beside Motijheel Metro Station',
+  openingHoursBn: 'সকাল ৭:০০ - রাত ১১:৩০ (প্রতিদিন)',
+  openingHoursEn: '7:00 AM - 11:30 PM (Everyday)',
+  standardDeliveryFee: 60,
+  freeDeliveryThreshold: 1000,
+  minOrderAmount: 150,
+  isOnlineOrderActive: true,
+  heroTitleBn: 'ঐতিহ্যবাহী খাসির ভুনা খিচুড়ি',
+  heroTitleEn: 'MUTTON KHICHURI',
+  heroSubtitleBn: 'আসল স্বাদ, মোহময় সুবাস ও নিপুণভাবে রান্না করা খাসির নরম মাংস।',
+  heroSubtitleEn: 'Traditional taste, rich aroma and perfectly cooked mutton.',
+  heroBadgeBn: 'খাঁটি ও ঐতিহ্যবাহী',
+  heroBadgeEn: 'AUTHENTIC',
+  heroImageUrl: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?q=80&w=1000&auto=format&fit=crop',
+  heroPouringImageUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?q=80&w=800&auto=format&fit=crop',
+  heroCtaTextBn: 'অর্ডার করুন',
+  heroCtaTextEn: 'Order Now',
+  heroCtaLink: '/menu',
+  aboutTitleBn: '১৯৭২ সাল থেকে স্বাদের বিশ্বস্ত ঐতিহ্য',
+  aboutTitleEn: 'A Legacy of Taste Since 1972',
+  aboutSubtitleBn: 'ঢাকার মতিঝিলে অর্ধশতাব্দীরও বেশি সময় ধরে আসল দেশি স্বাদের বিশ্বস্ত ঠিকানা।',
+  aboutSubtitleEn: 'Over half a century of authentic culinary excellence in Motijheel, Dhaka.',
+  aboutDescBn: '১৯৭২ সালে মতিঝিলের প্রাণকেন্দ্রে শুরু হয় ঘরোয়া হোটেল এন্ড রেস্টুরেন্টের ঐতিহাসিক যাত্রা। বিগত ৫ দশকেরও বেশি সময় ধরে আমরা ধরে রেখেছি খাঁটি ঢাকাইয়া রান্নার অতুলনীয় ঐতিহ্য ও স্বাদ।',
+  aboutDescEn: 'Gharowa Hotel & Restaurant started in 1972 with a simple goal — to serve authentic Bangladeshi flavors with the highest quality and love.',
+  aboutImageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop',
+  chefNameBn: 'মাস্টার শেফ রফিকুল ইসলাম',
+  chefNameEn: 'Master Chef Rafiqul Islam',
+  chefTitleBn: 'প্রধান বাবুর্চি (Head Chef)',
+  chefTitleEn: 'Head Chef (30+ Years Experience)',
+  chefBioBn: 'তিন দশক ধরে ঘরোয়ার সিগনেচার খাসির ভুনা খিচুড়ি ও কাচ্চির আসল স্বাদ সংরক্ষণ করে আসছেন।',
+  chefBioEn: 'Preserving the original secret spice recipes of Gharowa for over 30 years.',
+  chefImageUrl: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?q=80&w=800&auto=format&fit=crop',
+  ownerNameBn: 'হাজী মোহাম্মদ নূর হোসেন',
+  ownerNameEn: 'Haji Mohammad Nur Hossain',
+  ownerTitleBn: 'প্রতিষ্ঠাতা ও স্বত্বাধিকারী',
+  ownerTitleEn: 'Founder & Proprietor',
+  ownerQuoteBn: 'খাবারের মানের সাথে কোনো আপস নয় — এটাই ১৯৭২ সাল থেকে আমাদের প্রতিজ্ঞা।',
+  ownerQuoteEn: 'No compromise on food quality and customer satisfaction since 1972.',
+  ownerImageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop',
+  socialLinks: {
+    facebook: 'https://facebook.com/gharowahotel',
+    instagram: '',
+    youtube: '',
+  },
+  footerDescriptionBn: '১৯৭২ সাল থেকে ঢাকার মতিঝিলের ঐতিহ্যবাহী খাসির ভুনা খিচুড়ি, লেগ খিচুড়ি, স্পেশাল কাচ্চি ও বোরহানি। ৫০+ বছরের বিশ্বস্ত স্বাদ।',
+  footerDescriptionEn: '50+ Years of Authentic Culinary Heritage in Motijheel, Dhaka. Famous for our Mutton Bhuna Khichuri & Kacchi.',
+  copyrightTextBn: '© ১৯৭২-২০২৬ ঘরোয়া হোটেল এন্ড রেস্টুরেন্ট। সর্বস্বত্ব সংরক্ষিত।',
+  seoTitle: 'ঘরোয়া হোটেল এন্ড রেস্টুরেন্ট (Since 1972) — মতিঝিল, ঢাকা',
+  seoDescription: '১৯৭২ সাল থেকে ঢাকার মতিঝিলের ঐতিহ্যবাহী খাসির ভুনা খিচুড়ি, লেগ খিচুড়ি, স্পেশাল কাচ্চি ও বোরহানি।',
+  ogTitle: 'ঘরোয়া হোটেল এন্ড রেস্টুরেন্ট (Since 1972) — মতিঝিল, ঢাকা',
+  ogDescription: '১৯৭২ সাল থেকে মতিঝিলের খাঁটি খাসির ভুনা খিচুড়ি ও কাচ্চির আসল ঠিকানা।',
+  ogImageUrl: '',
+};
+
 // In-Memory Storage Instances
 let globalCategories: CategoryData[] = [...initialCategories];
 let globalMenuItems: MenuItemData[] = [...initialMenuItems];
 let globalBlogVideos: BlogVideoData[] = [...initialBlogVideos];
 let globalCustomerReviews: CustomerReviewData[] = [...initialCustomerReviews];
-let globalSettings = { ...defaultSettings };
+let globalSettings: any = { ...defaultSettings };
+
+export const getStoreSettings = () => globalSettings;
+export const updateStoreSettings = (updates: any) => {
+  globalSettings = { ...globalSettings, ...updates };
+  return globalSettings;
+};
 
 export const getStoreCategories = () => globalCategories;
 export const setStoreCategories = (cats: CategoryData[]) => {
@@ -767,10 +809,114 @@ export const deleteStoreHeroSlide = (id: string) => {
   return true;
 };
 
-export const getStoreSettings = () => globalSettings;
-export const updateStoreSettings = (updates: Partial<typeof defaultSettings>) => {
-  globalSettings = { ...globalSettings, ...updates };
-  return globalSettings;
+export interface MediaItemData {
+  _id: string;
+  id?: string;
+  title: string;
+  category: 'food' | 'hero' | 'chef_owner' | 'about' | 'logo' | 'brand' | 'general';
+  url: string;
+  size?: string;
+  addedDate: string;
+}
+
+export const initialMediaItems: MediaItemData[] = [
+  {
+    _id: 'm-1',
+    id: 'm-1',
+    title: 'Mutton Bhuna Khichuri Signature Dish',
+    category: 'food',
+    url: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?q=80&w=800&auto=format&fit=crop',
+    size: '420 KB',
+    addedDate: '2026-08-28',
+  },
+  {
+    _id: 'm-2',
+    id: 'm-2',
+    title: 'Special Mutton Kacchi Biryani',
+    category: 'food',
+    url: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?q=80&w=800&auto=format&fit=crop',
+    size: '510 KB',
+    addedDate: '2026-08-28',
+  },
+  {
+    _id: 'm-3',
+    id: 'm-3',
+    title: 'Old Dhaka Beef Tehari',
+    category: 'food',
+    url: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?q=80&w=800&auto=format&fit=crop',
+    size: '390 KB',
+    addedDate: '2026-08-28',
+  },
+  {
+    _id: 'm-4',
+    id: 'm-4',
+    title: 'Special Shorshe Ilish (Hilsa)',
+    category: 'food',
+    url: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?q=80&w=800&auto=format&fit=crop',
+    size: '480 KB',
+    addedDate: '2026-08-28',
+  },
+  {
+    _id: 'm-5',
+    id: 'm-5',
+    title: 'Gharowa Special Borhani Spiced Yogurt',
+    category: 'food',
+    url: 'https://images.unsplash.com/photo-1556881286-fc6915169721?q=80&w=800&auto=format&fit=crop',
+    size: '310 KB',
+    addedDate: '2026-08-28',
+  },
+  {
+    _id: 'm-6',
+    id: 'm-6',
+    title: 'Gharowa Special Firni Clay Pot',
+    category: 'food',
+    url: 'https://images.unsplash.com/photo-1541832676-9b763b0239ab?q=80&w=800&auto=format&fit=crop',
+    size: '340 KB',
+    addedDate: '2026-08-28',
+  },
+  {
+    _id: 'm-7',
+    id: 'm-7',
+    title: 'Master Chef Rahman Portrait',
+    category: 'chef_owner',
+    url: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?q=80&w=800&auto=format&fit=crop',
+    size: '450 KB',
+    addedDate: '2026-08-28',
+  },
+  {
+    _id: 'm-8',
+    id: 'm-8',
+    title: 'Founder Alhaj Md. Sirajuddin Portrait',
+    category: 'chef_owner',
+    url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop',
+    size: '410 KB',
+    addedDate: '2026-08-28',
+  },
+  {
+    _id: 'm-9',
+    id: 'm-9',
+    title: 'Historic Motijheel Dining Hall 1972',
+    category: 'about',
+    url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop',
+    size: '620 KB',
+    addedDate: '2026-08-28',
+  },
+];
+
+let globalMediaItems: MediaItemData[] = [...initialMediaItems];
+
+export const getStoreMediaItems = () => globalMediaItems;
+export const addStoreMediaItem = (item: MediaItemData) => {
+  // Prevent duplicate urls in media library
+  const exists = globalMediaItems.some((m) => m.url === item.url);
+  if (!exists) {
+    globalMediaItems.unshift(item);
+  }
+  return item;
+};
+export const deleteStoreMediaItem = (id: string) => {
+  globalMediaItems = globalMediaItems.filter((m) => m._id !== id && m.id !== id);
+  return true;
 };
 
 

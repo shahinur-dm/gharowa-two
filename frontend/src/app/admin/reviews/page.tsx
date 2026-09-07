@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { CustomerReview } from '../../../types';
 import { api } from '../../../lib/api';
+import ImageUploadField from '../../../components/ImageUploadField';
 
 // Google Colored G Icon
 function GoogleIcon() {
@@ -133,6 +134,9 @@ export default function AdminReviewsPage() {
           showToast('success', 'রিভিউ সফলভাবে আপডেট হয়েছে');
           setIsModalOpen(false);
           fetchReviews();
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('gharowa_cms_updated'));
+          }
         } else {
           showToast('error', res.message || 'আপডেট করতে সমস্যা হয়েছে');
         }
@@ -142,6 +146,9 @@ export default function AdminReviewsPage() {
           showToast('success', 'নতুন রিভিউ সফলভাবে যোগ করা হয়েছে');
           setIsModalOpen(false);
           fetchReviews();
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('gharowa_cms_updated'));
+          }
         } else {
           showToast('error', res.message || 'যোগ করতে সমস্যা হয়েছে');
         }
@@ -162,6 +169,9 @@ export default function AdminReviewsPage() {
           prev.map((r) => (r._id === review._id ? { ...r, isActive: updatedStatus } : r))
         );
         showToast('success', `রিভিউ ${updatedStatus ? 'সক্রিয় (Enabled)' : 'নিষ্ক্রিয় (Disabled)'} করা হয়েছে`);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('gharowa_cms_updated'));
+        }
       }
     } catch (err) {
       showToast('error', 'স্ট্যাটাস পরিবর্তন করা যায়নি');
@@ -175,6 +185,9 @@ export default function AdminReviewsPage() {
       if (res.success) {
         setReviews((prev) => prev.filter((r) => r._id !== deleteCandidate._id));
         showToast('success', 'রিভিউ সফলভাবে মুছে ফেলা হয়েছে');
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('gharowa_cms_updated'));
+        }
       } else {
         showToast('error', res.message || 'মুছে ফেলতে ব্যর্থ');
       }
@@ -390,18 +403,13 @@ export default function AdminReviewsPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  প্রোফাইল ছবি লিঙ্ক (Avatar URL - ঐচ্ছিক)
-                </label>
-                <input
-                  type="url"
-                  value={formData.avatarUrl}
-                  onChange={(e) => setFormData({ ...formData, avatarUrl: e.target.value })}
-                  placeholder="https://images.unsplash.com/... (খালি রাখলে নামের আদ্যক্ষর দেখাবে)"
-                  className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C] focus:ring-1 focus:ring-[#EA580C]"
-                />
-              </div>
+              <ImageUploadField
+                label="প্রোফাইল ছবি (Avatar - ঐচ্ছিক)"
+                value={formData.avatarUrl}
+                onChange={(url) => setFormData({ ...formData, avatarUrl: url })}
+                category="general"
+                helperText="Upload From Device অথবা Previous Photo Collection থেকে ছবি সিলেক্ট করুন (খালি রাখলে নামের আদ্যক্ষর দেখাবে)।"
+              />
 
               <div className="grid grid-cols-2 gap-3">
                 <div>

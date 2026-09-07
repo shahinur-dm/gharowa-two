@@ -233,6 +233,16 @@ export default function AdminSettingsPage() {
               helperText="Upload PNG, SVG, or high quality JPG logo image. Leave blank to use original Gharowa emblem."
             />
 
+            {/* Favicon / Site Icon Field */}
+            <div className="pt-2 border-t border-slate-100">
+              <ImageUploadField
+                label="Favicon / Site Icon (ব্রাউজার ট্যাব ও বুকমার্ক আইকন)"
+                value={settings.faviconUrl || ''}
+                onChange={(url) => setSettings({ ...settings, faviconUrl: url })}
+                helperText="Upload 32x32, 64x64, or 192x192 PNG/ICO/SVG icon. Updates live browser favicon immediately on save."
+              />
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs pt-3 border-t border-slate-100">
               <div>
                 <label className="block font-medium text-slate-700 mb-1">রেস্তোরাঁর নাম (বাংলা) *</label>

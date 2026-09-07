@@ -121,6 +121,9 @@ export default function AdminCategoriesPage() {
           setCategories((prev) => prev.map((c) => (c._id === editingCat._id ? res.data : c)));
           setIsModalOpen(false);
           showToast('success', `"${payload.nameBn}" ক্যাটাগরি সফলভাবে আপডেট করা হয়েছে`);
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('gharowa_cms_updated'));
+          }
         } else {
           showToast('error', res.message || 'ক্যাটাগরি আপডেট ব্যর্থ হয়েছে');
         }
@@ -130,6 +133,9 @@ export default function AdminCategoriesPage() {
           setCategories((prev) => [...prev, res.data]);
           setIsModalOpen(false);
           showToast('success', `"${payload.nameBn}" নতুন ক্যাটাগরি সফলভাবে তৈরি হয়েছে`);
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('gharowa_cms_updated'));
+          }
         } else {
           showToast('error', res.message || 'ক্যাটাগরি তৈরি ব্যর্থ হয়েছে');
         }
@@ -153,6 +159,9 @@ export default function AdminCategoriesPage() {
           prev.map((c) => (c._id === cat._id ? { ...c, isActive: newStatus } : c))
         );
         showToast('success', `স্ট্যাটাস পরিবর্তন করা হয়েছে`);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('gharowa_cms_updated'));
+        }
       }
     } catch (e: any) {
       showToast('error', 'স্ট্যাটাস পরিবর্তন ব্যর্থ হয়েছে');
@@ -166,6 +175,9 @@ export default function AdminCategoriesPage() {
       if (res.success) {
         setCategories((prev) => prev.filter((c) => c._id !== cat._id));
         showToast('success', `"${cat.nameBn}" ক্যাটাগরি মুছে ফেলা হয়েছে`);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('gharowa_cms_updated'));
+        }
       }
     } catch (e: any) {
       showToast('error', e.message || 'মুছে ফেলতে সমস্যা হয়েছে');

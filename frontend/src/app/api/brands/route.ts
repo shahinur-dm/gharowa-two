@@ -14,7 +14,7 @@ export async function GET() {
         .sort({ displayOrder: 1, createdAt: 1 })
         .lean();
 
-      if (brands && brands.length > 0) {
+      if (brands) {
         return NextResponse.json(
           { success: true, count: brands.length, data: brands },
           {

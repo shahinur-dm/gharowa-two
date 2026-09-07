@@ -3,6 +3,7 @@ import './globals.css';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import CartDrawer from '../components/CartDrawer';
+import DynamicFavicon from '../components/DynamicFavicon';
 import { MessageCircle } from 'lucide-react';
 
 export const metadata: Metadata = {
