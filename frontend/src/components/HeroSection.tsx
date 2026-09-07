@@ -134,7 +134,7 @@ export default function HeroSection({ settings }: HeroSectionProps) {
   const activeSlide = slides[currentSlideIndex] || slides[0] || defaultHeroSlides[0];
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#800A15] via-[#900C19] to-[#680811] text-white pt-16 sm:pt-20 lg:pt-22 pb-5 sm:pb-7 lg:pb-8 border-b border-white/10 font-sans">
+    <section className="relative overflow-hidden bg-gradient-to-b from-[#800A15] via-[#900C19] to-[#680811] text-white pt-24 sm:pt-20 lg:pt-22 pb-5 sm:pb-7 lg:pb-8 border-b border-white/10 font-sans">
       {/* Background Decorative Pattern & Warm Glow */}
       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
