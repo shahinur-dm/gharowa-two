@@ -5,22 +5,41 @@ import { api } from '../lib/api';
 
 export default function DynamicFavicon() {
   useEffect(() => {
-    const applyFavicon = (url: string) => {
-      if (!url || typeof document === 'undefined') return;
+    const applyFavicon = (rawUrl: string) => {
+      if (!rawUrl || typeof document === 'undefined') return;
 
-      const cacheBustedUrl = `${url}${url.includes('?') ? '&' : '?'}v=${Date.now()}`;
+      let targetUrl = rawUrl.trim();
 
-      // 1. Update or create standard icon and shortcut icon
+      // Only append cache-busting timestamp to HTTP/HTTPS URLs (NOT data: base64 URLs)
+      if (targetUrl.startsWith('http://') || targetUrl.startsWith('https://')) {
+        targetUrl = `${targetUrl}${targetUrl.includes('?') ? '&' : '?'}v=${Date.now()}`;
+      }
+
+      // Determine MIME type
+      let mimeType = 'image/png';
+      if (targetUrl.startsWith('data:')) {
+        const match = targetUrl.match(/^data:([^;]+);/);
+        if (match) mimeType = match[1];
+      } else if (targetUrl.endsWith('.ico')) {
+        mimeType = 'image/x-icon';
+      } else if (targetUrl.endsWith('.svg')) {
+        mimeType = 'image/svg+xml';
+      } else if (targetUrl.endsWith('.jpg') || targetUrl.endsWith('.jpeg')) {
+        mimeType = 'image/jpeg';
+      }
+
+      // 1. Remove any stale/existing icon links to force browser tab refresh
+      const existingIcons = document.querySelectorAll("link[rel*='icon'], link[rel*='apple-touch-icon']");
+      existingIcons.forEach((el) => el.remove());
+
+      // 2. Create fresh icon links
       const rels = ['icon', 'shortcut icon', 'apple-touch-icon'];
-
       rels.forEach((rel) => {
-        let link: HTMLLinkElement | null = document.querySelector(`link[rel='${rel}']`);
-        if (!link) {
-          link = document.createElement('link');
-          link.rel = rel;
-          document.head.appendChild(link);
-        }
-        link.href = cacheBustedUrl;
+        const link = document.createElement('link');
+        link.rel = rel;
+        link.type = mimeType;
+        link.href = targetUrl;
+        document.head.appendChild(link);
       });
     };
 
@@ -29,9 +48,12 @@ export default function DynamicFavicon() {
         const res: any = await api.get('/settings');
         if (res.success && res.data && res.data.faviconUrl) {
           applyFavicon(res.data.faviconUrl);
+        } else {
+          // If no custom favicon is saved, point to dynamic favicon endpoint
+          applyFavicon('/api/favicon');
         }
       } catch (e) {
-        // Silent fallback
+        applyFavicon('/api/favicon');
       }
     };
 

@@ -40,6 +40,11 @@ export const metadata: Metadata = {
     locale: 'bn_BD',
     type: 'website',
   },
+  icons: {
+    icon: '/api/favicon',
+    shortcut: '/api/favicon',
+    apple: '/api/favicon',
+  },
   robots: {
     index: true,
     follow: true,
@@ -86,6 +91,9 @@ export default function RootLayout({
   return (
     <html lang="bn">
       <head>
+        <link rel="icon" href="/api/favicon" />
+        <link rel="shortcut icon" href="/api/favicon" />
+        <link rel="apple-touch-icon" href="/api/favicon" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
