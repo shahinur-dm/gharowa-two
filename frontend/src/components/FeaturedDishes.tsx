@@ -16,7 +16,7 @@ export default function FeaturedDishes({ dishes }: FeaturedDishesProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Pick top popular & bestseller dishes (at least 4-8 items)
-  const popularList = dishes.filter((d) => d.isBestseller || d.isFeatured);
+  const popularList = dishes.filter((d) => d.isBestseller || d.isFeatured || d.isPopular);
   const displayed = popularList.length >= 4 ? popularList : dishes.slice(0, 8);
 
   const scroll = (direction: 'left' | 'right') => {

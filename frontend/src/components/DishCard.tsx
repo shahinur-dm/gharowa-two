@@ -37,9 +37,10 @@ export default function DishCard({ dish }: DishCardProps) {
       {/* Food Image Container */}
       <div className="relative w-full aspect-[4/3] overflow-hidden bg-slate-100">
         <Image
-          src={dish.image}
-          alt={dish.nameEn}
+          src={dish.image || 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?q=80&w=800&auto=format&fit=crop'}
+          alt={dish.nameEn || 'Food dish'}
           fill
+          unoptimized={dish.image?.startsWith('data:') || !dish.image?.startsWith('http')}
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
         />

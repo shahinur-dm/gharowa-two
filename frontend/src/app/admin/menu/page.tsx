@@ -462,7 +462,13 @@ export default function AdminMenuPage() {
                         )}
                       </td>
                       <td className="py-3 px-4 text-slate-600 font-normal">
-                        {typeof item.category === 'object' ? (item.category as any).nameEn : item.category}
+                        {(() => {
+                          if (typeof item.category === 'object' && item.category !== null) {
+                            return (item.category as any).nameEn || (item.category as any).nameBn || (item.category as any).slug;
+                          }
+                          const foundCat = categories.find((c) => c._id === item.category || c.slug === item.category);
+                          return foundCat ? `${foundCat.nameEn}` : (item.category || 'General');
+                        })()}
                       </td>
                       <td className="py-3 px-4">
                         <div className="font-mono font-semibold text-[#900C19]">৳{item.price}</div>
