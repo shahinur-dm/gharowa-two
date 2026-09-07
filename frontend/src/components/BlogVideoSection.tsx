@@ -25,7 +25,7 @@ export default function BlogVideoSection() {
     const fetchVideos = async () => {
       try {
         const res = await api.get('/blogs');
-        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+        if (res.success && Array.isArray(res.data)) {
           setVideos(res.data);
         }
       } catch (err) {

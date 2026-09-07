@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { MenuItem } from '@/models/MenuItem';
 import { MenuCategory } from '@/models/MenuCategory';
@@ -21,7 +22,13 @@ export async function GET(request: Request) {
         const query: any = { isAvailable: { $ne: false } };
 
         if (category && category !== 'all' && category !== 'সব') {
-          const catDoc = await MenuCategory.findOne({ slug: category });
+          let catDoc = null;
+          if (mongoose.isValidObjectId(category)) {
+            catDoc = await MenuCategory.findById(category);
+          }
+          if (!catDoc) {
+            catDoc = await MenuCategory.findOne({ slug: category });
+          }
           if (catDoc) {
             query.category = catDoc._id;
           }
@@ -40,14 +47,14 @@ export async function GET(request: Request) {
           query.$or = [{ nameBn: regex }, { nameEn: regex }, { sku: regex }];
         }
 
-        let items = await MenuItem.find(query).populate('category').sort({ displayOrder: 1 }).lean();
+        const items = await MenuItem.find(query).populate('category').sort({ displayOrder: 1, createdAt: -1 }).lean();
 
-        if (items) {
+        if (items && items.length > 0) {
           return NextResponse.json(
             { success: true, count: items.length, data: items },
             {
               headers: {
-                'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+                'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
               },
             }
           );
@@ -62,8 +69,9 @@ export async function GET(request: Request) {
 
     if (category && category !== 'all' && category !== 'সব') {
       liveItems = liveItems.filter((i) => {
-        const catSlug = typeof i.category === 'object' ? (i.category as any).slug : i.category;
-        return catSlug === category;
+        const catSlug = typeof i.category === 'object' && i.category !== null ? (i.category as any).slug : i.category;
+        const catId = typeof i.category === 'object' && i.category !== null ? String((i.category as any)._id) : String(i.category);
+        return catSlug === category || catId === category;
       });
     }
 
@@ -89,7 +97,7 @@ export async function GET(request: Request) {
       { success: true, count: liveItems.length, data: liveItems },
       {
         headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
         },
       }
     );
@@ -99,7 +107,7 @@ export async function GET(request: Request) {
       { success: true, count: fallback.length, data: fallback },
       {
         headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
         },
       }
     );

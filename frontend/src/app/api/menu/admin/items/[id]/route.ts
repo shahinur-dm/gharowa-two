@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { MenuItem } from '@/models/MenuItem';
 import { MenuCategory } from '@/models/MenuCategory';
-import { updateStoreMenuItem, deleteStoreMenuItem, getStoreMenuItems } from '@/lib/serverStore';
+import { updateStoreMenuItem, deleteStoreMenuItem } from '@/lib/serverStore';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -15,35 +16,54 @@ export async function PUT(
     const { id } = params;
     const body = await request.json();
 
-    const updates = {
+    const updates: any = {
       ...body,
-      price: body.price !== undefined ? Number(body.price) : undefined,
-      originalPrice: body.originalPrice !== undefined ? Number(body.originalPrice) : undefined,
-      displayOrder: body.displayOrder !== undefined ? Number(body.displayOrder) : undefined,
-      preparationTimeMinutes: body.preparationTimeMinutes !== undefined ? Number(body.preparationTimeMinutes) : undefined,
     };
+    if (body.price !== undefined) updates.price = Number(body.price);
+    if (body.originalPrice !== undefined) updates.originalPrice = Number(body.originalPrice);
+    if (body.displayOrder !== undefined) updates.displayOrder = Number(body.displayOrder);
+    if (body.preparationTimeMinutes !== undefined) updates.preparationTimeMinutes = Number(body.preparationTimeMinutes);
+    if (body.spiceLevel !== undefined) updates.spiceLevel = Number(body.spiceLevel);
+    if (body.ingredients !== undefined) {
+      updates.ingredients = Array.isArray(body.ingredients) ? body.ingredients : (body.ingredients ? [body.ingredients] : []);
+    }
 
     try {
       const db = await connectToDatabase();
       if (db) {
         let categoryId = body.category;
-        if (typeof categoryId === 'string' && !categoryId.match(/^[0-9a-fA-F]{24}$/)) {
-          const catDoc = await MenuCategory.findOne({ slug: categoryId });
-          if (catDoc) categoryId = catDoc._id;
+        if (categoryId) {
+          if (typeof categoryId === 'string' && !mongoose.isValidObjectId(categoryId)) {
+            const catDoc = await MenuCategory.findOne({ slug: categoryId });
+            if (catDoc) categoryId = catDoc._id;
+          }
+          updates.category = categoryId;
         }
 
-        const updated = await MenuItem.findByIdAndUpdate(
-          id,
-          { ...updates, category: categoryId || body.category },
-          { new: true }
-        )
-          .populate('category')
-          .lean();
+        let updated = null;
+        if (mongoose.isValidObjectId(id)) {
+          updated = await MenuItem.findByIdAndUpdate(id, updates, { new: true })
+            .populate('category')
+            .lean();
+        }
+        if (!updated) {
+          updated = await MenuItem.findOneAndUpdate(
+            { $or: [{ _id: id }, { slug: id }, { sku: id }] },
+            updates,
+            { new: true }
+          )
+            .populate('category')
+            .lean();
+        }
 
         if (updated) {
+          updateStoreMenuItem(id, {
+            ...(updated as any),
+            _id: String((updated as any)._id),
+          });
           return NextResponse.json(
             { success: true, message: 'Food item updated successfully', data: updated },
-            { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+            { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
           );
         }
       }
@@ -54,11 +74,11 @@ export async function PUT(
     const fallbackUpdated = updateStoreMenuItem(id, updates);
     return NextResponse.json(
       { success: true, message: 'Food item updated successfully', data: fallbackUpdated || updates },
-      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
     );
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, message: 'Unable to update item right now' },
+      { success: false, message: error.message || 'Unable to update item right now' },
       { status: 500 }
     );
   }
@@ -73,7 +93,11 @@ export async function DELETE(
     try {
       const db = await connectToDatabase();
       if (db) {
-        await MenuItem.findByIdAndDelete(id);
+        if (mongoose.isValidObjectId(id)) {
+          await MenuItem.findByIdAndDelete(id);
+        } else {
+          await MenuItem.findOneAndDelete({ $or: [{ _id: id }, { slug: id }, { sku: id }] });
+        }
       }
     } catch (e: any) {
       console.warn('MongoDB item delete notice:', e.message);
@@ -82,7 +106,7 @@ export async function DELETE(
     deleteStoreMenuItem(id);
     return NextResponse.json(
       { success: true, message: 'Food item deleted successfully' },
-      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
     );
   } catch (error: any) {
     return NextResponse.json(

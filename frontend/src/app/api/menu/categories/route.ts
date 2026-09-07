@@ -11,15 +11,15 @@ export async function GET() {
     const db = await connectToDatabase();
     if (db) {
       const categories = await MenuCategory.find({ isActive: { $ne: false } })
-        .sort({ displayOrder: 1 })
+        .sort({ displayOrder: 1, createdAt: 1 })
         .lean();
 
-      if (categories) {
+      if (categories && categories.length > 0) {
         return NextResponse.json(
           { success: true, count: categories.length, data: categories },
           {
             headers: {
-              'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+              'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
             },
           }
         );
@@ -38,7 +38,7 @@ export async function GET() {
     },
     {
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
       },
     }
   );

@@ -225,8 +225,10 @@ export default function AdminMenuPage() {
   const handleSaveItem = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const selectedCategory = formData.category || categories[0]?._id || '';
       const payload = {
         ...formData,
+        category: selectedCategory,
         slug: formData.slug || formData.nameEn.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
         displayOrder: Number(formData.displayOrder),
         nutritionFacts: {
@@ -245,6 +247,8 @@ export default function AdminMenuPage() {
           if (typeof window !== 'undefined') {
             window.dispatchEvent(new Event('gharowa_cms_updated'));
           }
+        } else {
+          alert(res.message || 'Update failed');
         }
       } else {
         const res: any = await api.post('/menu/admin/items', payload);
@@ -254,6 +258,8 @@ export default function AdminMenuPage() {
           if (typeof window !== 'undefined') {
             window.dispatchEvent(new Event('gharowa_cms_updated'));
           }
+        } else {
+          alert(res.message || 'Save failed');
         }
       }
     } catch (err: any) {

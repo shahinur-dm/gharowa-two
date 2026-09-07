@@ -12,10 +12,10 @@ export async function GET() {
     const db = await connectToDatabase();
     if (db) {
       const videos = await BlogVideo.find().sort({ displayOrder: 1, createdAt: -1 }).lean();
-      if (videos) {
+      if (videos && videos.length > 0) {
         return NextResponse.json(
           { success: true, count: videos.length, data: videos },
-          { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+          { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
         );
       }
     }
@@ -26,7 +26,7 @@ export async function GET() {
   const fallback = getStoreBlogVideos();
   return NextResponse.json(
     { success: true, count: fallback.length, data: fallback },
-    { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+    { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
   );
 }
 
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
               message: 'ভিডিও ব্লগ সফলভাবে যোগ করা হয়েছে',
               data: savedObj,
             },
-            { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+            { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
           );
         }
       }
@@ -88,11 +88,11 @@ export async function POST(request: Request) {
         message: 'ভিডিও ব্লগ সফলভাবে যোগ করা হয়েছে',
         data: savedFallback,
       },
-      { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+      { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
     );
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, message: 'Failed to create blog video' },
+      { success: false, message: error.message || 'Failed to create blog video' },
       { status: 500 }
     );
   }

@@ -30,13 +30,19 @@ export default function HomeMenuSection({ dishes }: HomeMenuProps) {
       }
     };
     fetchCategories();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('gharowa_cms_updated', fetchCategories);
+      return () => window.removeEventListener('gharowa_cms_updated', fetchCategories);
+    }
   }, []);
 
   const filteredDishes = useMemo(() => {
     if (activeCategory === 'all') return dishes;
     return dishes.filter((dish) => {
-      const catSlug = typeof dish.category === 'object' ? dish.category.slug : dish.category;
-      return catSlug === activeCategory;
+      const catSlug = typeof dish.category === 'object' && dish.category !== null ? (dish.category as any).slug : dish.category;
+      const catId = typeof dish.category === 'object' && dish.category !== null ? String((dish.category as any)._id) : String(dish.category);
+      return catSlug === activeCategory || catId === activeCategory;
     });
   }, [dishes, activeCategory]);
 

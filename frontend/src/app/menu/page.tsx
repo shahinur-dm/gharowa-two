@@ -58,7 +58,7 @@ export default function MenuPage() {
           api.get('/settings'),
         ]);
 
-        if (catRes.success && catRes.data && catRes.data.length > 0) {
+        if (catRes.success && Array.isArray(catRes.data) && catRes.data.length > 0) {
           setCategories([
             { _id: 'all', nameBn: 'সব খাবার', nameEn: 'All', slug: 'all', displayOrder: 0, isActive: true },
             ...catRes.data,
@@ -67,7 +67,7 @@ export default function MenuPage() {
           setCategories(defaultCategories);
         }
 
-        if (itemRes.success && itemRes.data && itemRes.data.length > 0) {
+        if (itemRes.success && Array.isArray(itemRes.data)) {
           setMenuItems(itemRes.data);
         }
 
@@ -83,15 +83,24 @@ export default function MenuPage() {
     };
 
     fetchData();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('gharowa_cms_updated', fetchData);
+      return () => window.removeEventListener('gharowa_cms_updated', fetchData);
+    }
   }, []);
 
   const filteredItems = menuItems.filter((item) => {
     if (selectedCategory !== 'all') {
       const itemCatSlug =
         typeof item.category === 'object' && item.category
-          ? item.category.slug
+          ? (item.category as any).slug
           : item.category;
-      if (itemCatSlug !== selectedCategory) return false;
+      const itemCatId =
+        typeof item.category === 'object' && item.category
+          ? String((item.category as any)._id)
+          : String(item.category);
+      if (itemCatSlug !== selectedCategory && itemCatId !== selectedCategory) return false;
     }
 
     if (searchQuery.trim()) {

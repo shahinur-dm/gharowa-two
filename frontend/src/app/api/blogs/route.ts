@@ -14,12 +14,12 @@ export async function GET() {
         .sort({ displayOrder: 1, createdAt: -1 })
         .lean();
 
-      if (videos) {
+      if (videos && videos.length > 0) {
         return NextResponse.json(
           { success: true, count: videos.length, data: videos },
           {
             headers: {
-              'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+              'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
             },
           }
         );
@@ -38,7 +38,7 @@ export async function GET() {
     },
     {
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
       },
     }
   );
