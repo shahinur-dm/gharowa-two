@@ -20,6 +20,7 @@ import {
   Video,
   MessageSquare,
   Building2,
+  Layers,
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import GharowaLogo from './GharowaLogo';
@@ -36,6 +37,7 @@ export default function AdminSidebar({ isOpen = false, onClose }: AdminSidebarPr
 
   const navItems = [
     { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/admin/hero', label: 'Hero Banner (হিরো ব্যানার)', icon: Layers, badge: 'New' },
     { href: '/admin/orders', label: 'Orders & POS', icon: ShoppingBag },
     { href: '/admin/kitchen', label: 'Kitchen KDS', icon: ChefHat, badge: 'Live' },
     { href: '/admin/reservations', label: 'Reservations', icon: Calendar },
@@ -51,6 +53,7 @@ export default function AdminSidebar({ isOpen = false, onClose }: AdminSidebarPr
     { href: '/admin/media', label: 'Media Library', icon: BarChart3 },
     { href: '/admin/settings', label: 'Website CMS & Settings', icon: Settings },
   ];
+
 
 
 

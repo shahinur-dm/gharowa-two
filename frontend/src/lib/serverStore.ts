@@ -689,10 +689,89 @@ export const deleteStoreBrandPartner = (id: string) => {
   return true;
 };
 
+// Hero Slides Store Data & Methods
+export interface HeroSlideData {
+  _id: string;
+  title: string;
+  mainImageUrl: string;
+  supportingImageUrl?: string;
+  badgeText?: string;
+  displayOrder: number;
+  slideDurationSeconds?: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export const initialHeroSlides: HeroSlideData[] = [
+  {
+    _id: 'slide-1',
+    title: 'ঐতিহ্যবাহী খাসির ভুনা খিচুড়ি (Mutton Khichuri)',
+    mainImageUrl: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?q=80&w=800&auto=format&fit=crop',
+    supportingImageUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?q=80&w=800&auto=format&fit=crop',
+    badgeText: '1972',
+    displayOrder: 1,
+    slideDurationSeconds: 4,
+    isActive: true,
+  },
+  {
+    _id: 'slide-2',
+    title: 'স্পেশাল খাসির কাচ্চি বিরিয়ানি (Mutton Kacchi)',
+    mainImageUrl: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?q=80&w=800&auto=format&fit=crop',
+    supportingImageUrl: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=800&auto=format&fit=crop',
+    badgeText: '1972',
+    displayOrder: 2,
+    slideDurationSeconds: 4,
+    isActive: true,
+  },
+  {
+    _id: 'slide-3',
+    title: 'খাসির লেগ খিচুড়ি (Mutton Leg Khichuri)',
+    mainImageUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?q=80&w=800&auto=format&fit=crop',
+    supportingImageUrl: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=800&auto=format&fit=crop',
+    badgeText: '1972',
+    displayOrder: 3,
+    slideDurationSeconds: 4,
+    isActive: true,
+  },
+  {
+    _id: 'slide-4',
+    title: 'স্পেশাল চিকেন বিরিয়ানি ও কাবাব (Chicken Biryani)',
+    mainImageUrl: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?q=80&w=800&auto=format&fit=crop',
+    supportingImageUrl: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=800&auto=format&fit=crop',
+    badgeText: '1972',
+    displayOrder: 4,
+    slideDurationSeconds: 4,
+    isActive: true,
+  },
+];
+
+// Hero Slides In-Memory Store
+let globalHeroSlides: HeroSlideData[] = [...initialHeroSlides];
+
+export const getStoreHeroSlides = () => globalHeroSlides;
+export const addStoreHeroSlide = (slide: HeroSlideData) => {
+  globalHeroSlides.push(slide);
+  return slide;
+};
+export const updateStoreHeroSlide = (id: string, updates: Partial<HeroSlideData>) => {
+  const idx = globalHeroSlides.findIndex((s) => s._id === id);
+  if (idx !== -1) {
+    globalHeroSlides[idx] = { ...globalHeroSlides[idx], ...updates };
+    return globalHeroSlides[idx];
+  }
+  return null;
+};
+export const deleteStoreHeroSlide = (id: string) => {
+  globalHeroSlides = globalHeroSlides.filter((s) => s._id !== id);
+  return true;
+};
+
 export const getStoreSettings = () => globalSettings;
 export const updateStoreSettings = (updates: Partial<typeof defaultSettings>) => {
   globalSettings = { ...globalSettings, ...updates };
   return globalSettings;
 };
+
 
 

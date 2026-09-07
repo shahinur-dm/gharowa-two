@@ -326,3 +326,17 @@ export interface BrandPartner {
   updatedAt?: string;
 }
 
+export interface HeroSlide {
+  _id: string;
+  title: string;
+  mainImageUrl: string;
+  supportingImageUrl?: string;
+  badgeText?: string;
+  displayOrder: number;
+  slideDurationSeconds?: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+
