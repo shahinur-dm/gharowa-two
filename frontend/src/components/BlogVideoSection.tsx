@@ -48,12 +48,11 @@ export default function BlogVideoSection() {
   return (
     <section className="py-6 sm:py-8 bg-white relative overflow-hidden font-sans">
       {/* Section Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 sm:mb-5 text-center">
-        <div className="inline-flex items-center justify-center gap-2">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#EA580C] tracking-tight">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-5 sm:mb-6 text-center">
+        <div className="inline-flex items-center justify-center px-6 sm:px-8 py-2 sm:py-2.5 rounded-full bg-[#900C19] text-white shadow-md">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
             Our Blog
           </h2>
-          <span className="w-1 h-7 sm:h-8 bg-[#EA580C] rounded-full inline-block" />
         </div>
       </div>
 

@@ -25,70 +25,69 @@ export default function TrustedBrandsSection() {
     fetchBrands();
   }, []);
 
-  if (!isLoading && brands.length === 0) {
-    return null;
-  }
+  // Duplicate brands for seamless infinite right-to-left marquee
+  const displayBrands = brands.length > 0 ? [...brands, ...brands, ...brands, ...brands] : [];
 
   return (
     <section className="py-6 sm:py-8 bg-white relative overflow-hidden font-sans border-t border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Heading matching Reference Screenshot */}
-        <div className="mb-5 sm:mb-6 text-center">
-          <div className="inline-flex items-center justify-center gap-2">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-              <span className="text-slate-900">Trusted by </span>
-              <span className="text-[#EA580C]">Leading Brands</span>
+        {/* Section Heading matching Our Menu Pill style */}
+        <div className="mb-6 sm:mb-8 text-center">
+          <div className="inline-flex items-center justify-center px-6 sm:px-8 py-2 sm:py-2.5 rounded-full bg-[#900C19] text-white shadow-md">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+              Trusted by Leading Brands
             </h2>
-            <span className="w-1 h-7 sm:h-8 bg-[#EA580C] rounded-full inline-block" />
           </div>
         </div>
 
-        {/* Brands Logo Row */}
-        <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 md:gap-16 lg:gap-20">
-          {brands.map((brand) => {
-            const logoContent = (
-              <div
-                key={brand._id}
-                className="group relative flex items-center justify-center p-2 transition-all duration-300 transform hover:scale-105"
-                title={brand.name}
-              >
-                <img
-                  src={brand.logoUrl}
-                  alt={brand.name}
-                  className="h-9 sm:h-11 md:h-12 lg:h-14 w-auto max-w-[150px] sm:max-w-[190px] md:max-w-[220px] object-contain select-none filter transition-all duration-300"
-                  loading="lazy"
-                  onError={(e) => {
-                    // Fallback to text badge if image link fails
-                    const target = e.target as HTMLElement;
-                    target.style.display = 'none';
-                    if (target.parentElement) {
-                      const textFallback = document.createElement('span');
-                      textFallback.className =
-                        'px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 whitespace-nowrap';
-                      textFallback.innerText = brand.name;
-                      target.parentElement.appendChild(textFallback);
-                    }
-                  }}
-                />
-              </div>
-            );
-
-            if (brand.websiteUrl) {
-              return (
-                <a
-                  key={brand._id}
-                  href={brand.websiteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="focus:outline-none"
+        {/* Brands Infinite Marquee Row (Right to Left) */}
+        <div className="relative w-full overflow-hidden">
+          <div className="animate-marquee-continuous flex items-center gap-8 sm:gap-12 md:gap-16 py-2">
+            {displayBrands.map((brand, idx) => {
+              const logoContent = (
+                <div
+                  key={`${brand._id}-${idx}`}
+                  className="group relative flex items-center justify-center p-2 shrink-0 transition-all duration-300 transform hover:scale-105 select-none"
+                  title={brand.name}
                 >
-                  {logoContent}
-                </a>
+                  <img
+                    src={brand.logoUrl}
+                    alt={brand.name}
+                    className="h-9 sm:h-11 md:h-12 lg:h-14 w-auto max-w-[150px] sm:max-w-[190px] md:max-w-[220px] object-contain select-none filter transition-all duration-300"
+                    loading="lazy"
+                    onError={(e) => {
+                      // Fallback to text badge if image link fails
+                      const target = e.target as HTMLElement;
+                      target.style.display = 'none';
+                      if (target.parentElement) {
+                        const textFallback = document.createElement('span');
+                        textFallback.className =
+                          'px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 whitespace-nowrap';
+                        textFallback.innerText = brand.name;
+                        target.parentElement.appendChild(textFallback);
+                      }
+                    }}
+                  />
+                </div>
               );
-            }
 
-            return logoContent;
-          })}
+              if (brand.websiteUrl) {
+                return (
+                  <a
+                    key={`${brand._id}-${idx}`}
+                    href={brand.websiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="focus:outline-none shrink-0"
+                  >
+                    {logoContent}
+                  </a>
+                );
+              }
+
+              return logoContent;
+            })}
+          </div>
         </div>
       </div>
     </section>

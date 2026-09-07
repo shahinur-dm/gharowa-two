@@ -81,27 +81,25 @@ export default function ReviewSection() {
     }
   };
 
-  if (!isLoading && reviews.length === 0) {
-    return null;
-  }
+  // Duplicate reviews for seamless infinite right-to-left marquee
+  const displayReviews = reviews.length > 0 ? [...reviews, ...reviews, ...reviews, ...reviews] : [];
 
   return (
     <section className="py-6 sm:py-8 bg-[#FAFAF9] relative overflow-hidden font-sans border-t border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Heading */}
-        <div className="mb-5 sm:mb-6 text-center">
-          <div className="inline-flex items-center justify-center gap-2">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#EA580C] tracking-tight">
-              Customers Loves
+        {/* Section Heading matching Our Menu Pill style */}
+        <div className="mb-6 sm:mb-8 text-center">
+          <div className="inline-flex items-center justify-center px-6 sm:px-8 py-2 sm:py-2.5 rounded-full bg-[#900C19] text-white shadow-md">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+              Reviews
             </h2>
-            <span className="w-1 h-7 sm:h-8 bg-[#EA580C] rounded-full inline-block" />
           </div>
         </div>
 
-        {/* Reviews Layout (Store Card + Horizontal Reviews Slider) */}
-        <div className="flex flex-col lg:flex-row items-stretch gap-4 sm:gap-5">
-          {/* Store Overview Card */}
-          <div className="w-full lg:w-[280px] shrink-0 bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs flex flex-col justify-between items-center text-center">
+        {/* Reviews Layout (Store Card + Automatic Horizontal Reviews Slider) */}
+        <div className="flex flex-col lg:flex-row items-center lg:items-stretch gap-4 sm:gap-5">
+          {/* Store Overview Card ("Write a review" box matching exact review card width) */}
+          <div className="w-[260px] sm:w-[280px] shrink-0 bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs flex flex-col justify-between items-center text-center">
             <div className="w-full flex flex-col items-center">
               {/* Store Logo Emblem */}
               <div className="w-14 h-14 rounded-2xl bg-black flex items-center justify-center p-2 mb-2.5 shadow-sm border border-slate-800">
@@ -141,39 +139,17 @@ export default function ReviewSection() {
             </a>
           </div>
 
-          {/* Reviews Slider */}
-          <div className="flex-1 relative min-w-0">
-            {/* Scroll Navigation Buttons (Desktop) */}
-            <button
-              onClick={() => scroll('left')}
-              className="hidden sm:flex absolute -left-3.5 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border border-slate-200 shadow-md items-center justify-center text-slate-600 hover:text-[#EA580C] hover:border-orange-200 transition-colors"
-              aria-label="Scroll left"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-
-            <button
-              onClick={() => scroll('right')}
-              className="hidden sm:flex absolute -right-3.5 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border border-slate-200 shadow-md items-center justify-center text-slate-600 hover:text-[#EA580C] hover:border-orange-200 transition-colors"
-              aria-label="Scroll right"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-
-            {/* Scroll Container */}
-            <div
-              ref={scrollContainerRef}
-              className="flex items-stretch gap-4 overflow-x-auto scrollbar-none scroll-smooth pb-3 px-1"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              {reviews.map((review) => {
+          {/* Seamless Infinite Reviews Carousel (Right to Left) */}
+          <div className="flex-1 relative min-w-0 overflow-hidden w-full">
+            <div className="animate-marquee-continuous flex items-stretch gap-4 py-1 px-1">
+              {displayReviews.map((review, index) => {
                 const initial = review.customerName.charAt(0).toUpperCase() || 'U';
                 const colorClass = getAvatarColor(review.customerName);
 
                 return (
                   <div
-                    key={review._id}
-                    className="w-[260px] sm:w-[280px] shrink-0 bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between"
+                    key={`${review._id}-${index}`}
+                    className="w-[260px] sm:w-[280px] shrink-0 bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between select-none"
                   >
                     <div>
                       {/* Card Header: Avatar, Name, Date, Google Icon */}
