@@ -58,7 +58,7 @@ export default function ReviewSection() {
     const fetchReviews = async () => {
       try {
         const res = await api.get('/reviews');
-        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+        if (res.success && Array.isArray(res.data)) {
           setReviews(res.data);
         }
       } catch (err) {

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { BlogVideo } from '@/models/BlogVideo';
 import { getStoreBlogVideos, addStoreBlogVideo } from '@/lib/serverStore';
@@ -11,7 +12,7 @@ export async function GET() {
     const db = await connectToDatabase();
     if (db) {
       const videos = await BlogVideo.find().sort({ displayOrder: 1, createdAt: -1 }).lean();
-      if (videos && videos.length > 0) {
+      if (videos) {
         return NextResponse.json(
           { success: true, count: videos.length, data: videos },
           { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
@@ -40,7 +41,6 @@ export async function POST(request: Request) {
     }
 
     const videoData = {
-      _id: `vid-${Date.now()}`,
       title: body.title || 'Gharowa Food Vlog Review',
       titleBn: body.titleBn || '',
       videoUrl: body.videoUrl.trim(),
@@ -49,28 +49,39 @@ export async function POST(request: Request) {
       authorName: body.authorName || 'Gharowa Kitchen',
       displayOrder: Number(body.displayOrder) || 0,
       isActive: body.isActive !== false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
     };
 
     try {
       const db = await connectToDatabase();
       if (db) {
         const saved = await BlogVideo.create(videoData);
-        return NextResponse.json(
-          {
-            success: true,
-            message: 'ভিডিও ব্লগ সফলভাবে যোগ করা হয়েছে',
-            data: saved,
-          },
-          { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
-        );
+        if (saved) {
+          const savedObj = saved.toObject ? saved.toObject() : saved;
+          addStoreBlogVideo({
+            ...savedObj,
+            _id: String(savedObj._id),
+          });
+          return NextResponse.json(
+            {
+              success: true,
+              message: 'ভিডিও ব্লগ সফলভাবে যোগ করা হয়েছে',
+              data: savedObj,
+            },
+            { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+          );
+        }
       }
     } catch (dbErr: any) {
-      console.warn('MongoDB save fallback to store:', dbErr.message);
+      console.warn('MongoDB blog save notice:', dbErr.message);
     }
 
-    const savedFallback = addStoreBlogVideo(videoData);
+    const fallbackData = {
+      ...videoData,
+      _id: `vid-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    const savedFallback = addStoreBlogVideo(fallbackData);
     return NextResponse.json(
       {
         success: true,

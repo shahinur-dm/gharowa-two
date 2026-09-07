@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import CartDrawer from '../components/CartDrawer';
 import DynamicFavicon from '../components/DynamicFavicon';
+import FloatingWhatsAppButton from '../components/FloatingWhatsAppButton';
 import { MessageCircle } from 'lucide-react';
 
 export const metadata: Metadata = {
@@ -106,6 +107,7 @@ export default function RootLayout({
 
         <Footer />
         <CartDrawer />
+        <FloatingWhatsAppButton />
 
         {/* Sticky Mobile Floating Order CTA */}
         <div className="md:hidden fixed bottom-4 left-4 right-4 z-30">

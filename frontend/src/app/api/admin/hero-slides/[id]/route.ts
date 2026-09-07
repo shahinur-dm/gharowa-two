@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { HeroSlide } from '@/models/HeroSlide';
 import { updateStoreHeroSlide, deleteStoreHeroSlide } from '@/lib/serverStore';
@@ -17,24 +18,30 @@ export async function PUT(
     try {
       const db = await connectToDatabase();
       if (db) {
-        const updated = await HeroSlide.findByIdAndUpdate(id, body, { new: true }).lean();
+        let updated = null;
+        if (mongoose.isValidObjectId(id)) {
+          updated = await HeroSlide.findByIdAndUpdate(id, body, { new: true }).lean();
+        }
+        if (!updated) {
+          updated = await HeroSlide.findOneAndUpdate({ _id: id }, body, { new: true }).lean();
+        }
         if (updated) {
           updateStoreHeroSlide(id, body);
           return NextResponse.json({
             success: true,
-            message: 'হিরো স্লাইড তথ্য আপডেট সফল হয়েছে',
+            message: 'হিরো স্লাইড আপডেট সফল হয়েছে',
             data: updated,
           });
         }
       }
     } catch (e: any) {
-      console.warn('MongoDB hero slide update fallback:', e.message);
+      console.warn('MongoDB hero slide update notice:', e.message);
     }
 
     const fallbackUpdated = updateStoreHeroSlide(id, body);
     return NextResponse.json({
       success: true,
-      message: 'হিরো স্লাইড তথ্য আপডেট সফল হয়েছে',
+      message: 'হিরো স্লাইড আপডেট সফল হয়েছে',
       data: fallbackUpdated,
     });
   } catch (error: any) {
@@ -55,7 +62,11 @@ export async function DELETE(
     try {
       const db = await connectToDatabase();
       if (db) {
-        await HeroSlide.findByIdAndDelete(id);
+        if (mongoose.isValidObjectId(id)) {
+          await HeroSlide.findByIdAndDelete(id);
+        } else {
+          await HeroSlide.findOneAndDelete({ _id: id });
+        }
       }
     } catch (e: any) {
       console.warn('MongoDB hero slide delete notice:', e.message);

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { BrandPartner } from '@/models/BrandPartner';
 import { getStoreBrandPartners, addStoreBrandPartner } from '@/lib/serverStore';
@@ -10,8 +11,8 @@ export async function GET() {
   try {
     const db = await connectToDatabase();
     if (db) {
-      const brands = await BrandPartner.find().sort({ displayOrder: 1, createdAt: 1 }).lean();
-      if (brands && brands.length > 0) {
+      const brands = await BrandPartner.find().sort({ displayOrder: 1, createdAt: -1 }).lean();
+      if (brands) {
         return NextResponse.json(
           { success: true, count: brands.length, data: brands },
           { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
@@ -40,34 +41,44 @@ export async function POST(request: Request) {
     }
 
     const brandData = {
-      _id: `brand-${Date.now()}`,
       name: body.name.trim(),
       logoUrl: body.logoUrl.trim(),
       websiteUrl: body.websiteUrl ? body.websiteUrl.trim() : '',
       displayOrder: Number(body.displayOrder) || 0,
       isActive: body.isActive !== false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
     };
 
     try {
       const db = await connectToDatabase();
       if (db) {
         const saved = await BrandPartner.create(brandData);
-        return NextResponse.json(
-          {
-            success: true,
-            message: 'ব্র্যান্ড পার্টনার সফলভাবে যোগ করা হয়েছে',
-            data: saved,
-          },
-          { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
-        );
+        if (saved) {
+          const savedObj = saved.toObject ? saved.toObject() : saved;
+          addStoreBrandPartner({
+            ...savedObj,
+            _id: String(savedObj._id),
+          });
+          return NextResponse.json(
+            {
+              success: true,
+              message: 'ব্র্যান্ড পার্টনার সফলভাবে যোগ করা হয়েছে',
+              data: savedObj,
+            },
+            { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+          );
+        }
       }
     } catch (dbErr: any) {
-      console.warn('MongoDB brand save fallback to store:', dbErr.message);
+      console.warn('MongoDB brand save notice:', dbErr.message);
     }
 
-    const savedFallback = addStoreBrandPartner(brandData);
+    const fallbackData = {
+      ...brandData,
+      _id: `brand-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    const savedFallback = addStoreBrandPartner(fallbackData);
     return NextResponse.json(
       {
         success: true,

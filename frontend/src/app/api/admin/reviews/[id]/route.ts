@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { CustomerReview } from '@/models/CustomerReview';
 import { updateStoreCustomerReview, deleteStoreCustomerReview } from '@/lib/serverStore';
@@ -17,7 +18,13 @@ export async function PUT(
     try {
       const db = await connectToDatabase();
       if (db) {
-        const updated = await CustomerReview.findByIdAndUpdate(id, body, { new: true }).lean();
+        let updated = null;
+        if (mongoose.isValidObjectId(id)) {
+          updated = await CustomerReview.findByIdAndUpdate(id, body, { new: true }).lean();
+        }
+        if (!updated) {
+          updated = await CustomerReview.findOneAndUpdate({ _id: id }, body, { new: true }).lean();
+        }
         if (updated) {
           updateStoreCustomerReview(id, body);
           return NextResponse.json({
@@ -28,7 +35,7 @@ export async function PUT(
         }
       }
     } catch (e: any) {
-      console.warn('MongoDB review update fallback:', e.message);
+      console.warn('MongoDB review update notice:', e.message);
     }
 
     const fallbackUpdated = updateStoreCustomerReview(id, body);
@@ -55,7 +62,11 @@ export async function DELETE(
     try {
       const db = await connectToDatabase();
       if (db) {
-        await CustomerReview.findByIdAndDelete(id);
+        if (mongoose.isValidObjectId(id)) {
+          await CustomerReview.findByIdAndDelete(id);
+        } else {
+          await CustomerReview.findOneAndDelete({ _id: id });
+        }
       }
     } catch (e: any) {
       console.warn('MongoDB review delete notice:', e.message);

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { BrandPartner } from '@/models/BrandPartner';
 import { updateStoreBrandPartner, deleteStoreBrandPartner } from '@/lib/serverStore';
@@ -17,24 +18,30 @@ export async function PUT(
     try {
       const db = await connectToDatabase();
       if (db) {
-        const updated = await BrandPartner.findByIdAndUpdate(id, body, { new: true }).lean();
+        let updated = null;
+        if (mongoose.isValidObjectId(id)) {
+          updated = await BrandPartner.findByIdAndUpdate(id, body, { new: true }).lean();
+        }
+        if (!updated) {
+          updated = await BrandPartner.findOneAndUpdate({ _id: id }, body, { new: true }).lean();
+        }
         if (updated) {
           updateStoreBrandPartner(id, body);
           return NextResponse.json({
             success: true,
-            message: 'ব্র্যান্ড তথ্য আপডেট সফল হয়েছে',
+            message: 'ব্র্যান্ড আপডেট সফল হয়েছে',
             data: updated,
           });
         }
       }
     } catch (e: any) {
-      console.warn('MongoDB brand update fallback:', e.message);
+      console.warn('MongoDB brand update notice:', e.message);
     }
 
     const fallbackUpdated = updateStoreBrandPartner(id, body);
     return NextResponse.json({
       success: true,
-      message: 'ব্র্যান্ড তথ্য আপডেট সফল হয়েছে',
+      message: 'ব্র্যান্ড আপডেট সফল হয়েছে',
       data: fallbackUpdated,
     });
   } catch (error: any) {
@@ -55,7 +62,11 @@ export async function DELETE(
     try {
       const db = await connectToDatabase();
       if (db) {
-        await BrandPartner.findByIdAndDelete(id);
+        if (mongoose.isValidObjectId(id)) {
+          await BrandPartner.findByIdAndDelete(id);
+        } else {
+          await BrandPartner.findOneAndDelete({ _id: id });
+        }
       }
     } catch (e: any) {
       console.warn('MongoDB brand delete notice:', e.message);
