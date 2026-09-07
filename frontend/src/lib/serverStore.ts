@@ -594,6 +594,61 @@ export const deleteStoreBlogVideo = (id: string) => {
   return true;
 };
 
+// Brand Partners Store Data & Methods
+export interface BrandPartnerData {
+  _id: string;
+  name: string;
+  logoUrl: string;
+  websiteUrl?: string;
+  displayOrder: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export const initialBrandPartners: BrandPartnerData[] = [
+  {
+    _id: 'brand-1',
+    name: 'ACI Pharmaceuticals',
+    logoUrl: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?q=80&w=240&auto=format&fit=crop',
+    websiteUrl: 'https://www.aci-bd.com',
+    displayOrder: 1,
+    isActive: true,
+  },
+  {
+    _id: 'brand-2',
+    name: 'ACME',
+    logoUrl: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=240&auto=format&fit=crop',
+    websiteUrl: 'https://www.acmeglobal.com',
+    displayOrder: 2,
+    isActive: true,
+  },
+  {
+    _id: 'brand-3',
+    name: 'UniMed UniHealth Pharmaceuticals',
+    logoUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?q=80&w=240&auto=format&fit=crop',
+    websiteUrl: 'https://unimedunihealth.com',
+    displayOrder: 3,
+    isActive: true,
+  },
+  {
+    _id: 'brand-4',
+    name: 'RADIANT Pharmaceuticals',
+    logoUrl: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?q=80&w=240&auto=format&fit=crop',
+    websiteUrl: 'https://www.radiantpharmabd.com',
+    displayOrder: 4,
+    isActive: true,
+  },
+  {
+    _id: 'brand-5',
+    name: 'EAST WEST MEDICAL COLLEGE & HOSPITAL',
+    logoUrl: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=240&auto=format&fit=crop',
+    websiteUrl: 'https://ewmch.com',
+    displayOrder: 5,
+    isActive: true,
+  },
+];
+
 // Customer Reviews Store
 export const getStoreCustomerReviews = () => globalCustomerReviews;
 export const addStoreCustomerReview = (review: CustomerReviewData) => {
@@ -613,9 +668,31 @@ export const deleteStoreCustomerReview = (id: string) => {
   return true;
 };
 
+// Brand Partners In-Memory Store
+let globalBrandPartners: BrandPartnerData[] = [...initialBrandPartners];
+
+export const getStoreBrandPartners = () => globalBrandPartners;
+export const addStoreBrandPartner = (brand: BrandPartnerData) => {
+  globalBrandPartners.push(brand);
+  return brand;
+};
+export const updateStoreBrandPartner = (id: string, updates: Partial<BrandPartnerData>) => {
+  const idx = globalBrandPartners.findIndex((b) => b._id === id);
+  if (idx !== -1) {
+    globalBrandPartners[idx] = { ...globalBrandPartners[idx], ...updates };
+    return globalBrandPartners[idx];
+  }
+  return null;
+};
+export const deleteStoreBrandPartner = (id: string) => {
+  globalBrandPartners = globalBrandPartners.filter((b) => b._id !== id);
+  return true;
+};
+
 export const getStoreSettings = () => globalSettings;
 export const updateStoreSettings = (updates: Partial<typeof defaultSettings>) => {
   globalSettings = { ...globalSettings, ...updates };
   return globalSettings;
 };
+
 

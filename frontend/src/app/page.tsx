@@ -8,6 +8,7 @@ import FeaturedDishes from '../components/FeaturedDishes';
 import HomeMenuSection from '../components/HomeMenuSection';
 import BlogVideoSection from '../components/BlogVideoSection';
 import ReviewSection from '../components/ReviewSection';
+import TrustedBrandsSection from '../components/TrustedBrandsSection';
 import AboutStorySection from '../components/AboutStorySection';
 import WhyChooseUs from '../components/WhyChooseUs';
 import ChefAndOwnerSection from '../components/ChefAndOwnerSection';
@@ -60,18 +61,22 @@ export default function HomePage() {
       {/* 5. OUR REVIEW (Customers Loves - Google Review Cards & Store Summary) */}
       <ReviewSection />
 
-      {/* 6. About Us / Our Story with Heritage Stats */}
+      {/* 6. NEW — TRUSTED BY LEADING BRANDS (Dynamic Brand Partner Logos) */}
+      <TrustedBrandsSection />
+
+      {/* 7. About Us / Our Story with Heritage Stats */}
       <AboutStorySection settings={settings} />
 
-      {/* 7. Why Choose Us (4 Value Pillars) */}
+      {/* 8. Why Choose Us (4 Value Pillars) */}
       <WhyChooseUs />
 
-      {/* 8. Chef & Owner Section */}
+      {/* 9. Chef & Owner Section */}
       <ChefAndOwnerSection settings={settings} />
 
-      {/* 9. Contact Us Section with Form & Coordinates */}
+      {/* 10. Contact Us Section with Form & Coordinates */}
       <ContactSection settings={settings} />
     </div>
   );
 }
+
 

@@ -314,3 +314,15 @@ export interface CustomerReview {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export interface BrandPartner {
+  _id: string;
+  name: string;
+  logoUrl: string;
+  websiteUrl?: string;
+  displayOrder: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
