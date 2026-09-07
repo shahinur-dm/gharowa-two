@@ -1,6 +1,8 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IRestaurantSettings extends Document {
+  logoUrl?: string;
+  faviconUrl?: string;
   restaurantNameBn: string;
   restaurantNameEn: string;
   taglineBn: string;
@@ -8,6 +10,9 @@ export interface IRestaurantSettings extends Document {
   establishedYear: number;
   phone: string;
   whatsappNumber: string;
+  whatsappCountryCode?: string;
+  isWhatsAppOrderActive?: boolean;
+  whatsappOrderTemplate?: string;
   email: string;
   addressBn: string;
   addressEn: string;
@@ -71,10 +76,29 @@ export interface IRestaurantSettings extends Document {
   // Menu Board Image CMS
   menuBoardImageUrl?: string;
   isMenuBoardEnabled?: boolean;
+  // Popular Dishes CMS
+  popularDishesTitleBn?: string;
+  popularDishesTitleEn?: string;
+  popularDishesSubtitleBn?: string;
+  popularDishesSubtitleEn?: string;
+  isPopularDishesEnabled?: boolean;
+  // Footer & Branding CMS
+  footerDescriptionBn?: string;
+  footerDescriptionEn?: string;
+  copyrightTextBn?: string;
+  copyrightTextEn?: string;
+  // SEO & OpenGraph
+  seoTitle?: string;
+  seoDescription?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImageUrl?: string;
 }
 
 const RestaurantSettingsSchema = new Schema<IRestaurantSettings>(
   {
+    logoUrl: { type: String, default: '' },
+    faviconUrl: { type: String, default: '' },
     menuBoardImageUrl: { type: String, default: '' },
     isMenuBoardEnabled: { type: Boolean, default: true },
     restaurantNameBn: { type: String, default: 'ঘরোয়া হোটেল এন্ড রেস্টুরেন্ট' },
@@ -84,6 +108,12 @@ const RestaurantSettingsSchema = new Schema<IRestaurantSettings>(
     establishedYear: { type: Number, default: 1972 },
     phone: { type: String, default: '01973255888' },
     whatsappNumber: { type: String, default: '8801973255888' },
+    whatsappCountryCode: { type: String, default: '+880' },
+    isWhatsAppOrderActive: { type: Boolean, default: true },
+    whatsappOrderTemplate: {
+      type: String,
+      default: `Hello Gharowa Hotel & Restaurant (Since 1972),\n\nI would like to place an order from your website:\n\n🍛 Food: {{product_name}}\n🔢 Quantity: {{quantity}}\n💰 Price: {{price}}\n💵 Total: {{total}}\n\nPlease confirm availability and delivery details. Thank you!`,
+    },
     email: { type: String, default: 'info@gharowarestaurant.com' },
     addressBn: { type: String, default: '৯/সি মতিঝিল বা/এ, ঢাকা-১০০০' },
     addressEn: { type: String, default: '9/C Motijheel C/A, Dhaka-1000' },
@@ -157,6 +187,23 @@ const RestaurantSettingsSchema = new Schema<IRestaurantSettings>(
     ownerQuoteBn: { type: String, default: 'স্বাদ যেখানে স্মৃতি, তৃপ্তি যেখানে প্রতিশ্রুতি।' },
     ownerQuoteEn: { type: String, default: 'Where culinary tradition meets timeless hospitality.' },
     ownerImageUrl: { type: String, default: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop' },
+    // Popular Dishes CMS
+    popularDishesTitleBn: { type: String, default: 'ঘরোয়ার সবচেয়ে জনপ্রিয় খাবার' },
+    popularDishesTitleEn: { type: String, default: 'Most Popular Dishes' },
+    popularDishesSubtitleBn: { type: String, default: 'প্রতিদিন শত শত ভোজনরসিকের প্রথম পছন্দ মতিঝিলের ঐতিহ্যবাহী স্পেশাল আইটেম' },
+    popularDishesSubtitleEn: { type: String, default: 'Our daily signature dishes crafted with traditional spice blends' },
+    isPopularDishesEnabled: { type: Boolean, default: true },
+    // Footer & Branding CMS
+    footerDescriptionBn: { type: String, default: '১৯৭২ সাল থেকে ঢাকার মতিঝিলের বাণিজ্যিক হৃদয়ে ঐতিহ্যবাহী খাসির ভুনা খিচুড়ি ও কাচ্চির বিশ্বস্ত ঠিকানা।' },
+    footerDescriptionEn: { type: String, default: 'Authentic 1972 Bengali heritage cuisine in Motijheel, Dhaka. Famous for legendary Mutton Khichuri & Kacchi.' },
+    copyrightTextBn: { type: String, default: '© ১৯৭২-২০২৬ ঘরোয়া হোটেল এন্ড রেস্টুরেন্ট। সর্বস্বত্ব সংরক্ষিত।' },
+    copyrightTextEn: { type: String, default: '© 1972-2026 Gharowa Hotel & Restaurant. All Rights Reserved.' },
+    // SEO & OpenGraph
+    seoTitle: { type: String, default: 'ঘরোয়া হোটেল এন্ড রেস্টুরেন্ট | Gharowa Hotel & Restaurant (Since 1972)' },
+    seoDescription: { type: String, default: '১৯৭২ সাল থেকে মতিঝিল ঢাকার সেরা ঐতিহ্যবাহী খাসির ভুনা খিচুড়ি, কাচ্চি ও খাঁটি বাংলা খাবার।' },
+    ogTitle: { type: String, default: 'Gharowa Hotel & Restaurant (Since 1972) - Motijheel, Dhaka' },
+    ogDescription: { type: String, default: 'Order authentic 1972 Mutton Khichuri, Kacchi & traditional Bengali delicacies in Dhaka.' },
+    ogImageUrl: { type: String, default: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?q=80&w=1200&auto=format&fit=crop' },
   },
   { timestamps: true }
 );

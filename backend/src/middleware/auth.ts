@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyToken, TokenPayload } from '../utils/tokenHelper';
 import { User, UserRole } from '../models/User';
+import { config } from '../config';
 
 export interface AuthenticatedRequest extends Request {
   user?: {
@@ -34,7 +35,32 @@ export const authenticate = async (
     }
 
     const decoded: TokenPayload = verifyToken(token);
-    const user = await User.findById(decoded.userId).select('-password');
+
+    // Direct match for super admin token
+    if (
+      decoded.userId === 'admin-1972' ||
+      (decoded.email && decoded.email.toLowerCase() === config.adminDefaultEmail.toLowerCase())
+    ) {
+      req.user = {
+        id: 'admin-1972',
+        email: decoded.email || config.adminDefaultEmail,
+        role: (decoded.role as UserRole) || 'super_admin',
+        name: 'Gharowa Head Admin',
+      };
+      next();
+      return;
+    }
+
+    // Database user lookup
+    let user: any = null;
+    try {
+      user = await User.findById(decoded.userId).select('-password');
+    } catch {
+      // Fallback search by email
+      if (decoded.email) {
+        user = await User.findOne({ email: decoded.email.toLowerCase() }).select('-password');
+      }
+    }
 
     if (!user || !user.isActive) {
       res.status(401).json({

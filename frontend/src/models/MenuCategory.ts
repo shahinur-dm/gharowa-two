@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IMenuCategory extends Document {
   nameBn: string;
@@ -7,8 +7,9 @@ export interface IMenuCategory extends Document {
   descriptionBn?: string;
   descriptionEn?: string;
   image?: string;
-  displayOrder: number;
   icon?: string;
+  status?: string;
+  displayOrder: number;
   isActive: boolean;
 }
 
@@ -20,11 +21,13 @@ const MenuCategorySchema = new Schema<IMenuCategory>(
     descriptionBn: { type: String, default: '' },
     descriptionEn: { type: String, default: '' },
     image: { type: String, default: '' },
-    displayOrder: { type: Number, default: 0 },
     icon: { type: String, default: 'Utensils' },
+    status: { type: String, default: 'active' },
+    displayOrder: { type: Number, default: 0 },
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
 
-export const MenuCategory = mongoose.model<IMenuCategory>('MenuCategory', MenuCategorySchema);
+export const MenuCategory: Model<IMenuCategory> =
+  mongoose.models.MenuCategory || mongoose.model<IMenuCategory>('MenuCategory', MenuCategorySchema);
