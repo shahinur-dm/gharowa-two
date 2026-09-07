@@ -39,8 +39,8 @@ export default function WhyChooseUs() {
   ];
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 border-t border-slate-200/70">
-      <div className="text-center max-w-2xl mx-auto mb-10">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 border-t border-slate-200/70">
+      <div className="text-center max-w-2xl mx-auto mb-6">
         <div className="text-[11px] font-medium tracking-wider text-[#900C19] uppercase mb-1 font-sans">
           {language === 'bn' ? 'আমাদের বিশেষত্ব' : 'WHY CHOOSE US'}
         </div>

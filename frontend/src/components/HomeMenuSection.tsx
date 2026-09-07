@@ -43,9 +43,9 @@ export default function HomeMenuSection({ dishes }: HomeMenuProps) {
   const displayedDishes = filteredDishes.slice(0, visibleCount);
 
   return (
-    <section className="pt-6 pb-12 space-y-6">
+    <section className="pt-4 pb-6 space-y-4">
       {/* Deep Red "Our Menu" Section Banner */}
-      <div className="bg-[#800A15] text-white py-9 px-4 text-center relative overflow-hidden border-y border-white/10">
+      <div className="bg-[#800A15] text-white py-7 px-4 text-center relative overflow-hidden border-y border-white/10">
         <div className="max-w-4xl mx-auto space-y-2 relative z-10">
           <h2 className="text-2xl sm:text-3xl lg:text-[34px] font-semibold font-sans tracking-tight">
             {language === 'bn' ? 'আমাদের সম্পূর্ণ মেনু' : 'Our Menu'}
@@ -58,7 +58,7 @@ export default function HomeMenuSection({ dishes }: HomeMenuProps) {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5 sm:space-y-6">
         {/* Category Pill Filters */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none justify-start sm:justify-center">
           <button
@@ -98,7 +98,7 @@ export default function HomeMenuSection({ dishes }: HomeMenuProps) {
 
         {/* Responsive Food Cards Grid */}
         {displayedDishes.length === 0 ? (
-          <div className="text-center py-12 text-slate-500 text-sm font-normal">
+          <div className="text-center py-8 text-slate-500 text-sm font-normal">
             {language === 'bn' ? 'এই ক্যাটাগরিতে কোনো খাবার পাওয়া যায়নি' : 'No dishes found in this category.'}
           </div>
         ) : (
@@ -111,7 +111,7 @@ export default function HomeMenuSection({ dishes }: HomeMenuProps) {
 
         {/* Load More / View All Menu Button */}
         {visibleCount < filteredDishes.length ? (
-          <div className="text-center pt-4">
+          <div className="text-center pt-2 sm:pt-3">
             <button
               onClick={() => setVisibleCount((prev) => prev + 8)}
               className="px-8 py-2.5 rounded-full border border-[#900C19] text-[#900C19] hover:bg-[#900C19] hover:text-white font-medium text-xs sm:text-sm shadow-sm transition-all active:scale-95"
@@ -120,7 +120,7 @@ export default function HomeMenuSection({ dishes }: HomeMenuProps) {
             </button>
           </div>
         ) : (
-          <div className="text-center pt-4">
+          <div className="text-center pt-2 sm:pt-3">
             <Link
               href="/menu"
               className="inline-flex items-center gap-2 px-8 py-2.5 rounded-full bg-[#900C19] hover:bg-[#780813] text-white font-medium text-xs sm:text-sm shadow-md transition-all active:scale-95"

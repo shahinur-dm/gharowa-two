@@ -86,10 +86,10 @@ export default function ReviewSection() {
   }
 
   return (
-    <section className="py-10 sm:py-14 bg-[#FAFAF9] relative overflow-hidden font-sans border-t border-slate-100">
+    <section className="py-6 sm:py-8 bg-[#FAFAF9] relative overflow-hidden font-sans border-t border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
-        <div className="mb-8 sm:mb-10 text-center">
+        <div className="mb-5 sm:mb-6 text-center">
           <div className="inline-flex items-center justify-center gap-2">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#EA580C] tracking-tight">
               Customers Loves
@@ -99,32 +99,32 @@ export default function ReviewSection() {
         </div>
 
         {/* Reviews Layout (Store Card + Horizontal Reviews Slider) */}
-        <div className="flex flex-col lg:flex-row items-stretch gap-5">
+        <div className="flex flex-col lg:flex-row items-stretch gap-4 sm:gap-5">
           {/* Store Overview Card */}
-          <div className="w-full lg:w-[280px] shrink-0 bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between items-center text-center">
+          <div className="w-full lg:w-[280px] shrink-0 bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs flex flex-col justify-between items-center text-center">
             <div className="w-full flex flex-col items-center">
               {/* Store Logo Emblem */}
-              <div className="w-16 h-16 rounded-2xl bg-black flex items-center justify-center p-2 mb-3 shadow-sm border border-slate-800">
-                <GharowaLogo size={44} variant="emblem" />
+              <div className="w-14 h-14 rounded-2xl bg-black flex items-center justify-center p-2 mb-2.5 shadow-sm border border-slate-800">
+                <GharowaLogo size={38} variant="emblem" />
               </div>
 
-              <h3 className="text-sm font-bold text-slate-900 tracking-tight leading-tight">
+              <h3 className="text-xs sm:text-sm font-bold text-slate-900 tracking-tight leading-tight">
                 Gharowa Hotel & Restaurant
               </h3>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">Motijheel, Dhaka</p>
+              <p className="text-[11px] text-slate-500 font-medium mt-0.5">Motijheel, Dhaka</p>
 
               {/* Rating Stars */}
-              <div className="flex items-center gap-1 mt-3">
-                <span className="text-sm font-bold text-slate-800 mr-1">4.9</span>
+              <div className="flex items-center gap-1 mt-2">
+                <span className="text-xs sm:text-sm font-bold text-slate-800 mr-1">4.9</span>
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className="w-4 h-4 text-amber-400 fill-amber-400"
+                    className="w-3.5 h-3.5 text-amber-400 fill-amber-400"
                   />
                 ))}
               </div>
 
-              <p className="text-[11px] text-slate-500 mt-1.5 font-medium">
+              <p className="text-[10px] sm:text-[11px] text-slate-500 mt-1 font-medium">
                 2,154+ Google reviews
               </p>
             </div>
@@ -134,7 +134,7 @@ export default function ReviewSection() {
               href="https://maps.google.com/?q=Gharowa+Hotel+Restaurant+Motijheel+Dhaka"
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 w-full py-2 px-3.5 rounded-xl border border-slate-300 hover:border-[#EA580C] hover:text-[#EA580C] text-slate-700 text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 bg-slate-50/60 hover:bg-orange-50/50"
+              className="mt-3.5 w-full py-2 px-3 rounded-xl border border-slate-200/90 hover:border-[#EA580C] hover:text-[#EA580C] text-slate-700 text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 bg-slate-50/80 hover:bg-orange-50/50 shadow-2xs"
             >
               <MessageSquarePlus className="w-3.5 h-3.5" />
               <span>Write a review</span>

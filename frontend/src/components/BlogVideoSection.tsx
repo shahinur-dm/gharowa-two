@@ -46,9 +46,9 @@ export default function BlogVideoSection() {
   const displayList = videos.length > 0 ? [...videos, ...videos, ...videos, ...videos] : [];
 
   return (
-    <section className="py-10 sm:py-14 bg-white relative overflow-hidden font-sans">
+    <section className="py-6 sm:py-8 bg-white relative overflow-hidden font-sans">
       {/* Section Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8 text-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 sm:mb-5 text-center">
         <div className="inline-flex items-center justify-center gap-2">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#EA580C] tracking-tight">
             Our Blog

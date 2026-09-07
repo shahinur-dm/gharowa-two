@@ -61,8 +61,8 @@ export default function ChefAndOwnerSection({ settings }: ChefAndOwnerProps) {
     'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop';
 
   return (
-    <section id="chef-owner" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 border-t border-slate-200/70">
-      <div className="text-center max-w-2xl mx-auto mb-12">
+    <section id="chef-owner" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 border-t border-slate-200/70">
+      <div className="text-center max-w-2xl mx-auto mb-6">
         <div className="text-[11px] font-medium tracking-wider text-[#900C19] uppercase mb-1 font-sans">
           {language === 'bn' ? 'আমাদের কারিগর ও কর্ণধার' : 'LEADERSHIP & CULINARY MASTERS'}
         </div>

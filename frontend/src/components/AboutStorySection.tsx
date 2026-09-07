@@ -40,7 +40,7 @@ export default function AboutStorySection({ settings }: AboutStoryProps) {
       ];
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       {/* Main Red Card Box */}
       <div className="bg-[#800A15] text-white rounded-3xl overflow-hidden shadow-2xl border border-white/10 p-6 sm:p-10 lg:p-12 relative">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">

@@ -36,8 +36,8 @@ export default function ContactSection({ settings }: ContactSectionProps) {
   };
 
   return (
-    <section id="contact" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 border-t border-slate-200/70">
-      <div className="text-center max-w-2xl mx-auto mb-12">
+    <section id="contact" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 border-t border-slate-200/70">
+      <div className="text-center max-w-2xl mx-auto mb-5 sm:mb-6">
         <div className="text-[11px] font-medium tracking-wider text-[#900C19] uppercase mb-1 font-sans">
           {language === 'bn' ? 'যোগাযোগ ও অবস্থান' : 'GET IN TOUCH'}
         </div>

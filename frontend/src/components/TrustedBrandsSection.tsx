@@ -30,10 +30,10 @@ export default function TrustedBrandsSection() {
   }
 
   return (
-    <section className="py-10 sm:py-14 bg-white relative overflow-hidden font-sans border-t border-slate-100">
+    <section className="py-6 sm:py-8 bg-white relative overflow-hidden font-sans border-t border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading matching Reference Screenshot */}
-        <div className="mb-8 sm:mb-12 text-center">
+        <div className="mb-5 sm:mb-6 text-center">
           <div className="inline-flex items-center justify-center gap-2">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
               <span className="text-slate-900">Trusted by </span>
