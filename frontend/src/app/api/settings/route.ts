@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { connectToDatabase } from '@/lib/mongodb';
 import { RestaurantSettings } from '@/models/RestaurantSettings';
 import { getStoreSettings, updateStoreSettings, defaultSettings } from '@/lib/serverStore';
@@ -44,6 +45,14 @@ export async function PUT(request: Request) {
 
         if (settings) {
           updateStoreSettings(body);
+          try {
+            revalidatePath('/', 'layout');
+            revalidatePath('/');
+            revalidatePath('/menu');
+            revalidatePath('/about');
+            revalidatePath('/contact');
+          } catch (revalErr) {}
+
           return NextResponse.json(
             { success: true, message: 'Settings updated successfully', data: settings },
             { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }

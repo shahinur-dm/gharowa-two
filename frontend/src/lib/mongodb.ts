@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const DEFAULT_MONGODB_URI =
+  'mongodb+srv://efootballmadrid25_db_user:ljvpbVMGVJTQPVcH@dawatit.5hxbo9c.mongodb.net/krishikagoj?appName=dawatit';
+
+const MONGODB_URI = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
 
 let cached = (global as any).mongoose;
 
@@ -9,7 +12,8 @@ if (!cached) {
 }
 
 export async function connectToDatabase(): Promise<typeof mongoose | null> {
-  if (!MONGODB_URI) {
+  const uri = MONGODB_URI || DEFAULT_MONGODB_URI;
+  if (!uri) {
     return null;
   }
 
@@ -26,7 +30,7 @@ export async function connectToDatabase(): Promise<typeof mongoose | null> {
     };
 
     cached.promise = mongoose
-      .connect(MONGODB_URI, opts)
+      .connect(uri, opts)
       .then((mongooseInstance) => {
         return mongooseInstance;
       })
