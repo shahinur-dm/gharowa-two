@@ -320,10 +320,10 @@ export default function AdminHeroBannerPage() {
 
       {/* Add / Edit Slide Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200 overflow-y-auto">
+          <div className="bg-white w-full max-w-lg max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3.5rem)] rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden my-auto">
             {/* Modal Header */}
-            <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
               <div className="flex items-center gap-2">
                 <Layers className="w-5 h-5 text-[#EA580C]" />
                 <h3 className="text-base font-bold text-slate-900">
@@ -331,6 +331,7 @@ export default function AdminHeroBannerPage() {
                 </h3>
               </div>
               <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
                 className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
               >
@@ -339,87 +340,89 @@ export default function AdminHeroBannerPage() {
             </div>
 
             {/* Modal Form */}
-            <form onSubmit={handleSave} className="p-4 sm:p-6 space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  খাবারের নাম / শিরোনাম (Title / Food Name) *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="e.g. Mutton Khichuri / Kacchi"
-                  className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C] focus:ring-1 focus:ring-[#EA580C]"
-                />
-              </div>
-
-              <ImageUploadField
-                label="মূল খাবারের ছবি (Main Dish Image) *"
-                value={formData.mainImageUrl}
-                onChange={(url) => setFormData({ ...formData, mainImageUrl: url })}
-                category="hero"
-                helperText="Upload From Device অথবা Previous Photo Collection থেকে ছবি নির্বাচন করুন।"
-              />
-
-              <ImageUploadField
-                label="টপ-রাইট সাপোর্টিং ছবি (Optional Supporting Dish Image)"
-                value={formData.supportingImageUrl}
-                onChange={(url) => setFormData({ ...formData, supportingImageUrl: url })}
-                category="food"
-                helperText="ঐচ্ছিক সাপোর্টিং আইটেমের ছবি (যেমন বোরহানি/সালাদ)।"
-              />
-
-              <div className="grid grid-cols-3 gap-3">
+            <form onSubmit={handleSave} className="flex flex-col flex-1 overflow-hidden min-h-0">
+              <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 min-h-0 overscroll-contain">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">সময়কাল (Seconds)</label>
-                  <input
-                    type="number"
-                    min={2}
-                    max={20}
-                    value={formData.slideDurationSeconds}
-                    onChange={(e) => setFormData({ ...formData, slideDurationSeconds: parseInt(e.target.value) || 4 })}
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">ব্যাজ লেখা</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    খাবারের নাম / শিরোনাম (Title / Food Name) *
+                  </label>
                   <input
                     type="text"
-                    value={formData.badgeText}
-                    onChange={(e) => setFormData({ ...formData, badgeText: e.target.value })}
-                    placeholder="1972"
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
+                    required
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="e.g. Mutton Khichuri / Kacchi"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C] focus:ring-1 focus:ring-[#EA580C]"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">ক্রমানুসার (Order)</label>
-                  <input
-                    type="number"
-                    value={formData.displayOrder}
-                    onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 pt-2">
-                <input
-                  type="checkbox"
-                  id="isActiveHeroSlide"
-                  checked={formData.isActive}
-                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="w-4 h-4 rounded text-[#EA580C] focus:ring-[#EA580C]"
+                <ImageUploadField
+                  label="মূল খাবারের ছবি (Main Dish Image) *"
+                  value={formData.mainImageUrl}
+                  onChange={(url) => setFormData({ ...formData, mainImageUrl: url })}
+                  category="hero"
+                  helperText="Upload From Device অথবা Previous Photo Collection থেকে ছবি নির্বাচন করুন।"
                 />
-                <label htmlFor="isActiveHeroSlide" className="text-xs font-semibold text-slate-700 cursor-pointer">
-                  হিরো স্লাইডারে সক্রিয় রাখুন (Active on Live Hero Banner)
-                </label>
+
+                <ImageUploadField
+                  label="টপ-রাইট সাপোর্টিং ছবি (Optional Supporting Dish Image)"
+                  value={formData.supportingImageUrl}
+                  onChange={(url) => setFormData({ ...formData, supportingImageUrl: url })}
+                  category="food"
+                  helperText="ঐচ্ছিক সাপোর্টিং আইটেমের ছবি (যেমন বোরহানি/সালাদ)।"
+                />
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">সময়কাল (Seconds)</label>
+                    <input
+                      type="number"
+                      min={2}
+                      max={20}
+                      value={formData.slideDurationSeconds}
+                      onChange={(e) => setFormData({ ...formData, slideDurationSeconds: parseInt(e.target.value) || 4 })}
+                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">ব্যাজ লেখা</label>
+                    <input
+                      type="text"
+                      value={formData.badgeText}
+                      onChange={(e) => setFormData({ ...formData, badgeText: e.target.value })}
+                      placeholder="1972"
+                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">ক্রমানুসার (Order)</label>
+                    <input
+                      type="number"
+                      value={formData.displayOrder}
+                      onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
+                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-1">
+                  <input
+                    type="checkbox"
+                    id="isActiveHeroSlide"
+                    checked={formData.isActive}
+                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                    className="w-4 h-4 rounded text-[#EA580C] focus:ring-[#EA580C]"
+                  />
+                  <label htmlFor="isActiveHeroSlide" className="text-xs font-semibold text-slate-700 cursor-pointer">
+                    হিরো স্লাইডারে সক্রিয় রাখুন (Active on Live Hero Banner)
+                  </label>
+                </div>
               </div>
 
-              {/* Submit Button */}
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-2.5">
+              {/* Sticky Submit Footer */}
+              <div className="p-3.5 sm:p-4 border-t border-slate-100 flex items-center justify-end gap-2.5 bg-slate-50/50 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}

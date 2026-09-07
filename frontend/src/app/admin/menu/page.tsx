@@ -545,9 +545,9 @@ export default function AdminMenuPage() {
 
       {/* Advanced Add / Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-3xl w-full shadow-2xl space-y-5 my-8 max-h-[90vh] overflow-y-auto font-sans">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-y-auto animate-in fade-in duration-200">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-3xl w-full shadow-2xl overflow-hidden my-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3.5rem)] flex flex-col font-sans">
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-100 bg-slate-50/50 shrink-0">
               <h3 className="text-base font-semibold text-slate-900 flex items-center gap-2">
                 <Utensils className="w-4 h-4 text-[#900C19]" />
                 <span>{editingItem ? 'খাবারের তথ্য সম্পাদনা (Edit Food)' : 'নতুন খাবার যোগ করুন (Add Food)'}</span>
@@ -560,210 +560,212 @@ export default function AdminMenuPage() {
               </button>
             </div>
 
-            <form onSubmit={handleSaveItem} className="space-y-4 text-xs">
-              {/* Main Image Uploader */}
-              <ImageUploadField
-                label="Primary Dish Image (খাবারের প্রধান ছবি) *"
-                value={formData.image}
-                onChange={(url) => setFormData({ ...formData, image: url })}
-                helperText="High quality photo of the dish."
-              />
-
-              {/* Names */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">খাবারের নাম (বাংলা) *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.nameBn}
-                    onChange={(e) => setFormData({ ...formData, nameBn: e.target.value })}
-                    placeholder="উদা: খাসির ভুনা খিচুড়ি"
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">Food Name (English) *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.nameEn}
-                    onChange={(e) => setFormData({ ...formData, nameEn: e.target.value })}
-                    placeholder="Mutton Bhuna Khichuri"
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                  />
-                </div>
-              </div>
-
-              {/* Category, SKU & Pricing */}
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">ক্যাটাগরি *</label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                  >
-                    {categories.map((c) => (
-                      <option key={c._id} value={c._id}>
-                        {c.nameEn} ({c.nameBn})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">SKU / কোড</label>
-                  <input
-                    type="text"
-                    value={formData.sku}
-                    onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">বিক্রয় মূল্য (Price ৳) *</label>
-                  <input
-                    type="number"
-                    required
-                    value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 font-semibold focus:outline-none focus:border-[#900C19]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">ডিসকাউন্ট পূর্বের মূল্য (৳)</label>
-                  <input
-                    type="number"
-                    value={formData.originalPrice}
-                    onChange={(e) => setFormData({ ...formData, originalPrice: parseFloat(e.target.value) || 0 })}
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                  />
-                </div>
-              </div>
-
-              {/* Prep time, Serving Size, Spice Level */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">প্রস্তুতির সময় (Prep Time Mins)</label>
-                  <input
-                    type="number"
-                    value={formData.preparationTimeMinutes}
-                    onChange={(e) => setFormData({ ...formData, preparationTimeMinutes: parseInt(e.target.value) || 15 })}
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">পরিবেশনের পরিমাণ (Serving Size)</label>
-                  <input
-                    type="text"
-                    value={formData.servingSize}
-                    onChange={(e) => setFormData({ ...formData, servingSize: e.target.value })}
-                    placeholder="১ জন (1 Person)"
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">ঝালের মাত্রা (Spice Level)</label>
-                  <select
-                    value={formData.spiceLevel}
-                    onChange={(e) => setFormData({ ...formData, spiceLevel: parseInt(e.target.value) || 0 })}
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                  >
-                    <option value={0}>ঝাল নেই (Mild 0)</option>
-                    <option value={1}>হালকা ঝাল (Low Spice 1)</option>
-                    <option value={2}>মাঝারি ঝাল (Medium Spice 2)</option>
-                    <option value={3}>তীব্র ঝাল (Hot Spice 3)</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Ingredients & Descriptions */}
-              <div>
-                <label className="block font-medium text-slate-700 mb-1">প্রধান উপকরণসমূহ (Ingredients)</label>
-                <input
-                  type="text"
-                  value={formData.ingredients}
-                  onChange={(e) => setFormData({ ...formData, ingredients: e.target.value })}
-                  placeholder="খাসির মাংস, সুগন্ধি চিনিগুঁড়া চাল, গাওয়া ঘি, এলাচ, লবঙ্গ"
-                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+            <form onSubmit={handleSaveItem} className="flex flex-col flex-1 min-h-0 text-xs">
+              <div className="overflow-y-auto p-4 sm:p-7 space-y-4">
+                {/* Main Image Uploader */}
+                <ImageUploadField
+                  label="Primary Dish Image (খাবারের প্রধান ছবি) *"
+                  value={formData.image}
+                  onChange={(url) => setFormData({ ...formData, image: url })}
+                  helperText="High quality photo of the dish."
                 />
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Names */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">খাবারের নাম (বাংলা) *</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.nameBn}
+                      onChange={(e) => setFormData({ ...formData, nameBn: e.target.value })}
+                      placeholder="উদা: খাসির ভুনা খিচুড়ি"
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">Food Name (English) *</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.nameEn}
+                      onChange={(e) => setFormData({ ...formData, nameEn: e.target.value })}
+                      placeholder="Mutton Bhuna Khichuri"
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
+                </div>
+
+                {/* Category, SKU & Pricing */}
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">ক্যাটাগরি *</label>
+                    <select
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    >
+                      {categories.map((c) => (
+                        <option key={c._id} value={c._id}>
+                          {c.nameEn} ({c.nameBn})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">SKU / কোড</label>
+                    <input
+                      type="text"
+                      value={formData.sku}
+                      onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">বিক্রয় মূল্য (Price ৳) *</label>
+                    <input
+                      type="number"
+                      required
+                      value={formData.price}
+                      onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 font-semibold focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">ডিসকাউন্ট পূর্বের মূল্য (৳)</label>
+                    <input
+                      type="number"
+                      value={formData.originalPrice}
+                      onChange={(e) => setFormData({ ...formData, originalPrice: parseFloat(e.target.value) || 0 })}
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
+                </div>
+
+                {/* Prep time, Serving Size, Spice Level */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">প্রস্তুতির সময় (Prep Time Mins)</label>
+                    <input
+                      type="number"
+                      value={formData.preparationTimeMinutes}
+                      onChange={(e) => setFormData({ ...formData, preparationTimeMinutes: parseInt(e.target.value) || 15 })}
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">পরিবেশনের পরিমাণ (Serving Size)</label>
+                    <input
+                      type="text"
+                      value={formData.servingSize}
+                      onChange={(e) => setFormData({ ...formData, servingSize: e.target.value })}
+                      placeholder="১ জন (1 Person)"
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">ঝালের মাত্রা (Spice Level)</label>
+                    <select
+                      value={formData.spiceLevel}
+                      onChange={(e) => setFormData({ ...formData, spiceLevel: parseInt(e.target.value) || 0 })}
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    >
+                      <option value={0}>ঝাল নেই (Mild 0)</option>
+                      <option value={1}>হালকা ঝাল (Low Spice 1)</option>
+                      <option value={2}>মাঝারি ঝাল (Medium Spice 2)</option>
+                      <option value={3}>তীব্র ঝাল (Hot Spice 3)</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Ingredients & Descriptions */}
                 <div>
-                  <label className="block font-medium text-slate-700 mb-1">সম্পূর্ণ বিবরণ (বাংলা)</label>
-                  <textarea
-                    rows={3}
-                    value={formData.descriptionBn}
-                    onChange={(e) => setFormData({ ...formData, descriptionBn: e.target.value })}
-                    placeholder="ঘরোয়ার ঐতিহ্যবাহী রেসিপিতে রান্না করা..."
+                  <label className="block font-medium text-slate-700 mb-1">প্রধান উপকরণসমূহ (Ingredients)</label>
+                  <input
+                    type="text"
+                    value={formData.ingredients}
+                    onChange={(e) => setFormData({ ...formData, ingredients: e.target.value })}
+                    placeholder="খাসির মাংস, সুগন্ধি চিনিগুঁড়া চাল, গাওয়া ঘি, এলাচ, লবঙ্গ"
                     className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
                   />
                 </div>
 
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">Full Description (English)</label>
-                  <textarea
-                    rows={3}
-                    value={formData.descriptionEn}
-                    onChange={(e) => setFormData({ ...formData, descriptionEn: e.target.value })}
-                    placeholder="Heritage slow-cooked delicacy..."
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">সম্পূর্ণ বিবরণ (বাংলা)</label>
+                    <textarea
+                      rows={3}
+                      value={formData.descriptionBn}
+                      onChange={(e) => setFormData({ ...formData, descriptionBn: e.target.value })}
+                      placeholder="ঘরোয়ার ঐতিহ্যবাহী রেসিপিতে রান্না করা..."
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">Full Description (English)</label>
+                    <textarea
+                      rows={3}
+                      value={formData.descriptionEn}
+                      onChange={(e) => setFormData({ ...formData, descriptionEn: e.target.value })}
+                      placeholder="Heritage slow-cooked delicacy..."
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              {/* Badges & Feature Toggles */}
-              <div className="flex flex-wrap gap-4 pt-3 border-t border-slate-100">
-                <label className="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
-                  <input
-                    type="checkbox"
-                    checked={formData.isPopular}
-                    onChange={(e) => setFormData({ ...formData, isPopular: e.target.checked })}
-                    className="rounded text-[#900C19] focus:ring-[#900C19]"
-                  />
-                  <span>🔥 Popular Dishes (হোমপেজে দেখাবে)</span>
-                </label>
+                {/* Badges & Feature Toggles */}
+                <div className="flex flex-wrap gap-4 pt-3 border-t border-slate-100">
+                  <label className="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
+                    <input
+                      type="checkbox"
+                      checked={formData.isPopular}
+                      onChange={(e) => setFormData({ ...formData, isPopular: e.target.checked })}
+                      className="rounded text-[#900C19] focus:ring-[#900C19]"
+                    />
+                    <span>🔥 Popular Dishes (হোমপেজে দেখাবে)</span>
+                  </label>
 
-                <label className="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
-                  <input
-                    type="checkbox"
-                    checked={formData.isBestseller}
-                    onChange={(e) => setFormData({ ...formData, isBestseller: e.target.checked })}
-                    className="rounded text-[#900C19] focus:ring-[#900C19]"
-                  />
-                  <span>🏆 Bestseller (ঐতিহ্যের সেরা)</span>
-                </label>
+                  <label className="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
+                    <input
+                      type="checkbox"
+                      checked={formData.isBestseller}
+                      onChange={(e) => setFormData({ ...formData, isBestseller: e.target.checked })}
+                      className="rounded text-[#900C19] focus:ring-[#900C19]"
+                    />
+                    <span>🏆 Bestseller (ঐতিহ্যের সেরা)</span>
+                  </label>
 
-                <label className="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
-                  <input
-                    type="checkbox"
-                    checked={formData.isFeatured}
-                    onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
-                    className="rounded text-[#900C19] focus:ring-[#900C19]"
-                  />
-                  <span>✨ Featured (স্পেশাল)</span>
-                </label>
+                  <label className="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
+                    <input
+                      type="checkbox"
+                      checked={formData.isFeatured}
+                      onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
+                      className="rounded text-[#900C19] focus:ring-[#900C19]"
+                    />
+                    <span>✨ Featured (স্পেশাল)</span>
+                  </label>
 
-                <label className="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
-                  <input
-                    type="checkbox"
-                    checked={formData.isAvailable}
-                    onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
-                    className="rounded text-[#900C19] focus:ring-[#900C19]"
-                  />
-                  <span>✓ Available in Stock (অর্ডারের জন্য উন্মুক্ত)</span>
-                </label>
+                  <label className="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
+                    <input
+                      type="checkbox"
+                      checked={formData.isAvailable}
+                      onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
+                      className="rounded text-[#900C19] focus:ring-[#900C19]"
+                    />
+                    <span>✓ Available in Stock (অর্ডারের জন্য উন্মুক্ত)</span>
+                  </label>
+                </div>
               </div>
 
               {/* Submit Buttons */}
-              <div className="flex justify-end gap-2.5 pt-4 border-t border-slate-100">
+              <div className="flex justify-end gap-2.5 p-4 sm:px-6 border-t border-slate-100 bg-slate-50/50 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}

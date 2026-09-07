@@ -1,31 +1,37 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { api } from '../lib/api';
 
 export default function DynamicFavicon() {
-  const [faviconUrl, setFaviconUrl] = useState<string>('/favicon.ico');
-
   useEffect(() => {
+    const applyFavicon = (url: string) => {
+      if (!url || typeof document === 'undefined') return;
+
+      const cacheBustedUrl = `${url}${url.includes('?') ? '&' : '?'}v=${Date.now()}`;
+
+      // 1. Update or create standard icon and shortcut icon
+      const rels = ['icon', 'shortcut icon', 'apple-touch-icon'];
+
+      rels.forEach((rel) => {
+        let link: HTMLLinkElement | null = document.querySelector(`link[rel='${rel}']`);
+        if (!link) {
+          link = document.createElement('link');
+          link.rel = rel;
+          document.head.appendChild(link);
+        }
+        link.href = cacheBustedUrl;
+      });
+    };
+
     const updateFavicon = async () => {
       try {
         const res: any = await api.get('/settings');
         if (res.success && res.data && res.data.faviconUrl) {
-          const url = res.data.faviconUrl;
-          setFaviconUrl(url);
-
-          // Update or create favicon link in document head with cache busting
-          let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
-          if (!link) {
-            link = document.createElement('link');
-            link.rel = 'shortcut icon';
-            document.head.appendChild(link);
-          }
-          link.type = 'image/x-icon';
-          link.href = `${url}${url.includes('?') ? '&' : '?'}v=${Date.now()}`;
+          applyFavicon(res.data.faviconUrl);
         }
       } catch (e) {
-        // Fallback default
+        // Silent fallback
       }
     };
 

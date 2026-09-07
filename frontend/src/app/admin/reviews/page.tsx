@@ -369,10 +369,10 @@ export default function AdminReviewsPage() {
 
       {/* Add / Edit Review Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200 overflow-y-auto">
+          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3.5rem)] flex flex-col">
             {/* Modal Header */}
-            <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
               <div className="flex items-center gap-2">
                 <Star className="w-5 h-5 text-[#EA580C]" />
                 <h3 className="text-base font-bold text-slate-900">
@@ -388,126 +388,128 @@ export default function AdminReviewsPage() {
             </div>
 
             {/* Modal Form */}
-            <form onSubmit={handleSave} className="p-4 sm:p-6 space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  গ্রাহকের নাম (Customer Name) *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.customerName}
-                  onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-                  placeholder="e.g. Tanvir Ahmed Shanto"
-                  className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C] focus:ring-1 focus:ring-[#EA580C]"
-                />
-              </div>
-
-              <ImageUploadField
-                label="প্রোফাইল ছবি (Avatar - ঐচ্ছিক)"
-                value={formData.avatarUrl}
-                onChange={(url) => setFormData({ ...formData, avatarUrl: url })}
-                category="general"
-                helperText="Upload From Device অথবা Previous Photo Collection থেকে ছবি সিলেক্ট করুন (খালি রাখলে নামের আদ্যক্ষর দেখাবে)।"
-              />
-
-              <div className="grid grid-cols-2 gap-3">
+            <form onSubmit={handleSave} className="flex flex-col flex-1 min-h-0">
+              <div className="overflow-y-auto p-4 sm:p-6 space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">রেটিং (Rating Stars)</label>
-                  <select
-                    value={formData.rating}
-                    onChange={(e) => setFormData({ ...formData, rating: parseInt(e.target.value) || 5 })}
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C] bg-white"
-                  >
-                    <option value={5}>⭐⭐⭐⭐⭐ (5 Star)</option>
-                    <option value={4}>⭐⭐⭐⭐ (4 Star)</option>
-                    <option value={3}>⭐⭐⭐ (3 Star)</option>
-                    <option value={2}>⭐⭐ (2 Star)</option>
-                    <option value={1}>⭐ (1 Star)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">তারিখ / সময় (Date Text)</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    গ্রাহকের নাম (Customer Name) *
+                  </label>
                   <input
                     type="text"
-                    value={formData.reviewDateText}
-                    onChange={(e) => setFormData({ ...formData, reviewDateText: e.target.value })}
-                    placeholder="e.g. 1 year ago, 2 weeks ago"
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
+                    required
+                    value={formData.customerName}
+                    onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
+                    placeholder="e.g. Tanvir Ahmed Shanto"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C] focus:ring-1 focus:ring-[#EA580C]"
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  রিভিউ মন্তব্য (Review Text) *
-                </label>
-                <textarea
-                  required
-                  rows={3}
-                  value={formData.reviewText}
-                  onChange={(e) => setFormData({ ...formData, reviewText: e.target.value })}
-                  placeholder="e.g. This user only left a rating / Good / Awesome khichuri!"
-                  className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
+                <ImageUploadField
+                  label="প্রোফাইল ছবি (Avatar - ঐচ্ছিক)"
+                  value={formData.avatarUrl}
+                  onChange={(url) => setFormData({ ...formData, avatarUrl: url })}
+                  category="general"
+                  helperText="Upload From Device অথবা Previous Photo Collection থেকে ছবি সিলেক্ট করুন (খালি রাখলে নামের আদ্যক্ষর দেখাবে)।"
                 />
-              </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">প্ল্যাটফর্ম (Platform)</label>
-                  <select
-                    value={formData.platform}
-                    onChange={(e) => setFormData({ ...formData, platform: e.target.value as any })}
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C] bg-white"
-                  >
-                    <option value="google">Google Review</option>
-                    <option value="facebook">Facebook</option>
-                    <option value="direct">Direct Review</option>
-                  </select>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">রেটিং (Rating Stars)</label>
+                    <select
+                      value={formData.rating}
+                      onChange={(e) => setFormData({ ...formData, rating: parseInt(e.target.value) || 5 })}
+                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C] bg-white"
+                    >
+                      <option value={5}>⭐⭐⭐⭐⭐ (5 Star)</option>
+                      <option value={4}>⭐⭐⭐⭐ (4 Star)</option>
+                      <option value={3}>⭐⭐⭐ (3 Star)</option>
+                      <option value={2}>⭐⭐ (2 Star)</option>
+                      <option value={1}>⭐ (1 Star)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">তারিখ / সময় (Date Text)</label>
+                    <input
+                      type="text"
+                      value={formData.reviewDateText}
+                      onChange={(e) => setFormData({ ...formData, reviewDateText: e.target.value })}
+                      placeholder="e.g. 1 year ago, 2 weeks ago"
+                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">ক্রমানুসার (Order)</label>
-                  <input
-                    type="number"
-                    value={formData.displayOrder}
-                    onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    রিভিউ মন্তব্য (Review Text) *
+                  </label>
+                  <textarea
+                    required
+                    rows={3}
+                    value={formData.reviewText}
+                    onChange={(e) => setFormData({ ...formData, reviewText: e.target.value })}
+                    placeholder="e.g. This user only left a rating / Good / Awesome khichuri!"
                     className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
                   />
                 </div>
-              </div>
 
-              <div className="flex items-center justify-between pt-2">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="isVerifiedRev"
-                    checked={formData.isVerified}
-                    onChange={(e) => setFormData({ ...formData, isVerified: e.target.checked })}
-                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
-                  />
-                  <label htmlFor="isVerifiedRev" className="text-xs font-semibold text-slate-700 cursor-pointer">
-                    যাচাইকৃত ব্যাজ (Verified Badge)
-                  </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">প্ল্যাটফর্ম (Platform)</label>
+                    <select
+                      value={formData.platform}
+                      onChange={(e) => setFormData({ ...formData, platform: e.target.value as any })}
+                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C] bg-white"
+                    >
+                      <option value="google">Google Review</option>
+                      <option value="facebook">Facebook</option>
+                      <option value="direct">Direct Review</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">ক্রমানুসার (Order)</label>
+                    <input
+                      type="number"
+                      value={formData.displayOrder}
+                      onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
+                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
+                    />
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="isActiveRev"
-                    checked={formData.isActive}
-                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                    className="w-4 h-4 rounded text-[#EA580C] focus:ring-[#EA580C]"
-                  />
-                  <label htmlFor="isActiveRev" className="text-xs font-semibold text-slate-700 cursor-pointer">
-                    সক্রিয় রাখুন (Active)
-                  </label>
+                <div className="flex items-center justify-between pt-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="isVerifiedRev"
+                      checked={formData.isVerified}
+                      onChange={(e) => setFormData({ ...formData, isVerified: e.target.checked })}
+                      className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
+                    />
+                    <label htmlFor="isVerifiedRev" className="text-xs font-semibold text-slate-700 cursor-pointer">
+                      যাচাইকৃত ব্যাজ (Verified Badge)
+                    </label>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="isActiveRev"
+                      checked={formData.isActive}
+                      onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                      className="w-4 h-4 rounded text-[#EA580C] focus:ring-[#EA580C]"
+                    />
+                    <label htmlFor="isActiveRev" className="text-xs font-semibold text-slate-700 cursor-pointer">
+                      সক্রিয় রাখুন (Active)
+                    </label>
+                  </div>
                 </div>
               </div>
 
               {/* Submit Button */}
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-2.5">
+              <div className="shrink-0 p-4 sm:px-6 border-t border-slate-100 flex items-center justify-end gap-2.5 bg-slate-50/50">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}

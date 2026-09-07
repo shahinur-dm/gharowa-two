@@ -179,9 +179,9 @@ export default function AdminInventoryPage() {
 
       {/* Adjust Stock Modal */}
       {isAdjustModalOpen && selectedItem && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-y-auto animate-in fade-in duration-200">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-md w-full shadow-2xl overflow-hidden my-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3.5rem)] flex flex-col font-sans">
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 bg-slate-50/50 shrink-0">
               <h3 className="text-base font-semibold text-slate-900 flex items-center gap-2">
                 <Boxes className="w-4 h-4 text-[#900C19]" />
                 <span>স্টক সমন্বয়: {selectedItem.nameBn}</span>
@@ -194,59 +194,61 @@ export default function AdminInventoryPage() {
               </button>
             </div>
 
-            <form onSubmit={handleSaveAdjustment} className="space-y-4 text-xs">
-              <div>
-                <label className="block font-medium text-slate-700 mb-1">অ্যাকশন টাইপ *</label>
-                <select
-                  value={adjustData.type}
-                  onChange={(e) => setAdjustData({ ...adjustData, type: e.target.value })}
-                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                >
-                  <option value="purchase">নতুন ক্রয় / ইনওয়ার্ড স্টক (+) (Purchase)</option>
-                  <option value="usage">কিচেনে ব্যবহার / অপচয় (-) (Kitchen Usage)</option>
-                  <option value="wastage">নষ্ট / মেয়াদোত্তীর্ণ (-) (Wastage)</option>
-                  <option value="adjustment">স্টক সংশোধন (Manual Adjustment)</option>
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
+            <form onSubmit={handleSaveAdjustment} className="flex flex-col flex-1 min-h-0 text-xs">
+              <div className="overflow-y-auto p-4 sm:p-6 space-y-4">
                 <div>
-                  <label className="block font-medium text-slate-700 mb-1">
-                    পরিমাণ ({selectedItem.unit}) *
-                  </label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    required
-                    value={adjustData.quantity}
-                    onChange={(e) => setAdjustData({ ...adjustData, quantity: parseFloat(e.target.value) || 0 })}
+                  <label className="block font-medium text-slate-700 mb-1">অ্যাকশন টাইপ *</label>
+                  <select
+                    value={adjustData.type}
+                    onChange={(e) => setAdjustData({ ...adjustData, type: e.target.value })}
                     className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                  />
+                  >
+                    <option value="purchase">নতুন ক্রয় / ইনওয়ার্ড স্টক (+) (Purchase)</option>
+                    <option value="usage">কিচেনে ব্যবহার / অপচয় (-) (Kitchen Usage)</option>
+                    <option value="wastage">নষ্ট / মেয়াদোত্তীর্ণ (-) (Wastage)</option>
+                    <option value="adjustment">স্টক সংশোধন (Manual Adjustment)</option>
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">
+                      পরিমাণ ({selectedItem.unit}) *
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      required
+                      value={adjustData.quantity}
+                      onChange={(e) => setAdjustData({ ...adjustData, quantity: parseFloat(e.target.value) || 0 })}
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">একক ক্রয়মূল্য (৳)</label>
+                    <input
+                      type="number"
+                      value={adjustData.unitCost}
+                      onChange={(e) => setAdjustData({ ...adjustData, unitCost: parseFloat(e.target.value) || 0 })}
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block font-medium text-slate-700 mb-1">একক ক্রয়মূল্য (৳)</label>
+                  <label className="block font-medium text-slate-700 mb-1">মন্তব্য / কারণ</label>
                   <input
-                    type="number"
-                    value={adjustData.unitCost}
-                    onChange={(e) => setAdjustData({ ...adjustData, unitCost: parseFloat(e.target.value) || 0 })}
+                    type="text"
+                    value={adjustData.reason}
+                    onChange={(e) => setAdjustData({ ...adjustData, reason: e.target.value })}
+                    placeholder="উদা: মতিঝিল কাঁচাবাজার থেকে খাসির মাংস ডেলিভারি"
                     className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block font-medium text-slate-700 mb-1">মন্তব্য / কারণ</label>
-                <input
-                  type="text"
-                  value={adjustData.reason}
-                  onChange={(e) => setAdjustData({ ...adjustData, reason: e.target.value })}
-                  placeholder="উদা: মতিঝিল কাঁচাবাজার থেকে খাসির মাংস ডেলিভারি"
-                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+              <div className="flex justify-end gap-2 p-4 sm:px-6 border-t border-slate-100 bg-slate-50/50 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsAdjustModalOpen(false)}

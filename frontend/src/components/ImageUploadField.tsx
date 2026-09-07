@@ -200,9 +200,9 @@ export default function ImageUploadField({
 
       {/* Previous Photo Collection Modal */}
       {isMediaModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 max-w-2xl w-full shadow-2xl space-y-4 my-8">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-y-auto animate-in fade-in duration-200">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden my-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3.5rem)] flex flex-col font-sans">
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 bg-slate-50/50 shrink-0">
               <div className="flex items-center gap-2">
                 <FolderOpen className="w-5 h-5 text-[#900C19]" />
                 <div>
@@ -221,94 +221,96 @@ export default function ImageUploadField({
               </button>
             </div>
 
-            {/* Filter & Search Bar */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px]">
-                {[
-                  { id: 'all', label: 'সব (All)' },
-                  { id: 'food', label: 'খাবার (Food)' },
-                  { id: 'hero', label: 'হিরো (Hero)' },
-                  { id: 'chef_owner', label: 'শেফ/কর্ণধার' },
-                  { id: 'logo', label: 'লোগো' },
-                ].map((cat) => (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => setSelectedMediaCategory(cat.id)}
-                    className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition-all ${
-                      selectedMediaCategory === cat.id
-                        ? 'bg-[#900C19] text-white font-semibold'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                    }`}
-                  >
-                    {cat.label}
-                  </button>
-                ))}
-              </div>
-
-              <div className="relative w-full sm:w-52 shrink-0">
-                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                <input
-                  type="text"
-                  value={mediaSearch}
-                  onChange={(e) => setMediaSearch(e.target.value)}
-                  placeholder="ছবি খুঁজুন..."
-                  className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#900C19]"
-                />
-              </div>
-            </div>
-
-            {/* Image Grid */}
-            {isLoadingMedia ? (
-              <div className="p-8 text-center text-xs text-slate-400">
-                <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-[#900C19]" />
-                <span>ছবি লোড হচ্ছে...</span>
-              </div>
-            ) : filteredMedia.length === 0 ? (
-              <div className="p-8 text-center text-xs text-slate-400 border border-dashed border-slate-200 rounded-2xl">
-                কোনো ছবি পাওয়া যায়নি
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-80 overflow-y-auto p-1">
-                {filteredMedia.map((item, idx) => {
-                  const isCurrent = value === item.url;
-                  return (
-                    <div
-                      key={item._id || item.id || idx}
-                      onClick={() => {
-                        onChange(item.url);
-                        setIsMediaModalOpen(false);
-                      }}
-                      className={`group relative rounded-xl border overflow-hidden cursor-pointer transition-all hover:scale-[1.02] flex flex-col bg-slate-50 ${
-                        isCurrent
-                          ? 'border-[#900C19] ring-2 ring-[#900C19] shadow-md'
-                          : 'border-slate-200 hover:border-orange-300'
+            <div className="p-4 sm:p-5 space-y-4 overflow-y-auto flex-1 min-h-0">
+              {/* Filter & Search Bar */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px]">
+                  {[
+                    { id: 'all', label: 'সব (All)' },
+                    { id: 'food', label: 'খাবার (Food)' },
+                    { id: 'hero', label: 'হিরো (Hero)' },
+                    { id: 'chef_owner', label: 'শেফ/কর্ণধার' },
+                    { id: 'logo', label: 'লোগো' },
+                  ].map((cat) => (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => setSelectedMediaCategory(cat.id)}
+                      className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition-all ${
+                        selectedMediaCategory === cat.id
+                          ? 'bg-[#900C19] text-white font-semibold'
+                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                       }`}
                     >
-                      <div className="relative aspect-square w-full bg-slate-100 overflow-hidden">
-                        <Image
-                          src={item.url}
-                          alt={item.title || 'Media item'}
-                          fill
-                          className="object-cover"
-                          unoptimized
-                        />
-                        {isCurrent && (
-                          <div className="absolute inset-0 bg-[#900C19]/30 flex items-center justify-center">
-                            <Check className="w-6 h-6 text-white drop-shadow-md" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-1.5 text-[10px] font-medium text-slate-800 truncate text-center">
-                        {item.title}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
 
-            <div className="flex justify-end pt-3 border-t border-slate-100">
+                <div className="relative w-full sm:w-52 shrink-0">
+                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={mediaSearch}
+                    onChange={(e) => setMediaSearch(e.target.value)}
+                    placeholder="ছবি খুঁজুন..."
+                    className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#900C19]"
+                  />
+                </div>
+              </div>
+
+              {/* Image Grid */}
+              {isLoadingMedia ? (
+                <div className="p-8 text-center text-xs text-slate-400">
+                  <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-[#900C19]" />
+                  <span>ছবি লোড হচ্ছে...</span>
+                </div>
+              ) : filteredMedia.length === 0 ? (
+                <div className="p-8 text-center text-xs text-slate-400 border border-dashed border-slate-200 rounded-2xl">
+                  কোনো ছবি পাওয়া যায়নি
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-1">
+                  {filteredMedia.map((item, idx) => {
+                    const isCurrent = value === item.url;
+                    return (
+                      <div
+                        key={item._id || item.id || idx}
+                        onClick={() => {
+                          onChange(item.url);
+                          setIsMediaModalOpen(false);
+                        }}
+                        className={`group relative rounded-xl border overflow-hidden cursor-pointer transition-all hover:scale-[1.02] flex flex-col bg-slate-50 ${
+                          isCurrent
+                            ? 'border-[#900C19] ring-2 ring-[#900C19] shadow-md'
+                            : 'border-slate-200 hover:border-orange-300'
+                        }`}
+                      >
+                        <div className="relative aspect-square w-full bg-slate-100 overflow-hidden">
+                          <Image
+                            src={item.url}
+                            alt={item.title || 'Media item'}
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                          {isCurrent && (
+                            <div className="absolute inset-0 bg-[#900C19]/30 flex items-center justify-center">
+                              <Check className="w-6 h-6 text-white drop-shadow-md" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-1.5 text-[10px] font-medium text-slate-800 truncate text-center">
+                          {item.title}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end p-3 sm:px-5 border-t border-slate-100 bg-slate-50/50 shrink-0">
               <button
                 type="button"
                 onClick={() => setIsMediaModalOpen(false)}

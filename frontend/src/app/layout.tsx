@@ -99,6 +99,7 @@ export default function RootLayout({
       <body
         className="bg-[#FAFAF9] text-slate-800 antialiased selection:bg-traditional-700 selection:text-white"
       >
+        <DynamicFavicon />
         <Navbar />
 
         <main className="min-h-screen pt-[64px] sm:pt-[72px]">{children}</main>

@@ -167,9 +167,9 @@ export default function AdminCouponsPage() {
 
       {/* Create Coupon Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-y-auto animate-in fade-in duration-200">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-md w-full shadow-2xl overflow-hidden my-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3.5rem)] flex flex-col font-sans">
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 bg-slate-50/50 shrink-0">
               <h3 className="text-base font-semibold text-slate-900 flex items-center gap-2">
                 <Tag className="w-4 h-4 text-[#900C19]" />
                 <span>নতুন প্রোমোকোড তৈরি করুন</span>
@@ -182,94 +182,96 @@ export default function AdminCouponsPage() {
               </button>
             </div>
 
-            <form onSubmit={handleCreateCoupon} className="space-y-3.5 text-xs">
-              <div>
-                <label className="block font-medium text-slate-700 mb-1">কুপন কোড (Promo Code) *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="উদা: GHAROWA50"
-                  value={formData.code}
-                  onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 uppercase font-mono font-semibold focus:outline-none focus:border-[#900C19]"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
+            <form onSubmit={handleCreateCoupon} className="flex flex-col flex-1 min-h-0 text-xs">
+              <div className="overflow-y-auto p-4 sm:p-6 space-y-3.5">
                 <div>
-                  <label className="block font-medium text-slate-700 mb-1">শিরোনাম (বাংলা) *</label>
+                  <label className="block font-medium text-slate-700 mb-1">কুপন কোড (Promo Code) *</label>
                   <input
                     type="text"
                     required
-                    value={formData.titleBn}
-                    onChange={(e) => setFormData({ ...formData, titleBn: e.target.value })}
-                    placeholder="উদা: স্পেশাল ৫০ টাকা ছাড়"
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    placeholder="উদা: GHAROWA50"
+                    value={formData.code}
+                    onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 uppercase font-mono font-semibold focus:outline-none focus:border-[#900C19]"
                   />
                 </div>
 
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">Title (English) *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.titleEn}
-                    onChange={(e) => setFormData({ ...formData, titleEn: e.target.value })}
-                    placeholder="Special 50 BDT Off"
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                  />
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">শিরোনাম (বাংলা) *</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.titleBn}
+                      onChange={(e) => setFormData({ ...formData, titleBn: e.target.value })}
+                      placeholder="উদা: স্পেশাল ৫০ টাকা ছাড়"
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">Title (English) *</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.titleEn}
+                      onChange={(e) => setFormData({ ...formData, titleEn: e.target.value })}
+                      placeholder="Special 50 BDT Off"
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">ডিসকাউন্ট টাইপ *</label>
+                    <select
+                      value={formData.discountType}
+                      onChange={(e) => setFormData({ ...formData, discountType: e.target.value })}
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    >
+                      <option value="percentage">শতকরা (%) Percentage</option>
+                      <option value="fixed">স্থির পরিমাণ (৳) Flat Amount</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">মূল্যছাড়ের পরিমাণ *</label>
+                    <input
+                      type="number"
+                      required
+                      value={formData.discountValue}
+                      onChange={(e) => setFormData({ ...formData, discountValue: parseFloat(e.target.value) || 0 })}
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">ন্যূনতম অর্ডার (৳)</label>
+                    <input
+                      type="number"
+                      value={formData.minOrderAmount}
+                      onChange={(e) => setFormData({ ...formData, minOrderAmount: parseFloat(e.target.value) || 0 })}
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">মেয়াদ শেষ হওয়ার তারিখ</label>
+                    <input
+                      type="date"
+                      required
+                      value={formData.expiryDate}
+                      onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">ডিসকাউন্ট টাইপ *</label>
-                  <select
-                    value={formData.discountType}
-                    onChange={(e) => setFormData({ ...formData, discountType: e.target.value })}
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                  >
-                    <option value="percentage">শতকরা (%) Percentage</option>
-                    <option value="fixed">স্থির পরিমাণ (৳) Flat Amount</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">মূল্যছাড়ের পরিমাণ *</label>
-                  <input
-                    type="number"
-                    required
-                    value={formData.discountValue}
-                    onChange={(e) => setFormData({ ...formData, discountValue: parseFloat(e.target.value) || 0 })}
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">ন্যূনতম অর্ডার (৳)</label>
-                  <input
-                    type="number"
-                    value={formData.minOrderAmount}
-                    onChange={(e) => setFormData({ ...formData, minOrderAmount: parseFloat(e.target.value) || 0 })}
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">মেয়াদ শেষ হওয়ার তারিখ</label>
-                  <input
-                    type="date"
-                    required
-                    value={formData.expiryDate}
-                    onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+              <div className="flex justify-end gap-2 p-4 sm:px-6 border-t border-slate-100 bg-slate-50/50 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}

@@ -234,10 +234,10 @@ export default function AdminOrdersPage() {
 
       {/* Printable Receipt / Voucher Modal */}
       {selectedOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs overflow-y-auto">
-          <div className="relative w-full max-w-md bg-white text-slate-900 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-4 print:shadow-none print:m-0 print:p-2 border border-slate-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200">
+          <div className="relative w-full max-w-md bg-white text-slate-900 rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3.5rem)] flex flex-col print:shadow-none print:m-0 print:p-2 border border-slate-200">
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3 print:hidden">
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 bg-slate-50/50 print:hidden shrink-0">
               <span className="text-xs font-semibold text-slate-500 font-mono">
                 INVOICE #{selectedOrder.orderNumber}
               </span>
@@ -259,82 +259,84 @@ export default function AdminOrdersPage() {
             </div>
 
             {/* Printable Receipt Body */}
-            <div className="text-center space-y-1 pb-3 border-b border-dashed border-slate-200">
-              <h2 className="text-base font-semibold text-slate-900">
-                ঘরোয়া হোটেল এন্ড রেস্টুরেন্ট
-              </h2>
-              <p className="text-xs text-slate-600 font-mono">Gharowa Restaurant (Since 1972)</p>
-              <p className="text-[11px] text-slate-500 font-normal">
-                ৯/সি মতিঝিল বা/এ, ঢাকা-১০০০ • ফোন: ০১৯৭৩২৫৫৮৮৮
-              </p>
-            </div>
+            <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 min-h-0">
+              <div className="text-center space-y-1 pb-3 border-b border-dashed border-slate-200">
+                <h2 className="text-base font-semibold text-slate-900">
+                  ঘরোয়া হোটেল এন্ড রেস্টুরেন্ট
+                </h2>
+                <p className="text-xs text-slate-600 font-mono">Gharowa Restaurant (Since 1972)</p>
+                <p className="text-[11px] text-slate-500 font-normal">
+                  ৯/সি মতিঝিল বা/এ, ঢাকা-১০০০ • ফোন: ০১৯৭৩২৫৫৮৮৮
+                </p>
+              </div>
 
-            {/* Order Info */}
-            <div className="text-xs space-y-1 text-slate-600 font-mono">
-              <div className="flex justify-between">
-                <span>Order ID:</span>
-                <strong className="text-slate-900 font-semibold">{selectedOrder.orderNumber}</strong>
+              {/* Order Info */}
+              <div className="text-xs space-y-1 text-slate-600 font-mono">
+                <div className="flex justify-between">
+                  <span>Order ID:</span>
+                  <strong className="text-slate-900 font-semibold">{selectedOrder.orderNumber}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span>Customer:</span>
+                  <strong className="text-slate-900 font-semibold">{selectedOrder.customer.name}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span>Phone:</span>
+                  <span>{selectedOrder.customer.phone}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Address:</span>
+                  <span className="text-right truncate max-w-[200px]">
+                    {selectedOrder.customer.address}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Date:</span>
+                  <span>{new Date(selectedOrder.createdAt).toLocaleString()}</span>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span>Customer:</span>
-                <strong className="text-slate-900 font-semibold">{selectedOrder.customer.name}</strong>
-              </div>
-              <div className="flex justify-between">
-                <span>Phone:</span>
-                <span>{selectedOrder.customer.phone}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Address:</span>
-                <span className="text-right truncate max-w-[200px]">
-                  {selectedOrder.customer.address}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>Date:</span>
-                <span>{new Date(selectedOrder.createdAt).toLocaleString()}</span>
-              </div>
-            </div>
 
-            {/* Items Table */}
-            <div className="border-t border-b border-dashed border-slate-200 py-3 space-y-2 text-xs">
-              {selectedOrder.items.map((item: any, idx: number) => (
-                <div key={idx} className="flex justify-between items-center">
-                  <div>
-                    <span className="font-semibold text-slate-900">{item.nameBn}</span>
-                    <span className="text-slate-500 text-[11px] block font-mono">
-                      ৳{item.price} × {item.quantity}
-                    </span>
+              {/* Items Table */}
+              <div className="border-t border-b border-dashed border-slate-200 py-3 space-y-2 text-xs">
+                {selectedOrder.items.map((item: any, idx: number) => (
+                  <div key={idx} className="flex justify-between items-center">
+                    <div>
+                      <span className="font-semibold text-slate-900">{item.nameBn}</span>
+                      <span className="text-slate-500 text-[11px] block font-mono">
+                        ৳{item.price} × {item.quantity}
+                      </span>
+                    </div>
+                    <span className="font-mono font-semibold text-slate-900">৳{item.subtotal}</span>
                   </div>
-                  <span className="font-mono font-semibold text-slate-900">৳{item.subtotal}</span>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
 
-            {/* Totals */}
-            <div className="space-y-1 text-xs font-mono">
-              <div className="flex justify-between text-slate-600">
-                <span>Subtotal:</span>
-                <span>৳{selectedOrder.subtotal}</span>
-              </div>
-              {selectedOrder.discount > 0 && (
-                <div className="flex justify-between text-emerald-700 font-medium">
-                  <span>Discount:</span>
-                  <span>-৳{selectedOrder.discount}</span>
+              {/* Totals */}
+              <div className="space-y-1 text-xs font-mono">
+                <div className="flex justify-between text-slate-600">
+                  <span>Subtotal:</span>
+                  <span>৳{selectedOrder.subtotal}</span>
                 </div>
-              )}
-              <div className="flex justify-between text-slate-600">
-                <span>Delivery:</span>
-                <span>৳{selectedOrder.deliveryCharge}</span>
+                {selectedOrder.discount > 0 && (
+                  <div className="flex justify-between text-emerald-700 font-medium">
+                    <span>Discount:</span>
+                    <span>-৳{selectedOrder.discount}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-slate-600">
+                  <span>Delivery:</span>
+                  <span>৳{selectedOrder.deliveryCharge}</span>
+                </div>
+                <div className="flex justify-between text-sm font-semibold text-slate-900 pt-2 border-t border-slate-100">
+                  <span>Grand Total:</span>
+                  <span>৳{selectedOrder.grandTotal}</span>
+                </div>
               </div>
-              <div className="flex justify-between text-sm font-semibold text-slate-900 pt-2 border-t border-slate-100">
-                <span>Grand Total:</span>
-                <span>৳{selectedOrder.grandTotal}</span>
-              </div>
-            </div>
 
-            <div className="text-center pt-2 text-[10px] text-slate-400 border-t border-dashed border-slate-200">
-              <p>ধন্যবাদ! আবার আসবেন।</p>
-              <p className="font-mono">Heritage Food in Motijheel Dhaka</p>
+              <div className="text-center pt-2 text-[10px] text-slate-400 border-t border-dashed border-slate-200">
+                <p>ধন্যবাদ! আবার আসবেন।</p>
+                <p className="font-mono">Heritage Food in Motijheel Dhaka</p>
+              </div>
             </div>
           </div>
         </div>

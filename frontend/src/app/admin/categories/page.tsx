@@ -383,9 +383,9 @@ export default function AdminCategoriesPage() {
 
       {/* Add / Edit Category Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-slate-200 space-y-5 animate-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-y-auto animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3.5rem)] flex flex-col animate-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-slate-100 p-4 sm:p-5 bg-slate-50/50 shrink-0">
               <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
                 <Layers className="w-4 h-4 text-[#900C19]" />
                 <span>{editingCat ? 'ক্যাটাগরি সম্পাদনা করুন' : 'নতুন ক্যাটাগরি যোগ করুন'}</span>
@@ -398,99 +398,101 @@ export default function AdminCategoriesPage() {
               </button>
             </div>
 
-            <form onSubmit={handleSave} className="space-y-4 text-xs">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <form onSubmit={handleSave} className="flex flex-col flex-1 min-h-0 text-xs">
+              <div className="overflow-y-auto p-4 sm:p-6 space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">
+                      ক্যাটাগরির নাম (বাংলা) *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.nameBn}
+                      onChange={(e) => setFormData({ ...formData, nameBn: e.target.value })}
+                      placeholder="যেমন: খিচুড়ি ও বিরিয়ানি"
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">
+                      Category Name (English) *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.nameEn}
+                      onChange={(e) => setFormData({ ...formData, nameEn: e.target.value })}
+                      placeholder="e.g. Khichuri & Biryani"
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">
+                      URL স্লাগ (Slug)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.slug}
+                      onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                      placeholder="যেমন: khichuri-biryani"
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19] font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">
+                      ক্রম সংখ্যা (Display Order)
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.displayOrder}
+                      onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <label className="block font-medium text-slate-700 mb-1">
-                    ক্যাটাগরির নাম (বাংলা) *
+                    সংক্ষিপ্ত বিবরণ (বাংলা)
                   </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.nameBn}
-                    onChange={(e) => setFormData({ ...formData, nameBn: e.target.value })}
-                    placeholder="যেমন: খিচুড়ি ও বিরিয়ানি"
+                  <textarea
+                    rows={2}
+                    value={formData.descriptionBn}
+                    onChange={(e) => setFormData({ ...formData, descriptionBn: e.target.value })}
+                    placeholder="ক্যাটাগরির খাবারের বিশেষত্ব..."
                     className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
                   />
                 </div>
 
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">
-                    Category Name (English) *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.nameEn}
-                    onChange={(e) => setFormData({ ...formData, nameEn: e.target.value })}
-                    placeholder="e.g. Khichuri & Biryani"
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">
-                    URL স্লাগ (Slug)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.slug}
-                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                    placeholder="যেমন: khichuri-biryani"
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19] font-mono"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">
-                    ক্রম সংখ্যা (Display Order)
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.displayOrder}
-                    onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-medium text-slate-700 mb-1">
-                  সংক্ষিপ্ত বিবরণ (বাংলা)
-                </label>
-                <textarea
-                  rows={2}
-                  value={formData.descriptionBn}
-                  onChange={(e) => setFormData({ ...formData, descriptionBn: e.target.value })}
-                  placeholder="ক্যাটাগরির খাবারের বিশেষত্ব..."
-                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                {/* Image Upload Component */}
+                <ImageUploadField
+                  label="ক্যাটাগরি কভার ছবি (Image URL বা ফাইল আপলোড)"
+                  value={formData.image}
+                  onChange={(url) => setFormData({ ...formData, image: url })}
+                  helperText="ব্যানার সাইজ ছবি আপলোড করুন"
                 />
+
+                <div className="flex items-center gap-2 pt-1">
+                  <input
+                    type="checkbox"
+                    id="catActive"
+                    checked={formData.isActive}
+                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                    className="w-4 h-4 text-[#900C19] rounded border-slate-300 focus:ring-[#900C19]"
+                  />
+                  <label htmlFor="catActive" className="text-slate-700 font-medium cursor-pointer">
+                    ওয়েবসাইটে সক্রিয় রাখুন (Active on Website)
+                  </label>
+                </div>
               </div>
 
-              {/* Image Upload Component */}
-              <ImageUploadField
-                label="ক্যাটাগরি কভার ছবি (Image URL বা ফাইল আপলোড)"
-                value={formData.image}
-                onChange={(url) => setFormData({ ...formData, image: url })}
-                helperText="ব্যানার সাইজ ছবি আপলোড করুন"
-              />
-
-              <div className="flex items-center gap-2 pt-1">
-                <input
-                  type="checkbox"
-                  id="catActive"
-                  checked={formData.isActive}
-                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="w-4 h-4 text-[#900C19] rounded border-slate-300 focus:ring-[#900C19]"
-                />
-                <label htmlFor="catActive" className="text-slate-700 font-medium cursor-pointer">
-                  ওয়েবসাইটে সক্রিয় রাখুন (Active on Website)
-                </label>
-              </div>
-
-              <div className="flex justify-end gap-2.5 pt-3 border-t border-slate-100">
+              <div className="flex justify-end gap-2.5 p-4 sm:px-6 border-t border-slate-100 bg-slate-50/50 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
