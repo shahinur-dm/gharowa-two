@@ -149,7 +149,30 @@
   .steam-particle-2,
   .steam-particle-3,
   .animate-float-slow,
-  .animate-glow-pulse {
+  .animate-glow-pulse,
+  .animate-marquee-continuous {
     animation: none !important;
   }
 }
+
+/* Continuous Infinite Horizontal Marquee */
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-continuous {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 32s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-continuous:hover {
+  animation-play-state: paused;
+}
+

@@ -6,6 +6,8 @@ import { MenuItem, RestaurantSettings } from '../types';
 import HeroSection from '../components/HeroSection';
 import FeaturedDishes from '../components/FeaturedDishes';
 import HomeMenuSection from '../components/HomeMenuSection';
+import BlogVideoSection from '../components/BlogVideoSection';
+import ReviewSection from '../components/ReviewSection';
 import AboutStorySection from '../components/AboutStorySection';
 import WhyChooseUs from '../components/WhyChooseUs';
 import ChefAndOwnerSection from '../components/ChefAndOwnerSection';
@@ -52,17 +54,24 @@ export default function HomePage() {
       {/* 3. Our Menu (Category Filter Pills & Responsive Grid matching Reference 2) */}
       <HomeMenuSection dishes={dishes} />
 
-      {/* 4. About Us / Our Story with Heritage Stats */}
+      {/* 4. OUR BLOG (Infinite Continuous Video Scroll & Modal Player) */}
+      <BlogVideoSection />
+
+      {/* 5. OUR REVIEW (Customers Loves - Google Review Cards & Store Summary) */}
+      <ReviewSection />
+
+      {/* 6. About Us / Our Story with Heritage Stats */}
       <AboutStorySection settings={settings} />
 
-      {/* 5. Why Choose Us (4 Value Pillars) */}
+      {/* 7. Why Choose Us (4 Value Pillars) */}
       <WhyChooseUs />
 
-      {/* 6. Chef & Owner Section */}
+      {/* 8. Chef & Owner Section */}
       <ChefAndOwnerSection settings={settings} />
 
-      {/* 7. Contact Us Section with Form & Coordinates */}
+      {/* 9. Contact Us Section with Form & Coordinates */}
       <ContactSection settings={settings} />
     </div>
   );
 }
+

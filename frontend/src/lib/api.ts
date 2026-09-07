@@ -37,7 +37,7 @@ class ApiClient {
     }
   }
 
-  get<T>(endpoint: string, params?: Record<string, any>): Promise<T> {
+  get<T = any>(endpoint: string, params?: Record<string, any>): Promise<T> {
     let url = endpoint;
     if (params) {
       const searchParams = new URLSearchParams();
@@ -54,28 +54,28 @@ class ApiClient {
     return this.request<T>(url, { method: 'GET' });
   }
 
-  post<T>(endpoint: string, body?: any): Promise<T> {
+  post<T = any>(endpoint: string, body?: any): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: body ? JSON.stringify(body) : undefined,
     });
   }
 
-  put<T>(endpoint: string, body?: any): Promise<T> {
+  put<T = any>(endpoint: string, body?: any): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'PUT',
       body: body ? JSON.stringify(body) : undefined,
     });
   }
 
-  patch<T>(endpoint: string, body?: any): Promise<T> {
+  patch<T = any>(endpoint: string, body?: any): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'PATCH',
       body: body ? JSON.stringify(body) : undefined,
     });
   }
 
-  delete<T>(endpoint: string): Promise<T> {
+  delete<T = any>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE' });
   }
 }

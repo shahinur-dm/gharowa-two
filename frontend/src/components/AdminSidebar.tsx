@@ -17,6 +17,8 @@ import {
   LogOut,
   ExternalLink,
   X,
+  Video,
+  MessageSquare,
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import GharowaLogo from './GharowaLogo';
@@ -38,6 +40,8 @@ export default function AdminSidebar({ isOpen = false, onClose }: AdminSidebarPr
     { href: '/admin/reservations', label: 'Reservations', icon: Calendar },
     { href: '/admin/menu', label: 'Menu & Products', icon: Utensils },
     { href: '/admin/categories', label: 'Categories (ক্যাটাগরি)', icon: Boxes },
+    { href: '/admin/blogs', label: 'Our Blog (ভিডিও ব্লগ)', icon: Video, badge: 'New' },
+    { href: '/admin/reviews', label: 'Our Review (রিভিউ)', icon: MessageSquare, badge: 'New' },
     { href: '/admin/inventory', label: 'Inventory Stock', icon: Boxes },
     { href: '/admin/customers', label: 'Customers', icon: Users },
     { href: '/admin/coupons', label: 'Coupons & Promo', icon: Tag },
@@ -45,6 +49,7 @@ export default function AdminSidebar({ isOpen = false, onClose }: AdminSidebarPr
     { href: '/admin/media', label: 'Media Library', icon: BarChart3 },
     { href: '/admin/settings', label: 'Website CMS & Settings', icon: Settings },
   ];
+
 
   const handleLogout = () => {
     logout();

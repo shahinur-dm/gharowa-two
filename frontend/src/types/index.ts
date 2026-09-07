@@ -285,3 +285,32 @@ export interface AdminUser {
   phone?: string;
   role: 'super_admin' | 'manager' | 'cashier' | 'kitchen_staff';
 }
+
+export interface BlogVideo {
+  _id: string;
+  title: string;
+  titleBn?: string;
+  videoUrl: string;
+  thumbnailUrl: string;
+  duration?: string;
+  authorName?: string;
+  displayOrder: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CustomerReview {
+  _id: string;
+  customerName: string;
+  avatarUrl?: string;
+  rating: number;
+  reviewText: string;
+  reviewDateText?: string;
+  platform?: 'google' | 'facebook' | 'direct';
+  isVerified?: boolean;
+  displayOrder: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}

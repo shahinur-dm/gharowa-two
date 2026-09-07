@@ -340,9 +340,197 @@ export const defaultSettings = {
   ogImageUrl: '',
 };
 
+export interface BlogVideoData {
+  _id: string;
+  title: string;
+  titleBn?: string;
+  videoUrl: string;
+  thumbnailUrl: string;
+  duration?: string;
+  authorName?: string;
+  displayOrder: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export const initialBlogVideos: BlogVideoData[] = [
+  {
+    _id: 'vid-1',
+    title: 'Gharowa Special Mutton Khichuri Review & Tasting',
+    titleBn: 'ঘরোয়ার বিখ্যাত খাসির ভুনা খিচুড়ি ফুড রিভিউ',
+    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?q=80&w=800&auto=format&fit=crop',
+    duration: '06:12',
+    authorName: 'Dhaka Foodies',
+    displayOrder: 1,
+    isActive: true,
+  },
+  {
+    _id: 'vid-2',
+    title: 'Family Feast at Motijheel Gharowa Hotel (Since 1972)',
+    titleBn: 'মতিঝিল ঘরোয়া হোটেলে ফ্যামিলি ভোজ ও অভিজ্ঞতা',
+    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop',
+    duration: '08:45',
+    authorName: 'Food Khobor',
+    displayOrder: 2,
+    isActive: true,
+  },
+  {
+    _id: 'vid-3',
+    title: 'Best Kacchi & Mutton Khichuri in Dhaka Food Hunt',
+    titleBn: 'ঢাকার সেরা খাসির কাচ্চি ও ভুনা খিচুড়ি অন্বেষণ',
+    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?q=80&w=800&auto=format&fit=crop',
+    duration: '05:30',
+    authorName: 'Taste of Bengal',
+    displayOrder: 3,
+    isActive: true,
+  },
+  {
+    _id: 'vid-4',
+    title: 'Dhaka vs Kolkata Biryani & Gharowa 50 Years Heritage',
+    titleBn: 'ঢাকা বনাম কলকাতা বিরিয়ানি ও ঘরোয়ার ৫০ বছরের ঐতিহ্য',
+    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?q=80&w=800&auto=format&fit=crop',
+    duration: '07:18',
+    authorName: 'Petuk Couple',
+    displayOrder: 4,
+    isActive: true,
+  },
+  {
+    _id: 'vid-5',
+    title: 'Gharowa Secret Ghee & Spice Recipe Behind the Kitchen',
+    titleBn: 'ঘরোয়ার রান্নাঘরের খাঁটি ঘি ও স্পেশাল মসলার গল্প',
+    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?q=80&w=800&auto=format&fit=crop',
+    duration: '04:55',
+    authorName: 'Kitchen Secrets BD',
+    displayOrder: 5,
+    isActive: true,
+  },
+];
+
+export interface CustomerReviewData {
+  _id: string;
+  customerName: string;
+  avatarUrl?: string;
+  rating: number;
+  reviewText: string;
+  reviewDateText?: string;
+  platform?: 'google' | 'facebook' | 'direct';
+  isVerified?: boolean;
+  displayOrder: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export const initialCustomerReviews: CustomerReviewData[] = [
+  {
+    _id: 'rev-1',
+    customerName: 'M H Sunny',
+    avatarUrl: '',
+    rating: 5,
+    reviewText: 'This user only left a rating.',
+    reviewDateText: '1 year ago',
+    platform: 'google',
+    isVerified: true,
+    displayOrder: 1,
+    isActive: true,
+  },
+  {
+    _id: 'rev-2',
+    customerName: 'Anny Farjana',
+    avatarUrl: '',
+    rating: 5,
+    reviewText: 'This user only left a rating.',
+    reviewDateText: '1 year ago',
+    platform: 'google',
+    isVerified: true,
+    displayOrder: 2,
+    isActive: true,
+  },
+  {
+    _id: 'rev-3',
+    customerName: 'Tanvir Ahmed Shanto',
+    avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=120&auto=format&fit=crop',
+    rating: 5,
+    reviewText: 'This user only left a rating.',
+    reviewDateText: '1 year ago',
+    platform: 'google',
+    isVerified: true,
+    displayOrder: 3,
+    isActive: true,
+  },
+  {
+    _id: 'rev-4',
+    customerName: 'Md Tanvir Ahmed',
+    avatarUrl: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?q=80&w=120&auto=format&fit=crop',
+    rating: 5,
+    reviewText: 'Good',
+    reviewDateText: '1 year ago',
+    platform: 'google',
+    isVerified: true,
+    displayOrder: 4,
+    isActive: true,
+  },
+  {
+    _id: 'rev-5',
+    customerName: 'Karimul Rizu',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=120&auto=format&fit=crop',
+    rating: 5,
+    reviewText: 'Awosm',
+    reviewDateText: '1 year ago',
+    platform: 'google',
+    isVerified: true,
+    displayOrder: 5,
+    isActive: true,
+  },
+  {
+    _id: 'rev-6',
+    customerName: 'Quazi Tasnim Zaman',
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=120&auto=format&fit=crop',
+    rating: 5,
+    reviewText: 'This user only left a rating.',
+    reviewDateText: '1 year ago',
+    platform: 'google',
+    isVerified: true,
+    displayOrder: 6,
+    isActive: true,
+  },
+  {
+    _id: 'rev-7',
+    customerName: 'Tonmoy Biswas',
+    avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=120&auto=format&fit=crop',
+    rating: 5,
+    reviewText: 'This user only left a rating.',
+    reviewDateText: '1 year ago',
+    platform: 'google',
+    isVerified: true,
+    displayOrder: 7,
+    isActive: true,
+  },
+  {
+    _id: 'rev-8',
+    customerName: 'Rafiqul Islam',
+    avatarUrl: '',
+    rating: 5,
+    reviewText: 'ঘরোয়ার খাসির ভুনা খিচুড়ি ও বোরহানি ঢাকার মধ্যে অতুলনীয়! ৫০ বছরের সেই একই খাঁটি স্বাদ।',
+    reviewDateText: '2 weeks ago',
+    platform: 'google',
+    isVerified: true,
+    displayOrder: 8,
+    isActive: true,
+  },
+];
+
 // In-Memory Storage Instances
 let globalCategories: CategoryData[] = [...initialCategories];
 let globalMenuItems: MenuItemData[] = [...initialMenuItems];
+let globalBlogVideos: BlogVideoData[] = [...initialBlogVideos];
+let globalCustomerReviews: CustomerReviewData[] = [...initialCustomerReviews];
 let globalSettings = { ...defaultSettings };
 
 export const getStoreCategories = () => globalCategories;
@@ -387,8 +575,47 @@ export const deleteStoreMenuItem = (id: string) => {
   return true;
 };
 
+// Blog Videos Store
+export const getStoreBlogVideos = () => globalBlogVideos;
+export const addStoreBlogVideo = (video: BlogVideoData) => {
+  globalBlogVideos.push(video);
+  return video;
+};
+export const updateStoreBlogVideo = (id: string, updates: Partial<BlogVideoData>) => {
+  const idx = globalBlogVideos.findIndex((v) => v._id === id);
+  if (idx !== -1) {
+    globalBlogVideos[idx] = { ...globalBlogVideos[idx], ...updates };
+    return globalBlogVideos[idx];
+  }
+  return null;
+};
+export const deleteStoreBlogVideo = (id: string) => {
+  globalBlogVideos = globalBlogVideos.filter((v) => v._id !== id);
+  return true;
+};
+
+// Customer Reviews Store
+export const getStoreCustomerReviews = () => globalCustomerReviews;
+export const addStoreCustomerReview = (review: CustomerReviewData) => {
+  globalCustomerReviews.push(review);
+  return review;
+};
+export const updateStoreCustomerReview = (id: string, updates: Partial<CustomerReviewData>) => {
+  const idx = globalCustomerReviews.findIndex((r) => r._id === id);
+  if (idx !== -1) {
+    globalCustomerReviews[idx] = { ...globalCustomerReviews[idx], ...updates };
+    return globalCustomerReviews[idx];
+  }
+  return null;
+};
+export const deleteStoreCustomerReview = (id: string) => {
+  globalCustomerReviews = globalCustomerReviews.filter((r) => r._id !== id);
+  return true;
+};
+
 export const getStoreSettings = () => globalSettings;
 export const updateStoreSettings = (updates: Partial<typeof defaultSettings>) => {
   globalSettings = { ...globalSettings, ...updates };
   return globalSettings;
 };
+
