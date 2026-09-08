@@ -1,19 +1,27 @@
 import { NextResponse } from 'next/server';
-import { getStoreMenuItems, getStoreCategories } from '@/lib/serverStore';
+import { getStoreMenuItems, getStoreCategories, getStoreOrders } from '@/lib/serverStore';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET() {
   try {
     const items = getStoreMenuItems();
     const categories = getStoreCategories();
+    const orders = getStoreOrders();
+
+    const pendingCount = orders.filter((o) => o.orderStatus === 'pending').length;
+    const cookingCount = orders.filter((o) => o.orderStatus === 'cooking').length;
+    const totalOrderAmount = orders.reduce((sum, o) => sum + (o.grandTotal || 0), 0);
 
     return NextResponse.json({
       success: true,
       data: {
-        todayRevenue: 48500,
-        todayOrdersCount: 42,
-        activeKitchenCount: 3,
-        pendingOrdersCount: 2,
-        totalOrdersCount: 1250,
+        todayRevenue: 48500 + totalOrderAmount,
+        todayOrdersCount: 42 + orders.length,
+        activeKitchenCount: cookingCount || 3,
+        pendingOrdersCount: pendingCount,
+        totalOrdersCount: 1250 + orders.length,
         lowStockItemsCount: 1,
         totalProductsCount: items.length,
         totalCategoriesCount: categories.length,
@@ -26,29 +34,7 @@ export async function GET() {
           { day: 'Thu', date: '27 Aug', revenue: 52000, orders: 48 },
           { day: 'Fri', date: '28 Aug', revenue: 58500, orders: 55 },
         ],
-        recentOrders: [
-          {
-            _id: 'ord-101',
-            orderNumber: 'GH-8901',
-            customer: { name: 'Shahinur Rahman', phone: '01711223344' },
-            grandTotal: 1140,
-            orderStatus: 'cooking',
-          },
-          {
-            _id: 'ord-102',
-            orderNumber: 'GH-8902',
-            customer: { name: 'Mohammad Faruk', phone: '01819334455' },
-            grandTotal: 580,
-            orderStatus: 'ready',
-          },
-          {
-            _id: 'ord-103',
-            orderNumber: 'GH-8903',
-            customer: { name: 'Tarek Hasan', phone: '01973255888' },
-            grandTotal: 840,
-            orderStatus: 'delivered',
-          },
-        ],
+        recentOrders: orders.slice(0, 5),
       },
     });
   } catch (error: any) {

@@ -407,21 +407,72 @@ export default function AdminSettingsPage() {
               </div>
             </div>
 
-            {/* Images */}
+            {/* Media Options */}
             <div className="space-y-4 pt-3 border-t border-slate-100">
-              <ImageUploadField
-                label="Hero Signature Dish Image (প্রধান খাবারের ছবি)"
-                value={settings.heroImageUrl || ''}
-                onChange={(url) => setSettings({ ...settings, heroImageUrl: url })}
-                helperText="Upload your signature Mutton Khichuri dish image."
-              />
+              <div>
+                <label className="block font-medium text-slate-700 mb-2">
+                  হিরো মিডিয়া ফরম্যাট (Hero Media Format)
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setSettings({ ...settings, heroMediaType: 'image' })}
+                    className={`flex items-center justify-center gap-2 py-2 px-4 rounded-xl border text-xs font-bold transition-all ${
+                      settings.heroMediaType !== 'video'
+                        ? 'border-[#900C19] bg-rose-50/60 text-[#900C19]'
+                        : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    <span>ছবি (Image)</span>
+                  </button>
 
-              <ImageUploadField
-                label="Hero Sauce / Pouring Image (সুস্বাদু গ্রেভি বা পরিবেশন ছবি)"
-                value={settings.heroPouringImageUrl || ''}
-                onChange={(url) => setSettings({ ...settings, heroPouringImageUrl: url })}
-                helperText="Secondary garnish / gravy image displayed with dynamic visual effect."
-              />
+                  <button
+                    type="button"
+                    onClick={() => setSettings({ ...settings, heroMediaType: 'video' })}
+                    className={`flex items-center justify-center gap-2 py-2 px-4 rounded-xl border text-xs font-bold transition-all ${
+                      settings.heroMediaType === 'video'
+                        ? 'border-[#900C19] bg-rose-50/60 text-[#900C19]'
+                        : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    <span>ভিডিও (Video)</span>
+                  </button>
+                </div>
+              </div>
+
+              {settings.heroMediaType === 'video' ? (
+                <div className="space-y-3 p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">
+                      হিরো ভিডিও লিঙ্ক (Direct Video URL - MP4 / WebM)
+                    </label>
+                    <input
+                      type="url"
+                      value={settings.heroVideoUrl || ''}
+                      onChange={(e) => setSettings({ ...settings, heroVideoUrl: e.target.value })}
+                      placeholder="https://example.com/hero-video.mp4"
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                    />
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      অটোপ্লে এবং লুপ প্লেব্যাক সমর্থিত MP4 অথবা WebM ভিডিও ফাইল লিঙ্ক দিন।
+                    </p>
+                  </div>
+
+                  <ImageUploadField
+                    label="ভিডিও পোস্টার / কভার ছবি (Video Poster / Fallback Image)"
+                    value={settings.heroImageUrl || ''}
+                    onChange={(url) => setSettings({ ...settings, heroImageUrl: url })}
+                    helperText="ভিডিও লোড হতে বিলম্ব হলে বা মোবাইল ডিভাইসে প্রিভিউ হিসেবে এটি প্রদর্শিত হবে।"
+                  />
+                </div>
+              ) : (
+                <ImageUploadField
+                  label="Hero Signature Dish Image (প্রধান খাবারের ছবি)"
+                  value={settings.heroImageUrl || ''}
+                  onChange={(url) => setSettings({ ...settings, heroImageUrl: url })}
+                  helperText="হিরো ব্যানারে প্রদর্শনের জন্য উচ্চ মানের খাবারের ছবি (Mutton Khichuri) নির্বাচন করুন।"
+                />
+              )}
             </div>
           </div>
         )}

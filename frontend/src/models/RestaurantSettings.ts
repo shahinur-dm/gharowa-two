@@ -33,6 +33,8 @@ export interface IRestaurantSettings extends Document {
   heroSubtitleEn?: string;
   heroBadgeBn?: string;
   heroBadgeEn?: string;
+  heroMediaType?: 'image' | 'video';
+  heroVideoUrl?: string;
   heroImageUrl?: string;
   heroPouringImageUrl?: string;
   heroCtaTextBn?: string;
@@ -106,6 +108,8 @@ const RestaurantSettingsSchema = new Schema<IRestaurantSettings>(
     heroSubtitleEn: { type: String, default: 'Traditional taste, rich aroma and perfectly cooked mutton.' },
     heroBadgeBn: { type: String, default: 'খাঁটি ও ঐতিহ্যবাহী' },
     heroBadgeEn: { type: String, default: 'AUTHENTIC' },
+    heroMediaType: { type: String, enum: ['image', 'video'], default: 'image' },
+    heroVideoUrl: { type: String, default: '' },
     heroImageUrl: {
       type: String,
       default: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?q=80&w=1000&auto=format&fit=crop',

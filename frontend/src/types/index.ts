@@ -215,6 +215,8 @@ export interface RestaurantSettings {
   heroSubtitleEn?: string;
   heroBadgeBn?: string;
   heroBadgeEn?: string;
+  heroMediaType?: 'image' | 'video';
+  heroVideoUrl?: string;
   heroImageUrl?: string;
   heroPouringImageUrl?: string;
   heroBgPatternUrl?: string;
@@ -251,21 +253,26 @@ export interface RestaurantSettings {
   ownerTitleBn?: string;
   ownerTitleEn?: string;
   ownerDesignation?: string;
+  ownerBioBn?: string;
+  ownerBioEn?: string;
   ownerStoryBn?: string;
   ownerStoryEn?: string;
   ownerQuoteBn?: string;
   ownerQuoteEn?: string;
   ownerImageUrl?: string;
-  // Menu Board Image CMS
-  menuBoardImageUrl?: string;
-  isMenuBoardEnabled?: boolean;
-  // Popular Dishes CMS
+  // Sections toggle
+  isPopularDishesEnabled?: boolean;
   popularDishesTitleBn?: string;
   popularDishesTitleEn?: string;
   popularDishesSubtitleBn?: string;
   popularDishesSubtitleEn?: string;
-  isPopularDishesEnabled?: boolean;
-  // Footer & Branding CMS
+  isMenuBoardEnabled?: boolean;
+  menuBoardImageUrl?: string;
+  menuBoardTitleBn?: string;
+  menuBoardTitleEn?: string;
+  menuBoardSubtitleBn?: string;
+  menuBoardSubtitleEn?: string;
+  // Footer CMS
   footerDescriptionBn?: string;
   footerDescriptionEn?: string;
   copyrightTextBn?: string;
@@ -329,9 +336,15 @@ export interface BrandPartner {
 export interface HeroSlide {
   _id: string;
   title: string;
-  mainImageUrl: string;
-  supportingImageUrl?: string;
+  titleBn?: string;
+  subtitleEn?: string;
+  subtitleBn?: string;
   badgeText?: string;
+  badgeBn?: string;
+  mediaType?: 'image' | 'video';
+  mainImageUrl: string;
+  videoUrl?: string;
+  supportingImageUrl?: string;
   displayOrder: number;
   slideDurationSeconds?: number;
   isActive: boolean;

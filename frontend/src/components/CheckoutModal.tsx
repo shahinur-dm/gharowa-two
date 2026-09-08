@@ -246,7 +246,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   <option value="paltan">পল্টন / বিজয়নগর (Paltan / Bijoynagar)</option>
                   <option value="shahbag">শাহবাগ / ঢাকা বিশ্ববিদ্যালয় (Shahbag / DU)</option>
                   <option value="shantinagar">শান্তিনগর / কাকরাইল (Shantinagar / Kakrail)</option>
-                  <option value="w客戶wari">ওয়ারী / টিকাটুলি (Wari / Tikatuli)</option>
+                  <option value="wari">ওয়ারী / টিকাটুলি (Wari / Tikatuli)</option>
                   <option value="dhanmondi">ধানমন্ডি (Dhanmondi)</option>
                   <option value="gulshan">গুলশান / বনানী (Gulshan / Banani)</option>
                   <option value="other_dhaka">অন্যান্য এলাকা (Other Dhaka)</option>

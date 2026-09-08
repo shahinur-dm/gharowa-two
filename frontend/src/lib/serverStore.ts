@@ -521,6 +521,8 @@ export const defaultSettings = {
   heroSubtitleEn: 'Traditional taste, rich aroma and perfectly cooked mutton.',
   heroBadgeBn: 'খাঁটি ও ঐতিহ্যবাহী',
   heroBadgeEn: 'AUTHENTIC',
+  heroMediaType: 'image',
+  heroVideoUrl: '',
   heroImageUrl: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?q=80&w=1000&auto=format&fit=crop',
   heroPouringImageUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?q=80&w=800&auto=format&fit=crop',
   heroCtaTextBn: 'অর্ডার করুন',
@@ -735,9 +737,15 @@ export const deleteStoreBrandPartner = (id: string) => {
 export interface HeroSlideData {
   _id: string;
   title: string;
-  mainImageUrl: string;
-  supportingImageUrl?: string;
+  titleBn?: string;
+  subtitleEn?: string;
+  subtitleBn?: string;
   badgeText?: string;
+  badgeBn?: string;
+  mediaType?: 'image' | 'video';
+  mainImageUrl: string;
+  videoUrl?: string;
+  supportingImageUrl?: string;
   displayOrder: number;
   slideDurationSeconds?: number;
   isActive: boolean;
@@ -749,9 +757,14 @@ export const initialHeroSlides: HeroSlideData[] = [
   {
     _id: 'slide-1',
     title: 'ঐতিহ্যবাহী খাসির ভুনা খিচুড়ি (Mutton Khichuri)',
+    titleBn: 'ঐতিহ্যবাহী খাসির ভুনা খিচুড়ি',
+    subtitleEn: 'Traditional taste, rich aroma and perfectly cooked mutton.',
+    subtitleBn: 'আসল স্বাদ, মোহময় সুবাস ও নিপুণভাবে রান্না করা খাসির নরম মাংস।',
+    badgeText: 'AUTHENTIC',
+    badgeBn: 'খাঁটি ও ঐতিহ্যবাহী',
+    mediaType: 'image',
     mainImageUrl: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?q=80&w=800&auto=format&fit=crop',
-    supportingImageUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?q=80&w=800&auto=format&fit=crop',
-    badgeText: '1972',
+    supportingImageUrl: '',
     displayOrder: 1,
     slideDurationSeconds: 4,
     isActive: true,
@@ -759,9 +772,14 @@ export const initialHeroSlides: HeroSlideData[] = [
   {
     _id: 'slide-2',
     title: 'স্পেশাল খাসির কাচ্চি বিরিয়ানি (Mutton Kacchi)',
+    titleBn: 'স্পেশাল খাসির কাচ্চি বিরিয়ানি',
+    subtitleEn: 'Slow-cooked tender mutton layered with aromatic basmati rice & potato.',
+    subtitleBn: 'সুগন্ধি বাসমতী চাল ও আলুর সাথে দমে রান্না করা নরম খাসির কাচ্চি।',
+    badgeText: 'AUTHENTIC',
+    badgeBn: 'খাঁটি ও ঐতিহ্যবাহী',
+    mediaType: 'image',
     mainImageUrl: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?q=80&w=800&auto=format&fit=crop',
-    supportingImageUrl: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=800&auto=format&fit=crop',
-    badgeText: '1972',
+    supportingImageUrl: '',
     displayOrder: 2,
     slideDurationSeconds: 4,
     isActive: true,
@@ -769,9 +787,14 @@ export const initialHeroSlides: HeroSlideData[] = [
   {
     _id: 'slide-3',
     title: 'খাসির লেগ খিচুড়ি (Mutton Leg Khichuri)',
+    titleBn: 'খাসির লেগ খিচুড়ি',
+    subtitleEn: 'Whole mutton shank cooked in aromatic spiced bhuna khichuri.',
+    subtitleBn: 'আস্ত খাসির লেগ পিস দিয়ে ভুনা ঐতিহ্যবাহী স্পেশাল খিচুড়ি।',
+    badgeText: 'AUTHENTIC',
+    badgeBn: 'খাঁটি ও ঐতিহ্যবাহী',
+    mediaType: 'image',
     mainImageUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?q=80&w=800&auto=format&fit=crop',
-    supportingImageUrl: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=800&auto=format&fit=crop',
-    badgeText: '1972',
+    supportingImageUrl: '',
     displayOrder: 3,
     slideDurationSeconds: 4,
     isActive: true,
@@ -779,9 +802,14 @@ export const initialHeroSlides: HeroSlideData[] = [
   {
     _id: 'slide-4',
     title: 'স্পেশাল চিকেন বিরিয়ানি ও কাবাব (Chicken Biryani)',
+    titleBn: 'স্পেশাল চিকেন বিরিয়ানি',
+    subtitleEn: 'Royal spiced chicken biryani served with mouthwatering aroma.',
+    subtitleBn: 'ঘরোয়ার স্পেশাল মসলায় তৈরি সুস্বাদু চিকেন বিরিয়ানি।',
+    badgeText: 'AUTHENTIC',
+    badgeBn: 'খাঁটি ও ঐতিহ্যবাহী',
+    mediaType: 'image',
     mainImageUrl: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?q=80&w=800&auto=format&fit=crop',
-    supportingImageUrl: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=800&auto=format&fit=crop',
-    badgeText: '1972',
+    supportingImageUrl: '',
     displayOrder: 4,
     slideDurationSeconds: 4,
     isActive: true,
@@ -918,6 +946,177 @@ export const deleteStoreMediaItem = (id: string) => {
   globalMediaItems = globalMediaItems.filter((m) => m._id !== id && m.id !== id);
   return true;
 };
+
+// ==================== ORDERS STORE ====================
+export interface OrderItemData {
+  menuItemId?: string;
+  nameBn: string;
+  nameEn?: string;
+  price: number;
+  quantity: number;
+  subtotal: number;
+  notes?: string;
+}
+
+export interface OrderData {
+  _id: string;
+  orderNumber: string;
+  customer: {
+    name: string;
+    phone: string;
+    email?: string;
+    address: string;
+    area?: string;
+  };
+  items: OrderItemData[];
+  subtotal: number;
+  deliveryCharge: number;
+  discount: number;
+  couponCode?: string;
+  grandTotal: number;
+  paymentMethod: 'cash_on_delivery' | 'bkash' | 'nagad' | 'pos_card' | 'counter_cash';
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
+  orderStatus: 'pending' | 'cooking' | 'ready' | 'delivered' | 'cancelled';
+  source: 'website' | 'website_whatsapp' | 'phone' | 'counter';
+  statusHistory?: Array<{
+    status: string;
+    changedAt: string;
+    changedBy?: string;
+    note?: string;
+  }>;
+  specialInstructions?: string;
+  whatsappMessage?: string;
+  estimatedDeliveryMinutes?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const initialOrders: OrderData[] = [
+  {
+    _id: 'ord-1001',
+    orderNumber: 'GH-1001',
+    customer: {
+      name: 'Shahinur Akter',
+      phone: '01733917395',
+      email: '',
+      address: 'House #12, Road #4, Motijheel C/A',
+      area: 'motijheel',
+    },
+    items: [
+      {
+        nameBn: 'ঐতিহ্যবাহী খাসির ভুনা খিচুড়ি',
+        nameEn: 'Special Mutton Bhuna Khichuri',
+        price: 360,
+        quantity: 2,
+        subtotal: 720,
+      },
+      {
+        nameBn: 'ঘরোয়া স্পেশাল বোরহানি',
+        nameEn: 'Gharowa Special Borhani',
+        price: 80,
+        quantity: 2,
+        subtotal: 160,
+      },
+    ],
+    subtotal: 880,
+    deliveryCharge: 60,
+    discount: 0,
+    grandTotal: 940,
+    paymentMethod: 'cash_on_delivery',
+    paymentStatus: 'pending',
+    orderStatus: 'pending',
+    source: 'website_whatsapp',
+    createdAt: new Date(Date.now() - 3600000).toISOString(),
+    updatedAt: new Date(Date.now() - 3600000).toISOString(),
+  },
+  {
+    _id: 'ord-1002',
+    orderNumber: 'GH-1002',
+    customer: {
+      name: 'Rafiqul Islam',
+      phone: '01812345678',
+      email: '',
+      address: 'Paltan Tower, 4th floor, Dhaka',
+      area: 'paltan',
+    },
+    items: [
+      {
+        nameBn: 'ঘরোয়া স্পেশাল খাসির কাচ্চি',
+        nameEn: 'Special Mutton Kacchi Biryani',
+        price: 380,
+        quantity: 3,
+        subtotal: 1140,
+      },
+      {
+        nameBn: 'মাটির হাঁড়ির ফিরনি',
+        nameEn: 'Special Shahi Firni',
+        price: 90,
+        quantity: 3,
+        subtotal: 270,
+      },
+    ],
+    subtotal: 1410,
+    deliveryCharge: 0,
+    discount: 0,
+    grandTotal: 1410,
+    paymentMethod: 'bkash',
+    paymentStatus: 'paid',
+    orderStatus: 'cooking',
+    source: 'website_whatsapp',
+    createdAt: new Date(Date.now() - 7200000).toISOString(),
+    updatedAt: new Date(Date.now() - 7200000).toISOString(),
+  },
+];
+
+let globalOrders: OrderData[] = [...initialOrders];
+
+export const getStoreOrders = (filter?: { status?: string; search?: string }) => {
+  let result = [...globalOrders];
+  if (filter?.status && filter.status !== 'all') {
+    result = result.filter((o) => o.orderStatus === filter.status);
+  }
+  if (filter?.search) {
+    const q = filter.search.toLowerCase();
+    result = result.filter(
+      (o) =>
+        o.orderNumber.toLowerCase().includes(q) ||
+        o.customer.name.toLowerCase().includes(q) ||
+        o.customer.phone.includes(q)
+    );
+  }
+  return result;
+};
+
+export const addStoreOrder = (order: OrderData) => {
+  globalOrders.unshift(order);
+  return order;
+};
+
+export const getStoreOrderById = (id: string) => {
+  return globalOrders.find((o) => o._id === id || o.orderNumber === id);
+};
+
+export const updateStoreOrderStatus = (id: string, status: string, note?: string) => {
+  const idx = globalOrders.findIndex((o) => o._id === id || o.orderNumber === id);
+  if (idx !== -1) {
+    globalOrders[idx].orderStatus = status as any;
+    if (status === 'delivered') {
+      globalOrders[idx].paymentStatus = 'paid';
+    }
+    if (!globalOrders[idx].statusHistory) {
+      globalOrders[idx].statusHistory = [];
+    }
+    globalOrders[idx].statusHistory!.push({
+      status,
+      changedAt: new Date().toISOString(),
+      note: note || `Status updated to ${status}`,
+    });
+    globalOrders[idx].updatedAt = new Date().toISOString();
+    return globalOrders[idx];
+  }
+  return null;
+};
+
 
 
 

@@ -33,18 +33,38 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    if (!body.mainImageUrl) {
+    if (!body.mainImageUrl && !body.videoUrl) {
       return NextResponse.json(
-        { success: false, message: 'মূল হিরো ছবির লিঙ্ক (Main Image URL) আবশ্যক' },
+        { success: false, message: 'মূল হিরো ছবি বা ভিডিও লিঙ্ক আবশ্যক' },
         { status: 400 }
       );
     }
 
-    const slideData = {
+    const slideData: {
+      title: string;
+      titleBn: string;
+      subtitleEn: string;
+      subtitleBn: string;
+      badgeText: string;
+      badgeBn: string;
+      mediaType: 'image' | 'video';
+      mainImageUrl: string;
+      videoUrl: string;
+      supportingImageUrl: string;
+      displayOrder: number;
+      slideDurationSeconds: number;
+      isActive: boolean;
+    } = {
       title: body.title ? body.title.trim() : 'Gharowa Hero Dish',
-      mainImageUrl: body.mainImageUrl.trim(),
+      titleBn: body.titleBn ? body.titleBn.trim() : '',
+      subtitleEn: body.subtitleEn ? body.subtitleEn.trim() : '',
+      subtitleBn: body.subtitleBn ? body.subtitleBn.trim() : '',
+      badgeText: body.badgeText ? body.badgeText.trim() : 'AUTHENTIC',
+      badgeBn: body.badgeBn ? body.badgeBn.trim() : '',
+      mediaType: body.mediaType === 'video' ? 'video' : 'image',
+      mainImageUrl: body.mainImageUrl ? body.mainImageUrl.trim() : '',
+      videoUrl: body.videoUrl ? body.videoUrl.trim() : '',
       supportingImageUrl: body.supportingImageUrl ? body.supportingImageUrl.trim() : '',
-      badgeText: body.badgeText ? body.badgeText.trim() : '1972',
       displayOrder: Number(body.displayOrder) || 0,
       slideDurationSeconds: Number(body.slideDurationSeconds) || 4,
       isActive: body.isActive !== false,

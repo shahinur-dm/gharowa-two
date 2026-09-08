@@ -13,6 +13,8 @@ import {
   Clock,
   AlertCircle,
   CheckCircle2,
+  Video,
+  ImageIcon,
 } from 'lucide-react';
 import { HeroSlide } from '../../../types';
 import { api } from '../../../lib/api';
@@ -28,9 +30,15 @@ export default function AdminHeroBannerPage() {
 
   const [formData, setFormData] = useState({
     title: '',
+    titleBn: '',
+    subtitleEn: '',
+    subtitleBn: '',
+    badgeText: 'AUTHENTIC',
+    badgeBn: 'খাঁটি ও ঐতিহ্যবাহী',
+    mediaType: 'image' as 'image' | 'video',
     mainImageUrl: '',
+    videoUrl: '',
     supportingImageUrl: '',
-    badgeText: '1972',
     displayOrder: 0,
     slideDurationSeconds: 4,
     isActive: true,
@@ -65,9 +73,15 @@ export default function AdminHeroBannerPage() {
     setEditingSlide(null);
     setFormData({
       title: '',
+      titleBn: '',
+      subtitleEn: '',
+      subtitleBn: '',
+      badgeText: 'AUTHENTIC',
+      badgeBn: 'খাঁটি ও ঐতিহ্যবাহী',
+      mediaType: 'image',
       mainImageUrl: '',
+      videoUrl: '',
       supportingImageUrl: '',
-      badgeText: '1972',
       displayOrder: slides.length + 1,
       slideDurationSeconds: 4,
       isActive: true,
@@ -79,9 +93,15 @@ export default function AdminHeroBannerPage() {
     setEditingSlide(slide);
     setFormData({
       title: slide.title || '',
+      titleBn: slide.titleBn || '',
+      subtitleEn: slide.subtitleEn || '',
+      subtitleBn: slide.subtitleBn || '',
+      badgeText: slide.badgeText || 'AUTHENTIC',
+      badgeBn: slide.badgeBn || 'খাঁটি ও ঐতিহ্যবাহী',
+      mediaType: slide.mediaType === 'video' ? 'video' : 'image',
       mainImageUrl: slide.mainImageUrl || '',
+      videoUrl: slide.videoUrl || '',
       supportingImageUrl: slide.supportingImageUrl || '',
-      badgeText: slide.badgeText || '1972',
       displayOrder: slide.displayOrder || 0,
       slideDurationSeconds: slide.slideDurationSeconds || 4,
       isActive: slide.isActive !== false,
@@ -91,8 +111,12 @@ export default function AdminHeroBannerPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.mainImageUrl.trim()) {
+    if (formData.mediaType === 'image' && !formData.mainImageUrl.trim()) {
       showToast('error', 'মূল খাবারের ছবির লিঙ্ক (Main Image URL) পূরণ করুন');
+      return;
+    }
+    if (formData.mediaType === 'video' && !formData.videoUrl.trim() && !formData.mainImageUrl.trim()) {
+      showToast('error', 'ভিডিওর লিঙ্ক (Video URL) পূরণ করুন');
       return;
     }
 
@@ -241,24 +265,46 @@ export default function AdminHeroBannerPage() {
                 slide.isActive ? 'border-slate-200 shadow-2xs' : 'border-slate-200/60 opacity-60 bg-slate-50/50'
               }`}
             >
-              {/* Image Preview Container */}
-              <div className="relative aspect-square bg-slate-900 overflow-hidden group">
-                <img
-                  src={slide.mainImageUrl}
-                  alt={slide.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-
-                {/* Supporting image badge on top-right */}
-                {slide.supportingImageUrl && (
-                  <div className="absolute top-2 right-2 w-14 h-12 rounded-lg border-2 border-white overflow-hidden shadow-md">
-                    <img
-                      src={slide.supportingImageUrl}
-                      alt="Supporting preview"
+              {/* Media Preview Container */}
+              <div className="relative aspect-video bg-slate-900 overflow-hidden group">
+                {slide.mediaType === 'video' || slide.videoUrl ? (
+                  slide.videoUrl ? (
+                    <video
+                      src={slide.videoUrl}
+                      poster={slide.mainImageUrl}
                       className="w-full h-full object-cover"
+                      muted
+                      loop
+                      playsInline
                     />
-                  </div>
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-slate-950 text-slate-400">
+                      <Video className="w-8 h-8 text-amber-500 mb-1" />
+                      <span className="text-xs">Video Slide</span>
+                    </div>
+                  )
+                ) : (
+                  <img
+                    src={slide.mainImageUrl}
+                    alt={slide.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
                 )}
+
+                {/* Media Type Badge (Top Left) */}
+                <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-xs text-[10px] font-bold text-white">
+                  {slide.mediaType === 'video' || slide.videoUrl ? (
+                    <>
+                      <Video className="w-3 h-3 text-amber-400" />
+                      <span>ভিডিও (Video)</span>
+                    </>
+                  ) : (
+                    <>
+                      <ImageIcon className="w-3 h-3 text-emerald-400" />
+                      <span>ছবি (Image)</span>
+                    </>
+                  )}
+                </div>
 
                 {/* Order & Duration Badges */}
                 <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[10px] text-white">
@@ -276,8 +322,14 @@ export default function AdminHeroBannerPage() {
               <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                 <div>
                   <h4 className="text-sm font-bold text-slate-900 line-clamp-1">{slide.title}</h4>
+                  {slide.titleBn && (
+                    <p className="text-xs text-slate-500 font-bengali line-clamp-1">{slide.titleBn}</p>
+                  )}
+                  {slide.subtitleEn && (
+                    <p className="text-[11px] text-slate-400 line-clamp-1 mt-0.5">{slide.subtitleEn}</p>
+                  )}
                   <p className="text-[11px] text-slate-400 mt-0.5">
-                    ব্যাজ লেখা: <span className="text-slate-700 font-semibold">{slide.badgeText || '1972'}</span>
+                    ব্যাজ: <span className="text-slate-700 font-semibold">{slide.badgeText || 'AUTHENTIC'}</span>
                   </p>
                 </div>
 
@@ -321,7 +373,7 @@ export default function AdminHeroBannerPage() {
       {/* Add / Edit Slide Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200 overflow-y-auto">
-          <div className="bg-white w-full max-w-lg max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3.5rem)] rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden my-auto">
+          <div className="bg-white w-full max-w-xl max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3.5rem)] rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden my-auto">
             {/* Modal Header */}
             <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
               <div className="flex items-center gap-2">
@@ -342,36 +394,135 @@ export default function AdminHeroBannerPage() {
             {/* Modal Form */}
             <form onSubmit={handleSave} className="flex flex-col flex-1 overflow-hidden min-h-0">
               <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 min-h-0 overscroll-contain">
+                {/* Media Type Selector */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    খাবারের নাম / শিরোনাম (Title / Food Name) *
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                    মিডিয়া টাইপ (Media Type: Image or Video) *
                   </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="e.g. Mutton Khichuri / Kacchi"
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C] focus:ring-1 focus:ring-[#EA580C]"
-                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, mediaType: 'image' })}
+                      className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border text-xs font-bold transition-all ${
+                        formData.mediaType === 'image'
+                          ? 'border-[#EA580C] bg-orange-50/60 text-[#EA580C] shadow-2xs'
+                          : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      <ImageIcon className="w-4 h-4" />
+                      <span>ছবি (Image)</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, mediaType: 'video' })}
+                      className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border text-xs font-bold transition-all ${
+                        formData.mediaType === 'video'
+                          ? 'border-[#EA580C] bg-orange-50/60 text-[#EA580C] shadow-2xs'
+                          : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      <Video className="w-4 h-4" />
+                      <span>ভিডিও (Video)</span>
+                    </button>
+                  </div>
                 </div>
 
-                <ImageUploadField
-                  label="মূল খাবারের ছবি (Main Dish Image) *"
-                  value={formData.mainImageUrl}
-                  onChange={(url) => setFormData({ ...formData, mainImageUrl: url })}
-                  category="hero"
-                  helperText="Upload From Device অথবা Previous Photo Collection থেকে ছবি নির্বাচন করুন।"
-                />
+                {/* Title (EN & BN) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      হিরো শিরোনাম (Title - English) *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      placeholder="e.g. MUTTON KHICHURI"
+                      className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C] focus:ring-1 focus:ring-[#EA580C]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      হিরো শিরোনাম (বাংলা - Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.titleBn}
+                      onChange={(e) => setFormData({ ...formData, titleBn: e.target.value })}
+                      placeholder="ঐতিহ্যবাহী খাসির ভুনা খিচুড়ি"
+                      className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C] focus:ring-1 focus:ring-[#EA580C]"
+                    />
+                  </div>
+                </div>
 
-                <ImageUploadField
-                  label="টপ-রাইট সাপোর্টিং ছবি (Optional Supporting Dish Image)"
-                  value={formData.supportingImageUrl}
-                  onChange={(url) => setFormData({ ...formData, supportingImageUrl: url })}
-                  category="food"
-                  helperText="ঐচ্ছিক সাপোর্টিং আইটেমের ছবি (যেমন বোরহানি/সালাদ)।"
-                />
+                {/* Subtitle / Description (EN & BN) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      বিবরণ / সাবটাইটেল (Subtitle - English)
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={formData.subtitleEn}
+                      onChange={(e) => setFormData({ ...formData, subtitleEn: e.target.value })}
+                      placeholder="Traditional taste, rich aroma and perfectly cooked mutton."
+                      className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      বিবরণ / সাবটাইটেল (বাংলা)
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={formData.subtitleBn}
+                      onChange={(e) => setFormData({ ...formData, subtitleBn: e.target.value })}
+                      placeholder="আসল স্বাদ, মোহময় সুবাস ও নিপুণভাবে রান্না করা খাসির নরম মাংস।"
+                      className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
+                    />
+                  </div>
+                </div>
 
+                {/* Media Input based on Media Type */}
+                {formData.mediaType === 'video' ? (
+                  <div className="space-y-3 p-3.5 bg-orange-50/30 rounded-xl border border-orange-200/60">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        ভিডিও লিঙ্ক (Direct Video URL - MP4 / WebM / CDN) *
+                      </label>
+                      <input
+                        type="url"
+                        value={formData.videoUrl}
+                        onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                        placeholder="https://example.com/videos/hero-food.mp4"
+                        className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
+                      />
+                      <p className="text-[11px] text-slate-500 mt-1">
+                        ব্রাউজারে সরাসরি লুপ ও অটোপ্লে হবে এমন কোনো ভিডিও ফাইল (MP4 / WebM) লিংক দিন।
+                      </p>
+                    </div>
+
+                    <ImageUploadField
+                      label="ভিডিও পোস্টার / কভার ছবি (Optional Video Poster / Fallback Image)"
+                      value={formData.mainImageUrl}
+                      onChange={(url) => setFormData({ ...formData, mainImageUrl: url })}
+                      category="hero"
+                      helperText="ভিডিও লোড হওয়ার সময় বা ফলব্যাক হিসেবে প্রদর্শনের জন্য ছবি নির্বাচন করুন।"
+                    />
+                  </div>
+                ) : (
+                  <ImageUploadField
+                    label="মূল খাবারের ছবি (Main Dish Image URL) *"
+                    value={formData.mainImageUrl}
+                    onChange={(url) => setFormData({ ...formData, mainImageUrl: url })}
+                    category="hero"
+                    helperText="হিরো ব্যানারের সম্পূর্ণ ডান অংশ জুড়তে রেক্ট্যাঙ্গুলার কাভার ফটো নির্বাচন করুন।"
+                  />
+                )}
+
+                {/* Badges & Duration */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1">সময়কাল (Seconds)</label>
@@ -381,18 +532,18 @@ export default function AdminHeroBannerPage() {
                       max={20}
                       value={formData.slideDurationSeconds}
                       onChange={(e) => setFormData({ ...formData, slideDurationSeconds: parseInt(e.target.value) || 4 })}
-                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
+                      className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">ব্যাজ লেখা</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">ব্যাজ লেখা (Badge Text)</label>
                     <input
                       type="text"
                       value={formData.badgeText}
                       onChange={(e) => setFormData({ ...formData, badgeText: e.target.value })}
-                      placeholder="1972"
-                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
+                      placeholder="AUTHENTIC"
+                      className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
                     />
                   </div>
 
@@ -402,7 +553,7 @@ export default function AdminHeroBannerPage() {
                       type="number"
                       value={formData.displayOrder}
                       onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
-                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
+                      className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:border-[#EA580C]"
                     />
                   </div>
                 </div>
