@@ -24,7 +24,7 @@ export async function GET(request: Request) {
       if (cached) {
         return NextResponse.json(
           { success: true, count: cached.length, data: cached },
-          { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+          { headers: { 'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=59' } }
         );
       }
     }
@@ -65,7 +65,10 @@ export async function GET(request: Request) {
           query.$or = [{ nameBn: regex }, { nameEn: regex }, { sku: regex }];
         }
 
-        const items = await MenuItem.find(query).populate('category').sort({ displayOrder: 1, createdAt: -1 }).lean();
+        const items = await MenuItem.find(query)
+          .populate({ path: 'category', model: MenuCategory })
+          .sort({ displayOrder: 1, createdAt: -1 })
+          .lean();
 
         if (isUnfiltered && items) {
           setCachedMenuItems(items);
@@ -75,7 +78,7 @@ export async function GET(request: Request) {
           { success: true, count: items.length, data: items || [] },
           {
             headers: {
-              'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+              'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=59',
             },
           }
         );
@@ -117,7 +120,7 @@ export async function GET(request: Request) {
       { success: true, count: liveItems.length, data: liveItems },
       {
         headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+          'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=59',
         },
       }
     );
@@ -127,7 +130,7 @@ export async function GET(request: Request) {
       { success: true, count: fallback.length, data: fallback },
       {
         headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+          'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=59',
         },
       }
     );

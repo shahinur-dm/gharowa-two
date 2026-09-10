@@ -13,7 +13,7 @@ export async function GET() {
   if (cached) {
     return NextResponse.json(
       { success: true, data: cached },
-      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+      { headers: { 'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=59' } }
     );
   }
 
@@ -26,7 +26,7 @@ export async function GET() {
         updateStoreSettings(settings);
         return NextResponse.json(
           { success: true, data: settings },
-          { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+          { headers: { 'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=59' } }
         );
       }
     }
@@ -37,7 +37,7 @@ export async function GET() {
   const fallback = getStoreSettings();
   return NextResponse.json(
     { success: true, data: fallback },
-    { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+    { headers: { 'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=59' } }
   );
 }
 

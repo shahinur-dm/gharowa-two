@@ -12,7 +12,7 @@ export async function GET() {
   if (cached) {
     return NextResponse.json(
       { success: true, count: cached.length, data: cached },
-      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+      { headers: { 'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=59' } }
     );
   }
 
@@ -31,7 +31,7 @@ export async function GET() {
         { success: true, count: videos.length, data: videos },
         {
           headers: {
-            'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+            'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=59',
           },
         }
       );
@@ -49,7 +49,7 @@ export async function GET() {
     },
     {
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+        'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=59',
       },
     }
   );
