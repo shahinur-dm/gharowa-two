@@ -2,17 +2,30 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { CustomerReview } from '@/models/CustomerReview';
 import { getStoreCustomerReviews } from '@/lib/serverStore';
+import { getCachedReviews, setCachedReviews } from '@/lib/cacheManager';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export async function GET() {
+  const cached = getCachedReviews();
+  if (cached) {
+    return NextResponse.json(
+      { success: true, count: cached.length, data: cached },
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+    );
+  }
+
   try {
     const db = await connectToDatabase();
     if (db) {
       const reviews = await CustomerReview.find({ isActive: { $ne: false } })
         .sort({ displayOrder: 1, createdAt: -1 })
         .lean();
+
+      if (reviews) {
+        setCachedReviews(reviews);
+      }
 
       return NextResponse.json(
         { success: true, count: reviews.length, data: reviews },

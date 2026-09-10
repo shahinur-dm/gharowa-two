@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { CustomerReview } from '@/models/CustomerReview';
 import { updateStoreCustomerReview, deleteStoreCustomerReview } from '@/lib/serverStore';
+import { invalidateReviewsCache } from '@/lib/cacheManager';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -33,6 +34,7 @@ export async function PUT(
       );
     }
 
+    invalidateReviewsCache();
     updateStoreCustomerReview(id, body);
 
     try {
@@ -76,6 +78,7 @@ export async function DELETE(
       );
     }
 
+    invalidateReviewsCache();
     deleteStoreCustomerReview(id);
 
     try {

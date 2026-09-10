@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { CustomerReview } from '@/models/CustomerReview';
 import { getStoreCustomerReviews, addStoreCustomerReview } from '@/lib/serverStore';
+import { invalidateReviewsCache } from '@/lib/cacheManager';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -55,6 +56,9 @@ export async function POST(request: Request) {
 
     const saved = await CustomerReview.create(reviewData);
     const savedObj = saved.toObject ? saved.toObject() : saved;
+
+    invalidateReviewsCache();
+
     addStoreCustomerReview({
       ...savedObj,
       _id: String(savedObj._id),

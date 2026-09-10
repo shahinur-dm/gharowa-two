@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { MenuCategory } from '@/models/MenuCategory';
 import { updateStoreCategory, deleteStoreCategory } from '@/lib/serverStore';
+import { invalidateCategoriesCache } from '@/lib/cacheManager';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -41,6 +42,8 @@ export async function PUT(
         { status: 404 }
       );
     }
+
+    invalidateCategoriesCache();
 
     updateStoreCategory(id, {
       ...(updated as any),
@@ -87,6 +90,7 @@ export async function DELETE(
       );
     }
 
+    invalidateCategoriesCache();
     deleteStoreCategory(id);
 
     try {

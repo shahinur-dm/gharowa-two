@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { BlogVideo } from '@/models/BlogVideo';
 import { getStoreBlogVideos, addStoreBlogVideo } from '@/lib/serverStore';
+import { invalidateBlogsCache } from '@/lib/cacheManager';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -54,6 +55,9 @@ export async function POST(request: Request) {
 
     const saved = await BlogVideo.create(videoData);
     const savedObj = saved.toObject ? saved.toObject() : saved;
+
+    invalidateBlogsCache();
+
     addStoreBlogVideo({
       ...savedObj,
       _id: String(savedObj._id),

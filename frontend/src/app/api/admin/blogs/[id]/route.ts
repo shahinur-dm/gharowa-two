@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { BlogVideo } from '@/models/BlogVideo';
 import { updateStoreBlogVideo, deleteStoreBlogVideo } from '@/lib/serverStore';
+import { invalidateBlogsCache } from '@/lib/cacheManager';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -33,6 +34,7 @@ export async function PUT(
       );
     }
 
+    invalidateBlogsCache();
     updateStoreBlogVideo(id, body);
 
     try {
@@ -76,6 +78,7 @@ export async function DELETE(
       );
     }
 
+    invalidateBlogsCache();
     deleteStoreBlogVideo(id);
 
     try {

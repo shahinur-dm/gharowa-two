@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { HeroSlide } from '@/models/HeroSlide';
 import { updateStoreHeroSlide, deleteStoreHeroSlide } from '@/lib/serverStore';
+import { invalidateHeroSlidesCache } from '@/lib/cacheManager';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -33,6 +34,7 @@ export async function PUT(
       );
     }
 
+    invalidateHeroSlidesCache();
     updateStoreHeroSlide(id, body);
 
     try {
@@ -76,6 +78,7 @@ export async function DELETE(
       );
     }
 
+    invalidateHeroSlidesCache();
     deleteStoreHeroSlide(id);
 
     try {

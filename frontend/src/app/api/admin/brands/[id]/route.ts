@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { BrandPartner } from '@/models/BrandPartner';
 import { updateStoreBrandPartner, deleteStoreBrandPartner } from '@/lib/serverStore';
+import { invalidateBrandsCache } from '@/lib/cacheManager';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -33,6 +34,7 @@ export async function PUT(
       );
     }
 
+    invalidateBrandsCache();
     updateStoreBrandPartner(id, body);
 
     try {
@@ -76,6 +78,7 @@ export async function DELETE(
       );
     }
 
+    invalidateBrandsCache();
     deleteStoreBrandPartner(id);
 
     try {

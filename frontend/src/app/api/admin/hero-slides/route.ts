@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { HeroSlide } from '@/models/HeroSlide';
 import { getStoreHeroSlides, addStoreHeroSlide } from '@/lib/serverStore';
+import { invalidateHeroSlidesCache } from '@/lib/cacheManager';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -73,6 +74,9 @@ export async function POST(request: Request) {
 
     const saved = await HeroSlide.create(slideData);
     const savedObj = saved.toObject ? saved.toObject() : saved;
+
+    invalidateHeroSlidesCache();
+
     addStoreHeroSlide({
       ...savedObj,
       _id: String(savedObj._id),

@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { BrandPartner } from '@/models/BrandPartner';
 import { getStoreBrandPartners, addStoreBrandPartner } from '@/lib/serverStore';
+import { invalidateBrandsCache } from '@/lib/cacheManager';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -51,6 +52,9 @@ export async function POST(request: Request) {
 
     const saved = await BrandPartner.create(brandData);
     const savedObj = saved.toObject ? saved.toObject() : saved;
+
+    invalidateBrandsCache();
+
     addStoreBrandPartner({
       ...savedObj,
       _id: String(savedObj._id),

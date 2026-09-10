@@ -5,7 +5,12 @@ const DEFAULT_MONGODB_URI =
 
 const MONGODB_URI = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
 
-let cached = (global as any).mongoose;
+interface MongooseCache {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose | null> | null;
+}
+
+let cached: MongooseCache = (global as any).mongoose;
 
 if (!cached) {
   cached = (global as any).mongoose = { conn: null, promise: null };
@@ -17,6 +22,7 @@ export async function connectToDatabase(): Promise<typeof mongoose | null> {
     return null;
   }
 
+  // If already connected and ready, reuse existing connection immediately (0ms)
   if ((mongoose.connection.readyState as number) === 1) {
     cached.conn = mongoose;
     return mongoose;
@@ -24,11 +30,12 @@ export async function connectToDatabase(): Promise<typeof mongoose | null> {
 
   if (!cached.promise) {
     const opts: mongoose.ConnectOptions = {
-      maxPoolSize: 20,
-      minPoolSize: 2,
-      serverSelectionTimeoutMS: 10000,
-      socketTimeoutMS: 45000,
-      connectTimeoutMS: 10000,
+      maxPoolSize: 10,
+      minPoolSize: 1,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 20000,
+      connectTimeoutMS: 5000,
+      bufferCommands: false,
     };
 
     cached.promise = mongoose

@@ -2,17 +2,30 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { HeroSlide } from '@/models/HeroSlide';
 import { getStoreHeroSlides } from '@/lib/serverStore';
+import { getCachedHeroSlides, setCachedHeroSlides } from '@/lib/cacheManager';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export async function GET() {
+  const cached = getCachedHeroSlides();
+  if (cached) {
+    return NextResponse.json(
+      { success: true, count: cached.length, data: cached },
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+    );
+  }
+
   try {
     const db = await connectToDatabase();
     if (db) {
       const slides = await HeroSlide.find({ isActive: { $ne: false } })
         .sort({ displayOrder: 1, createdAt: 1 })
         .lean();
+
+      if (slides) {
+        setCachedHeroSlides(slides);
+      }
 
       return NextResponse.json(
         { success: true, count: slides.length, data: slides },

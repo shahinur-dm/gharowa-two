@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { MenuCategory } from '@/models/MenuCategory';
 import { addStoreCategory, getStoreCategories } from '@/lib/serverStore';
+import { invalidateCategoriesCache } from '@/lib/cacheManager';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -64,6 +65,8 @@ export async function POST(request: Request) {
 
     const saved = await MenuCategory.create(categoryData);
     const savedObj = saved.toObject ? saved.toObject() : saved;
+
+    invalidateCategoriesCache();
 
     addStoreCategory({
       ...(savedObj as any),
