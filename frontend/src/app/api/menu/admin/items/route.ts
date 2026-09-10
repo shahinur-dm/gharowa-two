@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { MenuItem } from '@/models/MenuItem';
 import { MenuCategory } from '@/models/MenuCategory';
 import { getStoreMenuItems, addStoreMenuItem, MenuItemData } from '@/lib/serverStore';
+import { invalidateMenuItemsCache } from '@/lib/cacheManager';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -125,13 +127,13 @@ export async function POST(request: Request) {
         const populated = await MenuItem.findById(saved._id).populate('category').lean();
 
         if (populated) {
+          invalidateMenuItemsCache();
           addStoreMenuItem({
             ...(populated as any),
             _id: String(populated._id),
           });
 
           try {
-            revalidatePath('/', 'layout');
             revalidatePath('/');
             revalidatePath('/menu');
           } catch (revalErr) {}

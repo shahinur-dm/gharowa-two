@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { MenuItem } from '@/models/MenuItem';
 import { MenuCategory } from '@/models/MenuCategory';
 import { updateStoreMenuItem, deleteStoreMenuItem } from '@/lib/serverStore';
+import { invalidateMenuItemsCache } from '@/lib/cacheManager';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -57,10 +59,15 @@ export async function PUT(
         }
 
         if (updated) {
+          invalidateMenuItemsCache();
           updateStoreMenuItem(id, {
             ...(updated as any),
             _id: String((updated as any)._id),
           });
+          try {
+            revalidatePath('/');
+            revalidatePath('/menu');
+          } catch (revalErr) {}
           return NextResponse.json(
             { success: true, message: 'Food item updated successfully', data: updated },
             { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
@@ -75,6 +82,7 @@ export async function PUT(
       );
     }
 
+    invalidateMenuItemsCache();
     const fallbackUpdated = updateStoreMenuItem(id, updates);
     return NextResponse.json(
       { success: true, message: 'Food item updated successfully', data: fallbackUpdated || updates },
@@ -102,7 +110,12 @@ export async function DELETE(
         } else {
           await MenuItem.findOneAndDelete({ $or: [{ slug: id }, { sku: id }] });
         }
+        invalidateMenuItemsCache();
         deleteStoreMenuItem(id);
+        try {
+          revalidatePath('/');
+          revalidatePath('/menu');
+        } catch (revalErr) {}
         return NextResponse.json(
           { success: true, message: 'Food item deleted successfully' },
           { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }

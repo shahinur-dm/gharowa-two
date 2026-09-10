@@ -16,7 +16,7 @@ export default function HomeMenuSection({ dishes }: HomeMenuProps) {
   const { language } = useLanguageStore();
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
-  const [visibleCount, setVisibleCount] = useState<number>(8);
+  const [visibleCount, setVisibleCount] = useState<number>(12);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -39,10 +39,17 @@ export default function HomeMenuSection({ dishes }: HomeMenuProps) {
 
   const filteredDishes = useMemo(() => {
     if (activeCategory === 'all') return dishes;
+    const cleanActive = activeCategory.replace(/^cat-/, '');
     return dishes.filter((dish) => {
-      const catSlug = typeof dish.category === 'object' && dish.category !== null ? (dish.category as any).slug : dish.category;
-      const catId = typeof dish.category === 'object' && dish.category !== null ? String((dish.category as any)._id) : String(dish.category);
-      return catSlug === activeCategory || catId === activeCategory;
+      const catSlug = typeof dish.category === 'object' && dish.category !== null ? (dish.category as any).slug : String(dish.category || '');
+      const catId = typeof dish.category === 'object' && dish.category !== null ? String((dish.category as any)._id) : String(dish.category || '');
+      const cleanSlug = catSlug ? catSlug.replace(/^cat-/, '') : '';
+      return (
+        catSlug === activeCategory ||
+        cleanSlug === cleanActive ||
+        catId === activeCategory ||
+        catId === cleanActive
+      );
     });
   }, [dishes, activeCategory]);
 

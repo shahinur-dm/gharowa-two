@@ -48,6 +48,7 @@ export default function AdminSettingsPage() {
             ownerName: d.ownerName || d.ownerNameBn || d.ownerNameEn || '',
             ownerDesignation: d.ownerDesignation || d.ownerTitleBn || d.ownerTitleEn || '',
             ownerQuoteBn: d.ownerQuoteBn || d.ownerQuote || '',
+            ownerStoryBn: d.ownerStoryBn || d.ownerStoryEn || '',
           });
         }
       } catch (e) {
@@ -71,26 +72,36 @@ export default function AdminSettingsPage() {
       setSaveSuccess(false);
       setErrorMessage('');
 
+      const chefNameVal = settings.chefName || settings.chefNameBn || settings.chefNameEn || '';
+      const chefTitleVal = settings.chefDesignation || settings.chefTitleBn || settings.chefTitleEn || '';
+      const chefBioVal = settings.chefBioBn || settings.chefBio || settings.chefBioEn || '';
+      const ownerNameVal = settings.ownerName || settings.ownerNameBn || settings.ownerNameEn || '';
+      const ownerTitleVal = settings.ownerDesignation || settings.ownerTitleBn || settings.ownerTitleEn || '';
+      const ownerQuoteVal = settings.ownerQuoteBn || settings.ownerQuote || settings.ownerQuoteEn || '';
+      const ownerStoryVal = settings.ownerStoryBn || settings.ownerStoryEn || '';
+
       const payload = {
         ...settings,
-        chefName: settings.chefName,
-        chefNameBn: settings.chefName || settings.chefNameBn,
-        chefNameEn: settings.chefName || settings.chefNameEn,
-        chefDesignation: settings.chefDesignation,
-        chefTitleBn: settings.chefDesignation || settings.chefTitleBn,
-        chefTitleEn: settings.chefDesignation || settings.chefTitleEn,
-        chefBio: settings.chefBioBn || settings.chefBio,
-        chefBioBn: settings.chefBioBn || settings.chefBio,
-        chefBioEn: settings.chefBioEn || settings.chefBioBn || settings.chefBio,
-        ownerName: settings.ownerName,
-        ownerNameBn: settings.ownerName || settings.ownerNameBn,
-        ownerNameEn: settings.ownerName || settings.ownerNameEn,
-        ownerDesignation: settings.ownerDesignation,
-        ownerTitleBn: settings.ownerDesignation || settings.ownerTitleBn,
-        ownerTitleEn: settings.ownerDesignation || settings.ownerTitleEn,
-        ownerQuote: settings.ownerQuoteBn || settings.ownerQuote,
-        ownerQuoteBn: settings.ownerQuoteBn || settings.ownerQuote,
-        ownerQuoteEn: settings.ownerQuoteEn || settings.ownerQuoteBn || settings.ownerQuote,
+        chefName: chefNameVal,
+        chefNameBn: chefNameVal,
+        chefNameEn: chefNameVal,
+        chefDesignation: chefTitleVal,
+        chefTitleBn: chefTitleVal,
+        chefTitleEn: chefTitleVal,
+        chefBio: chefBioVal,
+        chefBioBn: chefBioVal,
+        chefBioEn: chefBioVal,
+        ownerName: ownerNameVal,
+        ownerNameBn: ownerNameVal,
+        ownerNameEn: ownerNameVal,
+        ownerDesignation: ownerTitleVal,
+        ownerTitleBn: ownerTitleVal,
+        ownerTitleEn: ownerTitleVal,
+        ownerQuote: ownerQuoteVal,
+        ownerQuoteBn: ownerQuoteVal,
+        ownerQuoteEn: ownerQuoteVal,
+        ownerStoryBn: ownerStoryVal,
+        ownerStoryEn: ownerStoryVal,
       };
 
       const res: any = await api.put('/settings', payload);
@@ -104,6 +115,7 @@ export default function AdminSettingsPage() {
             ownerName: res.data.ownerName || res.data.ownerNameBn || res.data.ownerNameEn || payload.ownerName,
             ownerDesignation: res.data.ownerDesignation || res.data.ownerTitleBn || res.data.ownerTitleEn || payload.ownerDesignation,
             ownerQuoteBn: res.data.ownerQuoteBn || res.data.ownerQuote || payload.ownerQuoteBn,
+            ownerStoryBn: res.data.ownerStoryBn || res.data.ownerStoryEn || payload.ownerStoryBn,
           });
         }
         setSaveSuccess(true);
@@ -774,7 +786,18 @@ export default function AdminSettingsPage() {
                     type="text"
                     value={settings.ownerQuoteBn || ''}
                     onChange={(e) => setSettings({ ...settings, ownerQuoteBn: e.target.value })}
-                    placeholder="স্বাদ যেখানে স্মৃতি, তৃপ্তি যেখানে প্রতিশ্রুতি।"
+                    placeholder="খাবারের মানের সাথে কোনো আপস নয় — এটাই ১৯৭২ সাল থেকে আমাদের প্রতিজ্ঞা।"
+                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block font-medium text-slate-700 mb-1">প্রতিষ্ঠাতা ও ঐতিহ্যের গল্প (Founder Story / Message)</label>
+                  <textarea
+                    rows={3}
+                    value={settings.ownerStoryBn || ''}
+                    onChange={(e) => setSettings({ ...settings, ownerStoryBn: e.target.value })}
+                    placeholder="১৯৭২ সালে মতিঝিলে ছোট্ট পরিসরে শুরু করা ঘরোয়া আজ ঢাকার ঐতিহ্যের অংশ। আমাদের অঙ্গীকার কেবল মান ও খাঁটি স্বাদ।"
                     className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#900C19]"
                   />
                 </div>

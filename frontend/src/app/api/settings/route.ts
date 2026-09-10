@@ -2,21 +2,18 @@ import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { connectToDatabase } from '@/lib/mongodb';
 import { RestaurantSettings } from '@/models/RestaurantSettings';
-import { getStoreSettings, updateStoreSettings, defaultSettings } from '@/lib/serverStore';
+import { getStoreSettings, updateStoreSettings } from '@/lib/serverStore';
+import { getCachedSettings, setCachedSettings, invalidateSettingsCache } from '@/lib/cacheManager';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-let cachedSettingsData: any = null;
-let lastSettingsFetchTime = 0;
-const SETTINGS_CACHE_TTL_MS = 60000;
-
 export async function GET() {
-  const now = Date.now();
-  if (cachedSettingsData && now - lastSettingsFetchTime < SETTINGS_CACHE_TTL_MS) {
+  const cached = getCachedSettings();
+  if (cached) {
     return NextResponse.json(
-      { success: true, data: cachedSettingsData },
-      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+      { success: true, data: cached },
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
     );
   }
 
@@ -25,12 +22,11 @@ export async function GET() {
     if (db) {
       const settings = await RestaurantSettings.findOne().lean();
       if (settings) {
-        cachedSettingsData = settings;
-        lastSettingsFetchTime = now;
+        setCachedSettings(settings);
         updateStoreSettings(settings);
         return NextResponse.json(
           { success: true, data: settings },
-          { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+          { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
         );
       }
     }
@@ -38,17 +34,10 @@ export async function GET() {
     console.warn('MongoDB settings fetch notice:', error.message);
   }
 
-  if (cachedSettingsData) {
-    return NextResponse.json(
-      { success: true, data: cachedSettingsData },
-      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
-    );
-  }
-
   const fallback = getStoreSettings();
   return NextResponse.json(
     { success: true, data: fallback },
-    { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+    { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
   );
 }
 
@@ -76,20 +65,17 @@ export async function PUT(request: Request) {
         ).lean();
 
         if (settings) {
-          cachedSettingsData = settings;
-          lastSettingsFetchTime = Date.now();
+          setCachedSettings(settings);
           updateStoreSettings(settings);
           try {
-            revalidatePath('/', 'layout');
             revalidatePath('/');
             revalidatePath('/menu');
             revalidatePath('/about');
-            revalidatePath('/contact');
           } catch (revalErr) {}
 
           return NextResponse.json(
             { success: true, message: 'Settings updated successfully', data: settings },
-            { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+            { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
           );
         }
       }
@@ -101,12 +87,12 @@ export async function PUT(request: Request) {
       );
     }
 
+    invalidateSettingsCache();
     const updated = updateStoreSettings(body);
-    cachedSettingsData = updated;
-    lastSettingsFetchTime = Date.now();
+    setCachedSettings(updated);
     return NextResponse.json(
       { success: true, message: 'Settings updated successfully', data: updated },
-      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
     );
   } catch (error: any) {
     return NextResponse.json(

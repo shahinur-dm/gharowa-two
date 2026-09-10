@@ -92,15 +92,24 @@ export default function MenuPage() {
 
   const filteredItems = menuItems.filter((item) => {
     if (selectedCategory !== 'all') {
+      const cleanSelected = selectedCategory.replace(/^cat-/, '');
       const itemCatSlug =
         typeof item.category === 'object' && item.category
           ? (item.category as any).slug
-          : item.category;
+          : String(item.category || '');
       const itemCatId =
         typeof item.category === 'object' && item.category
           ? String((item.category as any)._id)
-          : String(item.category);
-      if (itemCatSlug !== selectedCategory && itemCatId !== selectedCategory) return false;
+          : String(item.category || '');
+      const cleanSlug = itemCatSlug ? itemCatSlug.replace(/^cat-/, '') : '';
+
+      const matches =
+        itemCatSlug === selectedCategory ||
+        cleanSlug === cleanSelected ||
+        itemCatId === selectedCategory ||
+        itemCatId === cleanSelected;
+
+      if (!matches) return false;
     }
 
     if (searchQuery.trim()) {

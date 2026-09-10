@@ -4,18 +4,10 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { MenuItem } from '@/models/MenuItem';
 import { MenuCategory } from '@/models/MenuCategory';
 import { getStoreMenuItems } from '@/lib/serverStore';
+import { getCachedMenuItems, setCachedMenuItems } from '@/lib/cacheManager';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-
-let cachedMenuItems: any[] | null = null;
-let lastMenuItemsFetchTime = 0;
-const MENU_CACHE_TTL_MS = 30000;
-
-export function invalidateMenuItemsCache() {
-  cachedMenuItems = null;
-  lastMenuItemsFetchTime = 0;
-}
 
 export async function GET(request: Request) {
   try {
@@ -26,13 +18,15 @@ export async function GET(request: Request) {
     const bestseller = searchParams.get('bestseller');
 
     const isUnfiltered = !category && !search && !featured && !bestseller;
-    const now = Date.now();
 
-    if (isUnfiltered && cachedMenuItems && now - lastMenuItemsFetchTime < MENU_CACHE_TTL_MS) {
-      return NextResponse.json(
-        { success: true, count: cachedMenuItems.length, data: cachedMenuItems },
-        { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
-      );
+    if (isUnfiltered) {
+      const cached = getCachedMenuItems();
+      if (cached) {
+        return NextResponse.json(
+          { success: true, count: cached.length, data: cached },
+          { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+        );
+      }
     }
 
     try {
@@ -53,6 +47,8 @@ export async function GET(request: Request) {
           }
           if (catDoc) {
             query.category = catDoc._id;
+          } else if (mongoose.isValidObjectId(category)) {
+            query.category = category;
           }
         }
 
@@ -71,9 +67,8 @@ export async function GET(request: Request) {
 
         const items = await MenuItem.find(query).populate('category').sort({ displayOrder: 1, createdAt: -1 }).lean();
 
-        if (isUnfiltered) {
-          cachedMenuItems = items || [];
-          lastMenuItemsFetchTime = now;
+        if (isUnfiltered && items) {
+          setCachedMenuItems(items);
         }
 
         return NextResponse.json(

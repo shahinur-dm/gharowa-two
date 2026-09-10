@@ -23,10 +23,12 @@ export async function connectToDatabase(): Promise<typeof mongoose | null> {
   }
 
   if (!cached.promise) {
-    const opts = {
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 15000,
-      socketTimeoutMS: 60000,
+    const opts: mongoose.ConnectOptions = {
+      maxPoolSize: 20,
+      minPoolSize: 2,
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      connectTimeoutMS: 10000,
     };
 
     cached.promise = mongoose
@@ -38,7 +40,7 @@ export async function connectToDatabase(): Promise<typeof mongoose | null> {
       .catch((err) => {
         cached.promise = null;
         cached.conn = null;
-        console.warn('MongoDB Atlas connection notice:', err.message);
+        console.warn('MongoDB connection warning:', err.message);
         return null;
       });
   }
@@ -48,8 +50,10 @@ export async function connectToDatabase(): Promise<typeof mongoose | null> {
     if (!conn || (mongoose.connection.readyState as number) !== 1) {
       cached.promise = null;
       cached.conn = null;
+      return null;
     }
-    return cached.conn;
+    cached.conn = conn;
+    return conn;
   } catch (e) {
     cached.promise = null;
     cached.conn = null;

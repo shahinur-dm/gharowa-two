@@ -47,7 +47,15 @@ export interface IRestaurantSettings extends Document {
   aboutSubtitleEn?: string;
   aboutStoryBn?: string;
   aboutStoryEn?: string;
+  aboutDescBn?: string;
+  aboutDescEn?: string;
   aboutImageUrl?: string;
+  // Popular Dishes
+  popularDishesTitleBn?: string;
+  popularDishesTitleEn?: string;
+  popularDishesSubtitleBn?: string;
+  popularDishesSubtitleEn?: string;
+  isPopularDishesEnabled?: boolean;
   // Chef & Owner
   chefName?: string;
   chefNameBn?: string;
@@ -135,12 +143,19 @@ const RestaurantSettingsSchema = new Schema<IRestaurantSettings>(
     aboutTitleEn: { type: String, default: 'A Legacy of Taste Since 1972' },
     aboutSubtitleBn: { type: String, default: 'ঢাকার মতিঝিলে অর্ধশতাব্দীরও বেশি সময় ধরে আসল দেশি স্বাদের বিশ্বস্ত ঠিকানা।' },
     aboutSubtitleEn: { type: String, default: 'Over half a century of authentic culinary excellence in Motijheel, Dhaka.' },
-    aboutStoryBn: { type: String, default: '১৯৭২ সালে স্বাধীনতার পরপরই মতিঝিলের বুকে শুরু হয় ঘরোয়া হোটেলের যাত্রা।...' },
-    aboutStoryEn: { type: String, default: 'Founded in 1972 right after the independence of Bangladesh...' },
+    aboutStoryBn: { type: String, default: '' },
+    aboutStoryEn: { type: String, default: '' },
+    aboutDescBn: { type: String, default: '' },
+    aboutDescEn: { type: String, default: '' },
     aboutImageUrl: {
       type: String,
       default: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop',
     },
+    popularDishesTitleBn: { type: String, default: 'ঘরোয়ার সবচেয়ে জনপ্রিয় খাবার' },
+    popularDishesTitleEn: { type: String, default: 'Most Popular Dishes' },
+    popularDishesSubtitleBn: { type: String, default: 'প্রতিদিন শত শত ভোজনরসিকের প্রথম পছন্দ মতিঝিলের ঐতিহ্যবাহী স্পেশাল আইটেম' },
+    popularDishesSubtitleEn: { type: String, default: 'Our daily signature dishes crafted with traditional spice blends' },
+    isPopularDishesEnabled: { type: Boolean, default: true },
     chefName: { type: String, default: '' },
     chefNameBn: { type: String, default: 'মাস্টার শেফ রফিকুল ইসলাম' },
     chefNameEn: { type: String, default: 'Master Chef Rafiqul Islam' },
