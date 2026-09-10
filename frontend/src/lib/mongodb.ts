@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const DEFAULT_MONGODB_URI =
-  'mongodb+srv://efootballmadrid25_db_user:ljvpbVMGVJTQPVcH@dawatit.5hxbo9c.mongodb.net/Gharowa?appName=dawatit';
+  'mongodb+srv://witinstitute:Dawatit1234@dit.ajxvstc.mongodb.net/Gharowa?appName=dit';
 
 const MONGODB_URI = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
 
