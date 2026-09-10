@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { MenuCategory } from '@/models/MenuCategory';
@@ -20,42 +21,43 @@ export async function PUT(
     };
     if (body.displayOrder !== undefined) updates.displayOrder = Number(body.displayOrder);
 
-    try {
-      const db = await connectToDatabase();
-      if (db) {
-        let updated = null;
-        if (mongoose.isValidObjectId(id)) {
-          updated = await MenuCategory.findByIdAndUpdate(id, updates, { new: true }).lean();
-        }
-        if (!updated) {
-          updated = await MenuCategory.findOneAndUpdate(
-            { $or: [{ _id: id }, { slug: id }] },
-            updates,
-            { new: true }
-          ).lean();
-        }
+    await connectToDatabase();
 
-        if (updated) {
-          updateStoreCategory(id, {
-            ...(updated as any),
-            _id: String((updated as any)._id),
-          });
-          return NextResponse.json(
-            { success: true, message: 'Category updated successfully', data: updated },
-            { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
-          );
-        }
-      }
-    } catch (e: any) {
-      console.warn('MongoDB category update notice:', e.message);
+    let updated = null;
+    if (mongoose.isValidObjectId(id)) {
+      updated = await MenuCategory.findByIdAndUpdate(id, updates, { new: true }).lean();
+    }
+    if (!updated) {
+      updated = await MenuCategory.findOneAndUpdate(
+        { $or: [{ _id: id }, { slug: id }] },
+        updates,
+        { new: true }
+      ).lean();
     }
 
-    const fallbackUpdated = updateStoreCategory(id, updates);
+    if (!updated) {
+      return NextResponse.json(
+        { success: false, message: 'Category not found in database' },
+        { status: 404 }
+      );
+    }
+
+    updateStoreCategory(id, {
+      ...(updated as any),
+      _id: String((updated as any)._id),
+    });
+
+    try {
+      revalidatePath('/');
+      revalidatePath('/menu');
+    } catch (e) {}
+
     return NextResponse.json(
-      { success: true, message: 'Category updated successfully', data: fallbackUpdated || updates },
+      { success: true, message: 'Category updated successfully', data: updated },
       { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
     );
   } catch (error: any) {
+    console.error('Error updating category:', error);
     return NextResponse.json(
       { success: false, message: error.message || 'Unable to update category' },
       { status: 500 }
@@ -69,25 +71,35 @@ export async function DELETE(
 ) {
   try {
     const { id } = params;
-    try {
-      const db = await connectToDatabase();
-      if (db) {
-        if (mongoose.isValidObjectId(id)) {
-          await MenuCategory.findByIdAndDelete(id);
-        } else {
-          await MenuCategory.findOneAndDelete({ $or: [{ _id: id }, { slug: id }] });
-        }
-      }
-    } catch (e: any) {
-      console.warn('MongoDB category delete notice:', e.message);
+    await connectToDatabase();
+
+    let deleted = null;
+    if (mongoose.isValidObjectId(id)) {
+      deleted = await MenuCategory.findByIdAndDelete(id);
+    } else {
+      deleted = await MenuCategory.findOneAndDelete({ $or: [{ _id: id }, { slug: id }] });
+    }
+
+    if (!deleted) {
+      return NextResponse.json(
+        { success: false, message: 'Category not found in database' },
+        { status: 404 }
+      );
     }
 
     deleteStoreCategory(id);
+
+    try {
+      revalidatePath('/');
+      revalidatePath('/menu');
+    } catch (e) {}
+
     return NextResponse.json(
       { success: true, message: 'Category deleted successfully' },
       { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
     );
   } catch (error: any) {
+    console.error('Error deleting category:', error);
     return NextResponse.json(
       { success: false, message: error.message || 'Unable to delete category' },
       { status: 500 }

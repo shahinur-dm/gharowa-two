@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { MediaAsset } from '@/models/MediaAsset';
 import { deleteStoreMediaItem } from '@/lib/serverStore';
@@ -13,13 +14,21 @@ export async function DELETE(
   try {
     const { id } = params;
 
-    try {
-      const db = await connectToDatabase();
-      if (db) {
-        await MediaAsset.findOneAndDelete({ $or: [{ _id: id }, { id: id }] });
-      }
-    } catch (e: any) {
-      console.warn('MongoDB media delete notice:', e.message);
+    await connectToDatabase();
+
+    let deleted = null;
+    if (mongoose.isValidObjectId(id)) {
+      deleted = await MediaAsset.findByIdAndDelete(id);
+    }
+    if (!deleted) {
+      deleted = await MediaAsset.findOneAndDelete({ $or: [{ _id: id }, { id: id }] });
+    }
+
+    if (!deleted) {
+      return NextResponse.json(
+        { success: false, message: 'Media asset not found in database' },
+        { status: 404 }
+      );
     }
 
     deleteStoreMediaItem(id);
@@ -29,8 +38,9 @@ export async function DELETE(
       message: 'মিডিয়া সফলভাবে মুছে ফেলা হয়েছে',
     });
   } catch (error: any) {
+    console.error('Error deleting media asset:', error);
     return NextResponse.json(
-      { success: false, message: 'Failed to delete media' },
+      { success: false, message: error.message || 'Failed to delete media' },
       { status: 500 }
     );
   }

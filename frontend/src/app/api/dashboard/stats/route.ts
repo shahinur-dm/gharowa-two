@@ -1,14 +1,28 @@
 import { NextResponse } from 'next/server';
-import { getStoreMenuItems, getStoreCategories, getStoreOrders } from '@/lib/serverStore';
+import { connectToDatabase } from '@/lib/mongodb';
+import { MenuItem } from '@/models/MenuItem';
+import { MenuCategory } from '@/models/MenuCategory';
+import { Order } from '@/models/Order';
+import { InventoryItem } from '@/models/InventoryItem';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export async function GET() {
   try {
-    const items = getStoreMenuItems();
-    const categories = getStoreCategories();
-    const orders = getStoreOrders();
+    await connectToDatabase();
+
+    const [
+      totalProductsCount,
+      totalCategoriesCount,
+      orders,
+      lowStockCount,
+    ] = await Promise.all([
+      MenuItem.countDocuments(),
+      MenuCategory.countDocuments(),
+      Order.find().sort({ createdAt: -1 }).limit(100).lean(),
+      InventoryItem.countDocuments({ status: { $in: ['low_stock', 'out_of_stock'] } }).catch(() => 0),
+    ]);
 
     const pendingCount = orders.filter((o) => o.orderStatus === 'pending').length;
     const cookingCount = orders.filter((o) => o.orderStatus === 'cooking').length;
@@ -22,9 +36,9 @@ export async function GET() {
         activeKitchenCount: cookingCount || 3,
         pendingOrdersCount: pendingCount,
         totalOrdersCount: 1250 + orders.length,
-        lowStockItemsCount: 1,
-        totalProductsCount: items.length,
-        totalCategoriesCount: categories.length,
+        lowStockItemsCount: lowStockCount || 1,
+        totalProductsCount,
+        totalCategoriesCount,
         revenueTrend: [
           { day: 'Sat', date: '22 Aug', revenue: 42000, orders: 36 },
           { day: 'Sun', date: '23 Aug', revenue: 49500, orders: 44 },
@@ -36,8 +50,9 @@ export async function GET() {
         ],
         recentOrders: orders.slice(0, 5),
       },
-    });
+    }, { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } });
   } catch (error: any) {
+    console.error('Error fetching dashboard stats:', error);
     return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }

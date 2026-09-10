@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { CustomerReview } from '@/models/CustomerReview';
@@ -15,38 +16,38 @@ export async function PUT(
     const { id } = params;
     const body = await request.json();
 
-    try {
-      const db = await connectToDatabase();
-      if (db) {
-        let updated = null;
-        if (mongoose.isValidObjectId(id)) {
-          updated = await CustomerReview.findByIdAndUpdate(id, body, { new: true }).lean();
-        }
-        if (!updated) {
-          updated = await CustomerReview.findOneAndUpdate({ _id: id }, body, { new: true }).lean();
-        }
-        if (updated) {
-          updateStoreCustomerReview(id, body);
-          return NextResponse.json({
-            success: true,
-            message: 'রিভিউ আপডেট সফল হয়েছে',
-            data: updated,
-          });
-        }
-      }
-    } catch (e: any) {
-      console.warn('MongoDB review update notice:', e.message);
+    await connectToDatabase();
+
+    let updated = null;
+    if (mongoose.isValidObjectId(id)) {
+      updated = await CustomerReview.findByIdAndUpdate(id, body, { new: true }).lean();
+    }
+    if (!updated) {
+      updated = await CustomerReview.findOneAndUpdate({ _id: id }, body, { new: true }).lean();
     }
 
-    const fallbackUpdated = updateStoreCustomerReview(id, body);
+    if (!updated) {
+      return NextResponse.json(
+        { success: false, message: 'Review not found in database' },
+        { status: 404 }
+      );
+    }
+
+    updateStoreCustomerReview(id, body);
+
+    try {
+      revalidatePath('/');
+    } catch (e) {}
+
     return NextResponse.json({
       success: true,
       message: 'রিভিউ আপডেট সফল হয়েছে',
-      data: fallbackUpdated,
+      data: updated,
     });
   } catch (error: any) {
+    console.error('Error updating review:', error);
     return NextResponse.json(
-      { success: false, message: 'Failed to update review' },
+      { success: false, message: error.message || 'Failed to update review' },
       { status: 500 }
     );
   }
@@ -59,28 +60,36 @@ export async function DELETE(
   try {
     const { id } = params;
 
-    try {
-      const db = await connectToDatabase();
-      if (db) {
-        if (mongoose.isValidObjectId(id)) {
-          await CustomerReview.findByIdAndDelete(id);
-        } else {
-          await CustomerReview.findOneAndDelete({ _id: id });
-        }
-      }
-    } catch (e: any) {
-      console.warn('MongoDB review delete notice:', e.message);
+    await connectToDatabase();
+
+    let deleted = null;
+    if (mongoose.isValidObjectId(id)) {
+      deleted = await CustomerReview.findByIdAndDelete(id);
+    } else {
+      deleted = await CustomerReview.findOneAndDelete({ _id: id });
+    }
+
+    if (!deleted) {
+      return NextResponse.json(
+        { success: false, message: 'Review not found in database' },
+        { status: 404 }
+      );
     }
 
     deleteStoreCustomerReview(id);
+
+    try {
+      revalidatePath('/');
+    } catch (e) {}
 
     return NextResponse.json({
       success: true,
       message: 'রিভিউ সফলভাবে মুছে ফেলা হয়েছে',
     });
   } catch (error: any) {
+    console.error('Error deleting review:', error);
     return NextResponse.json(
-      { success: false, message: 'Failed to delete review' },
+      { success: false, message: error.message || 'Failed to delete review' },
       { status: 500 }
     );
   }

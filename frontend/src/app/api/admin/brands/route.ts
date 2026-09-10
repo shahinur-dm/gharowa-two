@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { BrandPartner } from '@/models/BrandPartner';
@@ -12,12 +13,10 @@ export async function GET() {
     const db = await connectToDatabase();
     if (db) {
       const brands = await BrandPartner.find().sort({ displayOrder: 1, createdAt: -1 }).lean();
-      if (brands) {
-        return NextResponse.json(
-          { success: true, count: brands.length, data: brands },
-          { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
-        );
-      }
+      return NextResponse.json(
+        { success: true, count: brands.length, data: brands },
+        { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+      );
     }
   } catch (error: any) {
     console.warn('MongoDB brands fetch notice:', error.message);
@@ -26,7 +25,7 @@ export async function GET() {
   const fallback = getStoreBrandPartners();
   return NextResponse.json(
     { success: true, count: fallback.length, data: fallback },
-    { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+    { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
   );
 }
 
@@ -48,48 +47,31 @@ export async function POST(request: Request) {
       isActive: body.isActive !== false,
     };
 
-    try {
-      const db = await connectToDatabase();
-      if (db) {
-        const saved = await BrandPartner.create(brandData);
-        if (saved) {
-          const savedObj = saved.toObject ? saved.toObject() : saved;
-          addStoreBrandPartner({
-            ...savedObj,
-            _id: String(savedObj._id),
-          });
-          return NextResponse.json(
-            {
-              success: true,
-              message: 'ব্র্যান্ড পার্টনার সফলভাবে যোগ করা হয়েছে',
-              data: savedObj,
-            },
-            { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
-          );
-        }
-      }
-    } catch (dbErr: any) {
-      console.warn('MongoDB brand save notice:', dbErr.message);
-    }
+    await connectToDatabase();
 
-    const fallbackData = {
-      ...brandData,
-      _id: `brand-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    const savedFallback = addStoreBrandPartner(fallbackData);
+    const saved = await BrandPartner.create(brandData);
+    const savedObj = saved.toObject ? saved.toObject() : saved;
+    addStoreBrandPartner({
+      ...savedObj,
+      _id: String(savedObj._id),
+    });
+
+    try {
+      revalidatePath('/');
+    } catch (e) {}
+
     return NextResponse.json(
       {
         success: true,
         message: 'ব্র্যান্ড পার্টনার সফলভাবে যোগ করা হয়েছে',
-        data: savedFallback,
+        data: savedObj,
       },
-      { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+      { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
     );
   } catch (error: any) {
+    console.error('Error saving brand partner:', error);
     return NextResponse.json(
-      { success: false, message: 'Failed to create brand partner' },
+      { success: false, message: error.message || 'Failed to create brand partner' },
       { status: 500 }
     );
   }

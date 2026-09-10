@@ -1,66 +1,44 @@
 import { NextResponse } from 'next/server';
+import { connectToDatabase } from '@/lib/mongodb';
+import { Reservation } from '@/models/Reservation';
+import { ensureDbBootstrapped } from '@/lib/dbBootstrap';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-interface ReservationData {
-  _id: string;
-  name: string;
-  phone: string;
-  email?: string;
-  guests: number;
-  date: string;
-  time: string;
-  tableType?: string;
-  specialRequests?: string;
-  status: 'pending' | 'confirmed' | 'rejected' | 'cancelled';
-  createdAt: string;
-}
-
-let globalReservations: ReservationData[] = [
-  {
-    _id: 'res-1',
-    name: 'তানভীর আহমেদ',
-    phone: '01712345678',
-    email: 'tanveer@example.com',
-    guests: 4,
-    date: '2026-09-10',
-    time: '20:00',
-    tableType: 'Family Table',
-    specialRequests: 'Window seat preferred',
-    status: 'confirmed',
-    createdAt: new Date(Date.now() - 3600000).toISOString(),
-  },
-  {
-    _id: 'res-2',
-    name: 'মাহমুদুল হাসান',
-    phone: '01898765432',
-    guests: 2,
-    date: '2026-09-11',
-    time: '19:30',
-    tableType: 'Couple',
-    status: 'pending',
-    createdAt: new Date().toISOString(),
-  },
-];
-
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const status = searchParams.get('status');
+  try {
+    await connectToDatabase();
+    await ensureDbBootstrapped();
 
-  let results = [...globalReservations];
-  if (status && status !== 'all') {
-    results = results.filter((r) => r.status === status);
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get('status');
+
+    const query: any = {};
+    if (status && status !== 'all') {
+      query.status = status;
+    }
+
+    const reservations = await Reservation.find(query).sort({ createdAt: -1 }).lean();
+
+    return NextResponse.json(
+      { success: true, count: reservations.length, data: reservations },
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+    );
+  } catch (err: any) {
+    console.error('Error fetching reservations:', err);
+    return NextResponse.json(
+      { success: false, message: 'Failed to fetch reservations: ' + err.message },
+      { status: 500 }
+    );
   }
-
-  return NextResponse.json(
-    { success: true, count: results.length, data: results },
-    { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
-  );
 }
 
 export async function POST(request: Request) {
   try {
+    await connectToDatabase();
+    await ensureDbBootstrapped();
+
     const body = await request.json();
     if (!body.name || !body.phone) {
       return NextResponse.json(
@@ -69,8 +47,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const newRes: ReservationData = {
-      _id: `res-${Date.now()}`,
+    const reservationData = {
       name: String(body.name).trim(),
       phone: String(body.phone).trim(),
       email: body.email ? String(body.email).trim() : undefined,
@@ -78,24 +55,25 @@ export async function POST(request: Request) {
       date: body.date || new Date().toISOString().split('T')[0],
       time: body.time || '19:00',
       tableType: body.tableType || 'General',
-      specialRequests: body.specialRequests || '',
-      status: 'pending',
-      createdAt: new Date().toISOString(),
+      specialRequests: body.specialRequests ? String(body.specialRequests).trim() : '',
+      status: 'pending' as const,
     };
 
-    globalReservations.unshift(newRes);
+    const saved = await Reservation.create(reservationData);
+    const savedObj = saved.toObject ? saved.toObject() : saved;
 
     return NextResponse.json(
       {
         success: true,
         message: 'টেবিল বুকিং অনুরোধ সফলভাবে গৃহীত হয়েছে! শীঘ্রই যোগাযোগ করা হবে।',
-        data: newRes,
+        data: savedObj,
       },
-      { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+      { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
     );
   } catch (err: any) {
+    console.error('Error creating reservation:', err);
     return NextResponse.json(
-      { success: false, message: 'Failed to create reservation' },
+      { success: false, message: 'বুকিং তৈরি করা সম্ভব হয়নি: ' + (err.message || 'Database error') },
       { status: 500 }
     );
   }

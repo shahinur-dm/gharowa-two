@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getStoreOrders } from '@/lib/serverStore';
+import { connectToDatabase } from '@/lib/mongodb';
+import { Order } from '@/models/Order';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -9,12 +10,13 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const search = (searchParams.get('search') || '').toLowerCase().trim();
 
-    const orders = getStoreOrders();
+    await connectToDatabase();
+    const orders = await Order.find().sort({ createdAt: -1 }).lean();
 
     // Map unique customers from orders
     const customerMap = new Map<string, any>();
 
-    // Initial mock customer base
+    // Initial base customer contacts
     customerMap.set('01733917395', {
       _id: 'cust-1',
       name: 'Shahinur Akter',
@@ -35,15 +37,15 @@ export async function GET(request: Request) {
       lastOrderDate: '2026-09-07',
     });
 
-    // Aggregate from placed orders
-    orders.forEach((o) => {
+    // Aggregate from placed orders in MongoDB
+    orders.forEach((o: any) => {
       const phone = o.customer?.phone;
       if (phone) {
         const existing = customerMap.get(phone);
         if (existing) {
           existing.totalOrders += 1;
           existing.totalSpent += o.grandTotal || 0;
-          existing.lastOrderDate = o.createdAt || existing.lastOrderDate;
+          existing.lastOrderDate = o.createdAt ? String(o.createdAt).split('T')[0] : existing.lastOrderDate;
         } else {
           customerMap.set(phone, {
             _id: `cust-${phone}`,
@@ -52,7 +54,7 @@ export async function GET(request: Request) {
             address: o.customer?.address || '',
             totalOrders: 1,
             totalSpent: o.grandTotal || 0,
-            lastOrderDate: o.createdAt || new Date().toISOString(),
+            lastOrderDate: o.createdAt ? String(o.createdAt).split('T')[0] : new Date().toISOString().split('T')[0],
           });
         }
       }
@@ -71,11 +73,12 @@ export async function GET(request: Request) {
 
     return NextResponse.json(
       { success: true, count: customers.length, data: customers },
-      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
     );
   } catch (err: any) {
+    console.error('Failed to fetch customers:', err);
     return NextResponse.json(
-      { success: false, message: 'Failed to fetch customers' },
+      { success: false, message: 'Failed to fetch customers: ' + err.message },
       { status: 500 }
     );
   }

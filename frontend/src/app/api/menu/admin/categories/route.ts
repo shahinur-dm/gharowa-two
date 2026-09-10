@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { MenuCategory } from '@/models/MenuCategory';
-import { getStoreCategories, addStoreCategory } from '@/lib/serverStore';
+import { addStoreCategory, getStoreCategories } from '@/lib/serverStore';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -12,12 +13,10 @@ export async function GET() {
     const db = await connectToDatabase();
     if (db) {
       const categories = await MenuCategory.find().sort({ displayOrder: 1, createdAt: 1 }).lean();
-      if (categories && categories.length > 0) {
-        return NextResponse.json(
-          { success: true, count: categories.length, data: categories },
-          { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
-        );
-      }
+      return NextResponse.json(
+        { success: true, count: categories.length, data: categories },
+        { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+      );
     }
   } catch (error: any) {
     console.warn('MongoDB category fetch fallback:', error.message);
@@ -43,53 +42,18 @@ export async function POST(request: Request) {
     const baseSlug = (body.slug || body.nameEn).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     const cleanSlug = baseSlug || `cat-${Date.now()}`;
 
-    try {
-      const db = await connectToDatabase();
-      if (db) {
-        let finalSlug = cleanSlug;
-        const existingCat = await MenuCategory.findOne({ slug: finalSlug });
-        if (existingCat) {
-          finalSlug = `${finalSlug}-${Date.now().toString().slice(-4)}`;
-        }
+    await connectToDatabase();
 
-        const categoryData = {
-          nameBn: body.nameBn.trim(),
-          nameEn: body.nameEn.trim(),
-          slug: finalSlug,
-          descriptionBn: body.descriptionBn || '',
-          descriptionEn: body.descriptionEn || '',
-          image: body.image || 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?q=80&w=800&auto=format&fit=crop',
-          icon: body.icon || 'Utensils',
-          displayOrder: Number(body.displayOrder) || 1,
-          isActive: body.isActive !== false,
-        };
-
-        const saved = await MenuCategory.create(categoryData);
-        const savedObj = saved.toObject ? saved.toObject() : saved;
-
-        addStoreCategory({
-          ...(savedObj as any),
-          _id: String(savedObj._id),
-        });
-
-        return NextResponse.json(
-          {
-            success: true,
-            message: 'ক্যাটাগরি সফলভাবে তৈরি ও সংরক্ষণ করা হয়েছে',
-            data: savedObj,
-          },
-          { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
-        );
-      }
-    } catch (dbErr: any) {
-      console.warn('MongoDB save category notice:', dbErr.message);
+    let finalSlug = cleanSlug;
+    const existingCat = await MenuCategory.findOne({ slug: finalSlug });
+    if (existingCat) {
+      finalSlug = `${finalSlug}-${Date.now().toString().slice(-4)}`;
     }
 
-    const fallbackData = {
-      _id: `cat-${Date.now()}`,
-      nameBn: body.nameBn,
-      nameEn: body.nameEn,
-      slug: cleanSlug,
+    const categoryData = {
+      nameBn: body.nameBn.trim(),
+      nameEn: body.nameEn.trim(),
+      slug: finalSlug,
       descriptionBn: body.descriptionBn || '',
       descriptionEn: body.descriptionEn || '',
       image: body.image || 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?q=80&w=800&auto=format&fit=crop',
@@ -98,16 +62,29 @@ export async function POST(request: Request) {
       isActive: body.isActive !== false,
     };
 
-    const savedFallback = addStoreCategory(fallbackData);
+    const saved = await MenuCategory.create(categoryData);
+    const savedObj = saved.toObject ? saved.toObject() : saved;
+
+    addStoreCategory({
+      ...(savedObj as any),
+      _id: String(savedObj._id),
+    });
+
+    try {
+      revalidatePath('/');
+      revalidatePath('/menu');
+    } catch (e) {}
+
     return NextResponse.json(
       {
         success: true,
-        message: 'ক্যাটাগরি সফলভাবে তৈরি হয়েছে',
-        data: savedFallback,
+        message: 'ক্যাটাগরি সফলভাবে তৈরি ও সংরক্ষণ করা হয়েছে',
+        data: savedObj,
       },
       { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
     );
   } catch (error: any) {
+    console.error('Error saving category to database:', error);
     return NextResponse.json(
       { success: false, message: error.message || 'Unable to save category right now. Please try again.' },
       { status: 500 }

@@ -14,16 +14,14 @@ export async function GET() {
         .sort({ displayOrder: 1, createdAt: 1 })
         .lean();
 
-      if (categories && categories.length > 0) {
-        return NextResponse.json(
-          { success: true, count: categories.length, data: categories },
-          {
-            headers: {
-              'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
-            },
-          }
-        );
-      }
+      return NextResponse.json(
+        { success: true, count: categories.length, data: categories },
+        {
+          headers: {
+            'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+          },
+        }
+      );
     }
   } catch (error: any) {
     console.warn('Database error in categories GET, fallback to store:', error.message);

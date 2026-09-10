@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { Order } from '@/models/Order';
-import { getStoreOrders, addStoreOrder, getStoreSettings } from '@/lib/serverStore';
+import { RestaurantSettings } from '@/models/RestaurantSettings';
+import { addStoreOrder } from '@/lib/serverStore';
 import { generateWhatsAppOrderMessage, createWhatsAppUrl } from '@/lib/whatsapp';
 
 export const dynamic = 'force-dynamic';
@@ -13,44 +14,31 @@ export async function GET(request: Request) {
     const status = searchParams.get('status') || undefined;
     const search = searchParams.get('search') || undefined;
 
-    try {
-      const db = await connectToDatabase();
-      if (db) {
-        const query: any = {};
-        if (status && status !== 'all') {
-          query.orderStatus = status;
-        }
-        if (search) {
-          const regex = new RegExp(search.trim(), 'i');
-          query.$or = [
-            { orderNumber: regex },
-            { 'customer.name': regex },
-            { 'customer.phone': regex },
-          ];
-        }
+    await connectToDatabase();
 
-        const orders = await Order.find(query).sort({ createdAt: -1 }).lean();
-        if (orders && orders.length > 0) {
-          return NextResponse.json({
-            success: true,
-            count: orders.length,
-            data: orders,
-          });
-        }
-      }
-    } catch (dbErr: any) {
-      console.warn('MongoDB orders fetch fallback:', dbErr.message);
+    const query: any = {};
+    if (status && status !== 'all') {
+      query.orderStatus = status;
+    }
+    if (search) {
+      const regex = new RegExp(search.trim(), 'i');
+      query.$or = [
+        { orderNumber: regex },
+        { 'customer.name': regex },
+        { 'customer.phone': regex },
+      ];
     }
 
-    const fallbackOrders = getStoreOrders({ status, search });
+    const orders = await Order.find(query).sort({ createdAt: -1 }).lean();
     return NextResponse.json({
       success: true,
-      count: fallbackOrders.length,
-      data: fallbackOrders,
-    });
+      count: orders.length,
+      data: orders,
+    }, { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } });
   } catch (error: any) {
+    console.error('Failed to fetch orders from database:', error);
     return NextResponse.json(
-      { success: false, message: 'Failed to fetch orders' },
+      { success: false, message: 'Failed to fetch orders: ' + error.message },
       { status: 500 }
     );
   }
@@ -75,10 +63,13 @@ export async function POST(request: Request) {
       );
     }
 
-    const settings = getStoreSettings();
-    const standardFee = settings.standardDeliveryFee || 60;
-    const freeThreshold = settings.freeDeliveryThreshold || 1000;
-    const whatsappPhone = settings.whatsappNumber || settings.phone || '01973255888';
+    await connectToDatabase();
+
+    // Fetch live settings from MongoDB
+    const settings = await RestaurantSettings.findOne().lean() || {};
+    const standardFee = (settings as any).standardDeliveryFee || 60;
+    const freeThreshold = (settings as any).freeDeliveryThreshold || 1000;
+    const whatsappPhone = (settings as any).whatsappNumber || (settings as any).phone || '01973255888';
 
     // Calculate subtotal
     let subtotal = 0;
@@ -106,13 +97,12 @@ export async function POST(request: Request) {
       ? 0
       : standardFee;
 
-    const discount = 0; // Handled if coupon code is verified
+    const discount = 0;
     const grandTotal = Math.max(0, subtotal + deliveryCharge - discount);
 
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
     const orderNumber = `GH-${randomSuffix}`;
 
-    // Normalize paymentMethod
     const validPaymentMethod =
       paymentMethod === 'bkash'
         ? 'bkash'
@@ -141,7 +131,7 @@ export async function POST(request: Request) {
 
     const whatsappDeepLink = createWhatsAppUrl(whatsappPhone, whatsappMessage);
 
-    const orderPayload = {
+    const orderDoc = {
       orderNumber,
       customer: {
         name: customer.name.trim(),
@@ -157,52 +147,23 @@ export async function POST(request: Request) {
       couponCode: couponCode ? String(couponCode).trim() : undefined,
       grandTotal,
       paymentMethod: validPaymentMethod,
-      paymentStatus: (validPaymentMethod === 'bkash' || validPaymentMethod === 'nagad') ? 'pending' : 'pending',
+      paymentStatus: 'pending',
       orderStatus: 'pending',
       source: 'website_whatsapp',
       statusHistory: [
         {
           status: 'pending',
-          changedAt: new Date().toISOString(),
+          changedAt: new Date(),
           note: `ওয়েবসাইট থেকে অর্ডার গৃহীত (${validPaymentMethod})`,
         },
       ],
       specialInstructions: specialInstructions ? specialInstructions.trim() : undefined,
       whatsappMessage,
       estimatedDeliveryMinutes: 45,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
     };
 
-    let savedOrder: any = null;
-
-    try {
-      const db = await connectToDatabase();
-      if (db) {
-        const created = await Order.create({
-          ...orderPayload,
-          statusHistory: [
-            {
-              status: 'pending',
-              changedAt: new Date(),
-              note: `ওয়েবসাইট থেকে অর্ডার গৃহীত (${validPaymentMethod})`,
-            },
-          ],
-        });
-        if (created) {
-          savedOrder = created.toObject ? created.toObject() : created;
-        }
-      }
-    } catch (dbErr: any) {
-      console.warn('MongoDB order create notice:', dbErr.message);
-    }
-
-    if (!savedOrder) {
-      savedOrder = {
-        ...orderPayload,
-        _id: `ord-${Date.now()}`,
-      };
-    }
+    const created = await Order.create(orderDoc);
+    const savedOrder = created.toObject ? created.toObject() : created;
 
     addStoreOrder({
       ...savedOrder,
@@ -223,7 +184,7 @@ export async function POST(request: Request) {
           order: savedOrder,
         },
       },
-      { status: 201 }
+      { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
     );
   } catch (error: any) {
     console.error('Order creation error:', error);

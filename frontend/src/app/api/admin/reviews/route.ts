@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { CustomerReview } from '@/models/CustomerReview';
@@ -12,12 +13,10 @@ export async function GET() {
     const db = await connectToDatabase();
     if (db) {
       const reviews = await CustomerReview.find().sort({ displayOrder: 1, createdAt: -1 }).lean();
-      if (reviews) {
-        return NextResponse.json(
-          { success: true, count: reviews.length, data: reviews },
-          { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
-        );
-      }
+      return NextResponse.json(
+        { success: true, count: reviews.length, data: reviews },
+        { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+      );
     }
   } catch (error: any) {
     console.warn('MongoDB reviews fetch notice:', error.message);
@@ -26,7 +25,7 @@ export async function GET() {
   const fallback = getStoreCustomerReviews();
   return NextResponse.json(
     { success: true, count: fallback.length, data: fallback },
-    { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+    { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
   );
 }
 
@@ -52,48 +51,31 @@ export async function POST(request: Request) {
       isActive: body.isActive !== false,
     };
 
-    try {
-      const db = await connectToDatabase();
-      if (db) {
-        const saved = await CustomerReview.create(reviewData);
-        if (saved) {
-          const savedObj = saved.toObject ? saved.toObject() : saved;
-          addStoreCustomerReview({
-            ...savedObj,
-            _id: String(savedObj._id),
-          });
-          return NextResponse.json(
-            {
-              success: true,
-              message: 'রিভিউ সফলভাবে যোগ করা হয়েছে',
-              data: savedObj,
-            },
-            { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
-          );
-        }
-      }
-    } catch (dbErr: any) {
-      console.warn('MongoDB review save notice:', dbErr.message);
-    }
+    await connectToDatabase();
 
-    const fallbackData = {
-      ...reviewData,
-      _id: `rev-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    const savedFallback = addStoreCustomerReview(fallbackData);
+    const saved = await CustomerReview.create(reviewData);
+    const savedObj = saved.toObject ? saved.toObject() : saved;
+    addStoreCustomerReview({
+      ...savedObj,
+      _id: String(savedObj._id),
+    });
+
+    try {
+      revalidatePath('/');
+    } catch (e) {}
+
     return NextResponse.json(
       {
         success: true,
         message: 'রিভিউ সফলভাবে যোগ করা হয়েছে',
-        data: savedFallback,
+        data: savedObj,
       },
-      { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+      { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
     );
   } catch (error: any) {
+    console.error('Error creating customer review:', error);
     return NextResponse.json(
-      { success: false, message: 'Failed to create customer review' },
+      { success: false, message: error.message || 'Failed to create customer review' },
       { status: 500 }
     );
   }

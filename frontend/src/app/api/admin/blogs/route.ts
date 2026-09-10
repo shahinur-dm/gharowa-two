@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { BlogVideo } from '@/models/BlogVideo';
@@ -12,12 +13,10 @@ export async function GET() {
     const db = await connectToDatabase();
     if (db) {
       const videos = await BlogVideo.find().sort({ displayOrder: 1, createdAt: -1 }).lean();
-      if (videos && videos.length > 0) {
-        return NextResponse.json(
-          { success: true, count: videos.length, data: videos },
-          { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
-        );
-      }
+      return NextResponse.json(
+        { success: true, count: videos.length, data: videos },
+        { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+      );
     }
   } catch (error: any) {
     console.warn('MongoDB blogs fetch notice:', error.message);
@@ -51,46 +50,29 @@ export async function POST(request: Request) {
       isActive: body.isActive !== false,
     };
 
-    try {
-      const db = await connectToDatabase();
-      if (db) {
-        const saved = await BlogVideo.create(videoData);
-        if (saved) {
-          const savedObj = saved.toObject ? saved.toObject() : saved;
-          addStoreBlogVideo({
-            ...savedObj,
-            _id: String(savedObj._id),
-          });
-          return NextResponse.json(
-            {
-              success: true,
-              message: 'ভিডিও ব্লগ সফলভাবে যোগ করা হয়েছে',
-              data: savedObj,
-            },
-            { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
-          );
-        }
-      }
-    } catch (dbErr: any) {
-      console.warn('MongoDB blog save notice:', dbErr.message);
-    }
+    await connectToDatabase();
 
-    const fallbackData = {
-      ...videoData,
-      _id: `vid-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    const savedFallback = addStoreBlogVideo(fallbackData);
+    const saved = await BlogVideo.create(videoData);
+    const savedObj = saved.toObject ? saved.toObject() : saved;
+    addStoreBlogVideo({
+      ...savedObj,
+      _id: String(savedObj._id),
+    });
+
+    try {
+      revalidatePath('/');
+    } catch (e) {}
+
     return NextResponse.json(
       {
         success: true,
         message: 'ভিডিও ব্লগ সফলভাবে যোগ করা হয়েছে',
-        data: savedFallback,
+        data: savedObj,
       },
       { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
     );
   } catch (error: any) {
+    console.error('Error saving blog video:', error);
     return NextResponse.json(
       { success: false, message: error.message || 'Failed to create blog video' },
       { status: 500 }

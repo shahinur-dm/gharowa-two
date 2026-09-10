@@ -1,79 +1,73 @@
 import { NextResponse } from 'next/server';
+import { connectToDatabase } from '@/lib/mongodb';
+import { InventoryItem } from '@/models/InventoryItem';
+import { ensureDatabaseBootstrapped } from '@/lib/dbBootstrap';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-interface InventoryItemData {
-  _id: string;
-  nameBn: string;
-  nameEn: string;
-  category: string;
-  currentStock: number;
-  minThreshold: number;
-  unit: string;
-  costPerUnit: number;
-  lastRestocked: string;
+export async function GET() {
+  try {
+    await ensureDatabaseBootstrapped();
+    const db = await connectToDatabase();
+    if (!db) {
+      return NextResponse.json({ success: false, message: 'Database connection failed' }, { status: 500 });
+    }
+
+    const items = await InventoryItem.find().sort({ nameBn: 1 }).lean();
+    const lowStockCount = items.filter((i) => i.currentStock <= i.minThreshold).length;
+
+    return NextResponse.json(
+      {
+        success: true,
+        count: items.length,
+        lowStockCount,
+        data: items,
+      },
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+    );
+  } catch (err: any) {
+    return NextResponse.json(
+      { success: false, message: err.message || 'Failed to fetch inventory' },
+      { status: 500 }
+    );
+  }
 }
 
-let globalInventory: InventoryItemData[] = [
-  {
-    _id: 'inv-1',
-    nameBn: 'খাসির মাংস (Mutton)',
-    nameEn: 'Fresh Mutton Shank & Shoulder',
-    category: 'Meat',
-    currentStock: 45,
-    minThreshold: 20,
-    unit: 'কেজি (kg)',
-    costPerUnit: 1100,
-    lastRestocked: '2026-09-07',
-  },
-  {
-    _id: 'inv-2',
-    nameBn: 'বাসমতী চাল (Basmati Rice)',
-    nameEn: 'Premium Kalijeera / Basmati Rice',
-    category: 'Grains',
-    currentStock: 120,
-    minThreshold: 50,
-    unit: 'কেজি (kg)',
-    costPerUnit: 140,
-    lastRestocked: '2026-09-05',
-  },
-  {
-    _id: 'inv-3',
-    nameBn: 'খাঁটি সরিষার তেল ও ঘি',
-    nameEn: 'Pure Mustard Oil & Ghee',
-    category: 'Oils',
-    currentStock: 15,
-    minThreshold: 10,
-    unit: 'লিটার (L)',
-    costPerUnit: 280,
-    lastRestocked: '2026-09-06',
-  },
-  {
-    _id: 'inv-4',
-    nameBn: 'স্পেশাল কাচ্চি ও খিচুড়ি মসলা',
-    nameEn: 'Gharowa Secret Spice Blend',
-    category: 'Spices',
-    currentStock: 8,
-    minThreshold: 10,
-    unit: 'কেজি (kg)',
-    costPerUnit: 950,
-    lastRestocked: '2026-09-04',
-  },
-];
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    if (!body.nameBn || !body.nameEn) {
+      return NextResponse.json(
+        { success: false, message: 'পণ্যের নাম আবশ্যক' },
+        { status: 400 }
+      );
+    }
 
-export async function GET() {
-  const lowStockCount = globalInventory.filter(
-    (i) => i.currentStock <= i.minThreshold
-  ).length;
+    const db = await connectToDatabase();
+    if (!db) {
+      return NextResponse.json({ success: false, message: 'Database connection failed' }, { status: 500 });
+    }
 
-  return NextResponse.json(
-    {
-      success: true,
-      count: globalInventory.length,
-      lowStockCount,
-      data: globalInventory,
-    },
-    { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
-  );
+    const newItem = await InventoryItem.create({
+      nameBn: body.nameBn.trim(),
+      nameEn: body.nameEn.trim(),
+      category: body.category || 'General',
+      currentStock: Number(body.currentStock) || 0,
+      minThreshold: Number(body.minThreshold) || 10,
+      unit: body.unit || 'কেজি (kg)',
+      costPerUnit: Number(body.costPerUnit) || 0,
+      lastRestocked: body.lastRestocked || new Date().toISOString().split('T')[0],
+    });
+
+    return NextResponse.json(
+      { success: true, message: 'ইনভেন্টরি আইটেম সফলভাবে যোগ করা হয়েছে', data: newItem },
+      { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+    );
+  } catch (err: any) {
+    return NextResponse.json(
+      { success: false, message: err.message || 'Failed to create inventory item' },
+      { status: 500 }
+    );
+  }
 }

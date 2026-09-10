@@ -14,16 +14,14 @@ export async function GET() {
         .sort({ displayOrder: 1, createdAt: 1 })
         .lean();
 
-      if (brands) {
-        return NextResponse.json(
-          { success: true, count: brands.length, data: brands },
-          {
-            headers: {
-              'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-            },
-          }
-        );
-      }
+      return NextResponse.json(
+        { success: true, count: brands.length, data: brands },
+        {
+          headers: {
+            'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+          },
+        }
+      );
     }
   } catch (error: any) {
     console.warn('Database error in brands GET, fallback to store:', error.message);
@@ -38,7 +36,7 @@ export async function GET() {
     },
     {
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
       },
     }
   );

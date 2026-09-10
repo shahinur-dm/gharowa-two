@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb';
 import { HeroSlide } from '@/models/HeroSlide';
@@ -12,12 +13,10 @@ export async function GET() {
     const db = await connectToDatabase();
     if (db) {
       const slides = await HeroSlide.find().sort({ displayOrder: 1, createdAt: -1 }).lean();
-      if (slides) {
-        return NextResponse.json(
-          { success: true, count: slides.length, data: slides },
-          { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
-        );
-      }
+      return NextResponse.json(
+        { success: true, count: slides.length, data: slides },
+        { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+      );
     }
   } catch (error: any) {
     console.warn('MongoDB hero slides fetch notice:', error.message);
@@ -26,7 +25,7 @@ export async function GET() {
   const fallback = getStoreHeroSlides();
   return NextResponse.json(
     { success: true, count: fallback.length, data: fallback },
-    { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+    { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
   );
 }
 
@@ -70,48 +69,31 @@ export async function POST(request: Request) {
       isActive: body.isActive !== false,
     };
 
-    try {
-      const db = await connectToDatabase();
-      if (db) {
-        const saved = await HeroSlide.create(slideData);
-        if (saved) {
-          const savedObj = saved.toObject ? saved.toObject() : saved;
-          addStoreHeroSlide({
-            ...savedObj,
-            _id: String(savedObj._id),
-          });
-          return NextResponse.json(
-            {
-              success: true,
-              message: 'হিরো স্লাইড সফলভাবে যোগ করা হয়েছে',
-              data: savedObj,
-            },
-            { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
-          );
-        }
-      }
-    } catch (dbErr: any) {
-      console.warn('MongoDB hero slide save notice:', dbErr.message);
-    }
+    await connectToDatabase();
 
-    const fallbackData = {
-      ...slideData,
-      _id: `slide-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    const savedFallback = addStoreHeroSlide(fallbackData);
+    const saved = await HeroSlide.create(slideData);
+    const savedObj = saved.toObject ? saved.toObject() : saved;
+    addStoreHeroSlide({
+      ...savedObj,
+      _id: String(savedObj._id),
+    });
+
+    try {
+      revalidatePath('/');
+    } catch (e) {}
+
     return NextResponse.json(
       {
         success: true,
         message: 'হিরো স্লাইড সফলভাবে যোগ করা হয়েছে',
-        data: savedFallback,
+        data: savedObj,
       },
-      { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+      { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
     );
   } catch (error: any) {
+    console.error('Error saving hero slide:', error);
     return NextResponse.json(
-      { success: false, message: 'Failed to create hero slide' },
+      { success: false, message: error.message || 'Failed to create hero slide' },
       { status: 500 }
     );
   }

@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server';
-import { getStoreOrders } from '@/lib/serverStore';
+import { connectToDatabase } from '@/lib/mongodb';
+import { Order } from '@/models/Order';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export async function GET() {
   try {
-    const orders = getStoreOrders();
+    await connectToDatabase();
+    const orders = await Order.find().sort({ createdAt: -1 }).lean();
 
     const totalOrders = orders.length;
     const totalSales = orders.reduce((sum, o) => sum + (o.grandTotal || 0), 0);
@@ -53,11 +55,12 @@ export async function GET() {
           ],
         },
       },
-      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
     );
   } catch (err: any) {
+    console.error('Failed to fetch reports from MongoDB:', err);
     return NextResponse.json(
-      { success: false, message: 'Failed to fetch reports data' },
+      { success: false, message: 'Failed to fetch reports data: ' + err.message },
       { status: 500 }
     );
   }
