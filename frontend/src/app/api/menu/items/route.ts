@@ -27,7 +27,10 @@ export async function GET(request: Request) {
             catDoc = await MenuCategory.findById(category);
           }
           if (!catDoc) {
-            catDoc = await MenuCategory.findOne({ slug: category });
+            const cleanCat = category.replace(/^cat-/, '');
+            catDoc = await MenuCategory.findOne({
+              $or: [{ slug: category }, { slug: cleanCat }, { nameEn: category }, { nameBn: category }],
+            });
           }
           if (catDoc) {
             query.category = catDoc._id;
@@ -49,16 +52,14 @@ export async function GET(request: Request) {
 
         const items = await MenuItem.find(query).populate('category').sort({ displayOrder: 1, createdAt: -1 }).lean();
 
-        if (items && items.length > 0) {
-          return NextResponse.json(
-            { success: true, count: items.length, data: items },
-            {
-              headers: {
-                'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
-              },
-            }
-          );
-        }
+        return NextResponse.json(
+          { success: true, count: items.length, data: items || [] },
+          {
+            headers: {
+              'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+            },
+          }
+        );
       }
     } catch (e: any) {
       console.warn('MongoDB public items query notice:', e.message);

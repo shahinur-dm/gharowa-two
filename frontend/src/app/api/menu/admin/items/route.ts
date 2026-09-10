@@ -13,12 +13,10 @@ export async function GET() {
     const db = await connectToDatabase();
     if (db) {
       const items = await MenuItem.find().populate('category').sort({ displayOrder: 1, createdAt: -1 }).lean();
-      if (items && items.length > 0) {
-        return NextResponse.json(
-          { success: true, count: items.length, data: items },
-          { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
-        );
-      }
+      return NextResponse.json(
+        { success: true, count: items.length, data: items || [] },
+        { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+      );
     }
   } catch (error: any) {
     console.warn('MongoDB items fetch fallback:', error.message);
@@ -49,15 +47,21 @@ export async function POST(request: Request) {
     try {
       const db = await connectToDatabase();
       if (db) {
-        // Resolve category
+        // Resolve category safely without triggering Mongoose CastError on invalid ObjectIds
         if (body.category) {
           if (mongoose.isValidObjectId(body.category)) {
             const catDoc = await MenuCategory.findById(body.category);
             if (catDoc) resolvedCategoryId = catDoc._id;
           }
           if (!resolvedCategoryId) {
+            const categorySlugOrName = String(body.category).replace(/^cat-/, '');
             const catDoc = await MenuCategory.findOne({
-              $or: [{ slug: body.category }, { _id: body.category }],
+              $or: [
+                { slug: body.category },
+                { slug: categorySlugOrName },
+                { nameEn: body.category },
+                { nameBn: body.category },
+              ],
             });
             if (catDoc) resolvedCategoryId = catDoc._id;
           }
@@ -85,6 +89,12 @@ export async function POST(request: Request) {
           finalSlug = `${finalSlug}-${Date.now().toString().slice(-4)}`;
         }
 
+        const ingredientsArr = Array.isArray(body.ingredients)
+          ? body.ingredients
+          : typeof body.ingredients === 'string' && body.ingredients.trim()
+          ? body.ingredients.split(',').map((s: string) => s.trim()).filter(Boolean)
+          : [];
+
         const createData = {
           nameBn: body.nameBn.trim(),
           nameEn: body.nameEn.trim(),
@@ -104,7 +114,7 @@ export async function POST(request: Request) {
           isPopular: !!body.isPopular,
           preparationTimeMinutes: Number(body.preparationTimeMinutes) || 15,
           servingSize: body.servingSize || '১ জন (1 Person)',
-          ingredients: Array.isArray(body.ingredients) ? body.ingredients : (body.ingredients ? [body.ingredients] : []),
+          ingredients: ingredientsArr,
           dietaryTags: Array.isArray(body.dietaryTags) ? body.dietaryTags : [],
           displayOrder: Number(body.displayOrder) || 1,
           rating: Number(body.rating) || 4.9,
@@ -127,10 +137,14 @@ export async function POST(request: Request) {
         }
       }
     } catch (e: any) {
-      console.warn('MongoDB item create notice:', e.message);
+      console.error('MongoDB item create error:', e.message);
+      return NextResponse.json(
+        { success: false, message: e.message || 'ডাটাবেজে খাবার সংরক্ষণ করা সম্ভব হয়নি' },
+        { status: 500 }
+      );
     }
 
-    // Fallback store
+    // Fallback store if no DB connection configured
     const fallbackItem: MenuItemData = {
       _id: `item-${Date.now()}`,
       nameBn: body.nameBn,
@@ -160,7 +174,7 @@ export async function POST(request: Request) {
 
     const savedFallback = addStoreMenuItem(fallbackItem);
     return NextResponse.json(
-      { success: true, message: 'খাবার সফলভাবে তৈরি হয়েছে', data: savedFallback },
+      { success: true, message: 'খাবার সংরক্ষণ করা হয়েছে', data: savedFallback },
       { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
     );
   } catch (error: any) {

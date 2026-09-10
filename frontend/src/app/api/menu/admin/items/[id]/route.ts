@@ -48,7 +48,7 @@ export async function PUT(
         }
         if (!updated) {
           updated = await MenuItem.findOneAndUpdate(
-            { $or: [{ _id: id }, { slug: id }, { sku: id }] },
+            { $or: [{ slug: id }, { sku: id }] },
             updates,
             { new: true }
           )
@@ -68,7 +68,11 @@ export async function PUT(
         }
       }
     } catch (e: any) {
-      console.warn('MongoDB item update notice:', e.message);
+      console.error('MongoDB item update error:', e.message);
+      return NextResponse.json(
+        { success: false, message: e.message || 'ডাটাবেজে খাবার আপডেট করা সম্ভব হয়নি' },
+        { status: 500 }
+      );
     }
 
     const fallbackUpdated = updateStoreMenuItem(id, updates);
@@ -96,11 +100,20 @@ export async function DELETE(
         if (mongoose.isValidObjectId(id)) {
           await MenuItem.findByIdAndDelete(id);
         } else {
-          await MenuItem.findOneAndDelete({ $or: [{ _id: id }, { slug: id }, { sku: id }] });
+          await MenuItem.findOneAndDelete({ $or: [{ slug: id }, { sku: id }] });
         }
+        deleteStoreMenuItem(id);
+        return NextResponse.json(
+          { success: true, message: 'Food item deleted successfully' },
+          { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+        );
       }
     } catch (e: any) {
-      console.warn('MongoDB item delete notice:', e.message);
+      console.error('MongoDB item delete error:', e.message);
+      return NextResponse.json(
+        { success: false, message: e.message || 'ডাটাবেজ থেকে খাবার ডিলিট করা সম্ভব হয়নি' },
+        { status: 500 }
+      );
     }
 
     deleteStoreMenuItem(id);

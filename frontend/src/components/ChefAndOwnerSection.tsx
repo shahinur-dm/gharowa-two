@@ -15,20 +15,20 @@ export default function ChefAndOwnerSection({ settings }: ChefAndOwnerProps) {
 
   const chefName =
     language === 'bn'
-      ? settings?.chefNameBn || 'মাস্টার শেফ রফিকুল ইসলাম'
-      : settings?.chefNameEn || 'Master Chef Rafiqul Islam';
+      ? (settings?.chefNameBn || settings?.chefName || 'মাস্টার শেফ রফিকুল ইসলাম')
+      : (settings?.chefNameEn || settings?.chefName || 'Master Chef Rafiqul Islam');
 
   const chefDesignation =
     language === 'bn'
-      ? settings?.chefTitleBn || 'প্রধান বাবুর্চি (Head Chef)'
-      : settings?.chefTitleEn || 'Head Chef (30+ Years Experience)';
+      ? (settings?.chefTitleBn || settings?.chefDesignation || 'প্রধান বাবুর্চি (Head Chef)')
+      : (settings?.chefTitleEn || settings?.chefDesignation || 'Head Chef (30+ Years Experience)');
 
   const chefBio =
     language === 'bn'
-      ? settings?.chefBioBn || '২৫ বছরেরও বেশি রন্ধন অভিজ্ঞতায় ঐতিহ্যবাহী মসলা ও খাঁটি ঘরোয়া স্বাদের ধারক।'
-      : settings?.chefBioEn || 'Preserving the original secret spice recipes of Gharowa for over 30 years.';
+      ? (settings?.chefBioBn || settings?.chefBio || '২৫ বছরেরও বেশি রন্ধন অভিজ্ঞতায় ঐতিহ্যবাহী মসলা ও খাঁটি ঘরোয়া স্বাদের ধারক।')
+      : (settings?.chefBioEn || settings?.chefBioBn || settings?.chefBio || 'Preserving the original secret spice recipes of Gharowa for over 30 years.');
 
-  const chefExperience = settings?.chefExperience || '30+ Years Experience';
+  const chefExperience = settings?.chefExperience || '25+ Years Experience';
   const chefSpecialty = settings?.chefSpecialty || 'Dum Pukht & Heritage Khichuri';
   const chefImage =
     settings?.chefImageUrl ||
@@ -36,25 +36,25 @@ export default function ChefAndOwnerSection({ settings }: ChefAndOwnerProps) {
 
   const ownerName =
     language === 'bn'
-      ? settings?.ownerNameBn || 'হাজী মোহাম্মদ নূর হোসেন'
-      : settings?.ownerNameEn || 'Haji Mohammad Nur Hossain';
+      ? (settings?.ownerNameBn || settings?.ownerName || 'হাজী মোহাম্মদ নূর হোসেন')
+      : (settings?.ownerNameEn || settings?.ownerName || 'Haji Mohammad Nur Hossain');
 
   const ownerDesignation =
     language === 'bn'
-      ? settings?.ownerTitleBn || 'প্রতিষ্ঠাতা ও স্বত্বাধিকারী'
-      : settings?.ownerTitleEn || 'Founder & Proprietor';
+      ? (settings?.ownerTitleBn || settings?.ownerDesignation || 'প্রতিষ্ঠাতা ও স্বত্বাধিকারী')
+      : (settings?.ownerTitleEn || settings?.ownerDesignation || 'Founder & Proprietor');
 
   const ownerStory =
     language === 'bn'
-      ? settings?.ownerStoryBn ||
-        '১৯৭২ সালে মতিঝিলে ছোট্ট পরিসরে শুরু করা ঘরোয়া আজ ঢাকার ঐতিহ্যের অংশ। আমাদের অঙ্গীকার কেবল মান ও খাঁটি স্বাদ।'
-      : settings?.ownerStoryEn ||
-        'Founded with the philosophy that great food brings families and hearts together with honesty and passion.';
+      ? (settings?.ownerStoryBn ||
+        '১৯৭২ সালে মতিঝিলে ছোট্ট পরিসরে শুরু করা ঘরোয়া আজ ঢাকার ঐতিহ্যের অংশ। আমাদের অঙ্গীকার কেবল মান ও খাঁটি স্বাদ।')
+      : (settings?.ownerStoryEn || settings?.ownerStoryBn ||
+        'Founded with the philosophy that great food brings families and hearts together with honesty and passion.');
 
   const ownerQuote =
     language === 'bn'
-      ? settings?.ownerQuoteBn || 'খাবারের মানের সাথে কোনো আপস নয় — এটাই ১৯৭২ সাল থেকে আমাদের প্রতিজ্ঞা।'
-      : settings?.ownerQuoteEn || 'No compromise on food quality and customer satisfaction since 1972.';
+      ? (settings?.ownerQuoteBn || settings?.ownerQuote || 'খাবারের মানের সাথে কোনো আপস নয় — এটাই ১৯৭২ সাল থেকে আমাদের প্রতিজ্ঞা।')
+      : (settings?.ownerQuoteEn || settings?.ownerQuoteBn || settings?.ownerQuote || 'No compromise on food quality and customer satisfaction since 1972.');
 
   const ownerImage =
     settings?.ownerImageUrl ||

@@ -39,7 +39,16 @@ export default function AdminSettingsPage() {
         setIsLoading(true);
         const res: any = await api.get('/settings');
         if (res.success && res.data) {
-          setSettings(res.data);
+          const d = res.data;
+          setSettings({
+            ...d,
+            chefName: d.chefName || d.chefNameBn || d.chefNameEn || '',
+            chefDesignation: d.chefDesignation || d.chefTitleBn || d.chefTitleEn || '',
+            chefBioBn: d.chefBioBn || d.chefBio || '',
+            ownerName: d.ownerName || d.ownerNameBn || d.ownerNameEn || '',
+            ownerDesignation: d.ownerDesignation || d.ownerTitleBn || d.ownerTitleEn || '',
+            ownerQuoteBn: d.ownerQuoteBn || d.ownerQuote || '',
+          });
         }
       } catch (e) {
         console.warn('Settings fetch error', e);
@@ -61,8 +70,42 @@ export default function AdminSettingsPage() {
       setIsSaving(true);
       setSaveSuccess(false);
       setErrorMessage('');
-      const res: any = await api.put('/settings', settings);
+
+      const payload = {
+        ...settings,
+        chefName: settings.chefName,
+        chefNameBn: settings.chefName || settings.chefNameBn,
+        chefNameEn: settings.chefName || settings.chefNameEn,
+        chefDesignation: settings.chefDesignation,
+        chefTitleBn: settings.chefDesignation || settings.chefTitleBn,
+        chefTitleEn: settings.chefDesignation || settings.chefTitleEn,
+        chefBio: settings.chefBioBn || settings.chefBio,
+        chefBioBn: settings.chefBioBn || settings.chefBio,
+        chefBioEn: settings.chefBioEn || settings.chefBioBn || settings.chefBio,
+        ownerName: settings.ownerName,
+        ownerNameBn: settings.ownerName || settings.ownerNameBn,
+        ownerNameEn: settings.ownerName || settings.ownerNameEn,
+        ownerDesignation: settings.ownerDesignation,
+        ownerTitleBn: settings.ownerDesignation || settings.ownerTitleBn,
+        ownerTitleEn: settings.ownerDesignation || settings.ownerTitleEn,
+        ownerQuote: settings.ownerQuoteBn || settings.ownerQuote,
+        ownerQuoteBn: settings.ownerQuoteBn || settings.ownerQuote,
+        ownerQuoteEn: settings.ownerQuoteEn || settings.ownerQuoteBn || settings.ownerQuote,
+      };
+
+      const res: any = await api.put('/settings', payload);
       if (res.success) {
+        if (res.data) {
+          setSettings({
+            ...res.data,
+            chefName: res.data.chefName || res.data.chefNameBn || res.data.chefNameEn || payload.chefName,
+            chefDesignation: res.data.chefDesignation || res.data.chefTitleBn || res.data.chefTitleEn || payload.chefDesignation,
+            chefBioBn: res.data.chefBioBn || res.data.chefBio || payload.chefBioBn,
+            ownerName: res.data.ownerName || res.data.ownerNameBn || res.data.ownerNameEn || payload.ownerName,
+            ownerDesignation: res.data.ownerDesignation || res.data.ownerTitleBn || res.data.ownerTitleEn || payload.ownerDesignation,
+            ownerQuoteBn: res.data.ownerQuoteBn || res.data.ownerQuote || payload.ownerQuoteBn,
+          });
+        }
         setSaveSuccess(true);
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new Event('gharowa_cms_updated'));

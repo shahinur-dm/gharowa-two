@@ -28,19 +28,20 @@ export default function DynamicFavicon() {
         mimeType = 'image/jpeg';
       }
 
-      // 1. Remove any stale/existing icon links to force browser tab refresh
+      // Safely update existing icon links without removing DOM elements from React's tree
       const existingIcons = document.querySelectorAll("link[rel*='icon'], link[rel*='apple-touch-icon']");
-      existingIcons.forEach((el) => el.remove());
-
-      // 2. Create fresh icon links
-      const rels = ['icon', 'shortcut icon', 'apple-touch-icon'];
-      rels.forEach((rel) => {
+      if (existingIcons.length > 0) {
+        existingIcons.forEach((el) => {
+          (el as HTMLLinkElement).href = targetUrl;
+          if (mimeType) (el as HTMLLinkElement).type = mimeType;
+        });
+      } else {
         const link = document.createElement('link');
-        link.rel = rel;
+        link.rel = 'icon';
         link.type = mimeType;
         link.href = targetUrl;
         document.head.appendChild(link);
-      });
+      }
     };
 
     const updateFavicon = async () => {

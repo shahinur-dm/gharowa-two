@@ -60,7 +60,11 @@ export async function PUT(request: Request) {
         }
       }
     } catch (e: any) {
-      console.warn('MongoDB settings update notice:', e.message);
+      console.error('MongoDB settings update error:', e.message);
+      return NextResponse.json(
+        { success: false, message: e.message || 'ডাটাবেজ সেটিংস সংরক্ষণ করা যায়নি' },
+        { status: 500 }
+      );
     }
 
     const updated = updateStoreSettings(body);

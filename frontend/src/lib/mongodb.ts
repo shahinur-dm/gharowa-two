@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const DEFAULT_MONGODB_URI =
-  'mongodb+srv://efootballmadrid25_db_user:ljvpbVMGVJTQPVcH@dawatit.5hxbo9c.mongodb.net/Gharowa?appName=dawatit';
+  'mongodb+srv://nafieuislam_db_user:ceGww3v4VcJtrKRR@dit.ajxvstc.mongodb.net/Gharowa?appName=dit';
 
 const MONGODB_URI = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
 
@@ -17,35 +17,42 @@ export async function connectToDatabase(): Promise<typeof mongoose | null> {
     return null;
   }
 
-  if (cached.conn && cached.conn.connection.readyState === 1) {
-    return cached.conn;
+  if ((mongoose.connection.readyState as number) === 1) {
+    cached.conn = mongoose;
+    return mongoose;
   }
 
   if (!cached.promise) {
     const opts = {
-      bufferCommands: false,
       maxPoolSize: 10,
-      serverSelectionTimeoutMS: 4000,
-      socketTimeoutMS: 20000,
+      serverSelectionTimeoutMS: 8000,
+      socketTimeoutMS: 45000,
     };
 
     cached.promise = mongoose
       .connect(uri, opts)
       .then((mongooseInstance) => {
+        cached.conn = mongooseInstance;
         return mongooseInstance;
       })
       .catch((err) => {
         cached.promise = null;
+        cached.conn = null;
         console.warn('MongoDB Atlas connection notice:', err.message);
         return null;
       });
   }
 
   try {
-    cached.conn = await cached.promise;
+    const conn = await cached.promise;
+    if (!conn || (mongoose.connection.readyState as number) !== 1) {
+      cached.promise = null;
+      cached.conn = null;
+    }
     return cached.conn;
   } catch (e) {
     cached.promise = null;
+    cached.conn = null;
     return null;
   }
 }

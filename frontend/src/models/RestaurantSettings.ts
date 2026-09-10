@@ -49,19 +49,29 @@ export interface IRestaurantSettings extends Document {
   aboutStoryEn?: string;
   aboutImageUrl?: string;
   // Chef & Owner
+  chefName?: string;
   chefNameBn?: string;
   chefNameEn?: string;
   chefTitleBn?: string;
   chefTitleEn?: string;
+  chefDesignation?: string;
+  chefBio?: string;
   chefBioBn?: string;
   chefBioEn?: string;
+  chefExperience?: string;
+  chefSpecialty?: string;
   chefImageUrl?: string;
+  ownerName?: string;
   ownerNameBn?: string;
   ownerNameEn?: string;
   ownerTitleBn?: string;
   ownerTitleEn?: string;
+  ownerDesignation?: string;
+  ownerQuote?: string;
   ownerQuoteBn?: string;
   ownerQuoteEn?: string;
+  ownerStoryBn?: string;
+  ownerStoryEn?: string;
   ownerImageUrl?: string;
   // SEO & OG
   seoTitle?: string;
@@ -131,22 +141,32 @@ const RestaurantSettingsSchema = new Schema<IRestaurantSettings>(
       type: String,
       default: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop',
     },
+    chefName: { type: String, default: '' },
     chefNameBn: { type: String, default: 'মাস্টার শেফ রফিকুল ইসলাম' },
     chefNameEn: { type: String, default: 'Master Chef Rafiqul Islam' },
+    chefDesignation: { type: String, default: '' },
     chefTitleBn: { type: String, default: 'প্রধান বাবুর্চি (Head Chef)' },
     chefTitleEn: { type: String, default: 'Head Chef (30+ Years Experience)' },
+    chefBio: { type: String, default: '' },
     chefBioBn: { type: String, default: 'তিন দশক ধরে ঘরোয়ার সিগনেচার খাসির ভুনা খিচুড়ি ও কাচ্চির আসল স্বাদ সংরক্ষণ করে আসছেন।' },
     chefBioEn: { type: String, default: 'Preserving the original secret spice recipes of Gharowa for over 30 years.' },
+    chefExperience: { type: String, default: '25+ Years Experience' },
+    chefSpecialty: { type: String, default: 'Dum Pukht & Heritage Khichuri' },
     chefImageUrl: {
       type: String,
       default: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?q=80&w=800&auto=format&fit=crop',
     },
+    ownerName: { type: String, default: '' },
     ownerNameBn: { type: String, default: 'হাজী মোহাম্মদ নূর হোসেন' },
     ownerNameEn: { type: String, default: 'Haji Mohammad Nur Hossain' },
+    ownerDesignation: { type: String, default: '' },
     ownerTitleBn: { type: String, default: 'প্রতিষ্ঠাতা ও স্বত্বাধিকারী' },
     ownerTitleEn: { type: String, default: 'Founder & Proprietor' },
+    ownerQuote: { type: String, default: '' },
     ownerQuoteBn: { type: String, default: 'খাবারের মানের সাথে কোনো আপস নয় — এটাই ১৯৭২ সাল থেকে আমাদের প্রতিজ্ঞা।' },
     ownerQuoteEn: { type: String, default: 'No compromise on food quality and customer satisfaction since 1972.' },
+    ownerStoryBn: { type: String, default: '' },
+    ownerStoryEn: { type: String, default: '' },
     ownerImageUrl: {
       type: String,
       default: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop',

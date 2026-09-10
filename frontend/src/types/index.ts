@@ -241,6 +241,7 @@ export interface RestaurantSettings {
   chefTitleBn?: string;
   chefTitleEn?: string;
   chefDesignation?: string;
+  chefBio?: string;
   chefBioBn?: string;
   chefBioEn?: string;
   chefExperience?: string;
@@ -257,6 +258,7 @@ export interface RestaurantSettings {
   ownerBioEn?: string;
   ownerStoryBn?: string;
   ownerStoryEn?: string;
+  ownerQuote?: string;
   ownerQuoteBn?: string;
   ownerQuoteEn?: string;
   ownerImageUrl?: string;

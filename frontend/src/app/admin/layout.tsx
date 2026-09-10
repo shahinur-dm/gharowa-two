@@ -9,23 +9,33 @@ import AdminTopBar from '../../components/AdminTopBar';
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { isAuthenticated, token } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const [isClient, setIsClient] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
+    if (pathname !== '/admin/login') {
+      const storedToken = typeof window !== 'undefined' ? localStorage.getItem('gharowa_admin_token') : null;
+      if (!isAuthenticated && !storedToken) {
+        router.replace('/admin/login');
+      }
+    }
+  }, [pathname, isAuthenticated, router]);
 
   // Allow login page without admin wrapper
   if (pathname === '/admin/login') {
     return <>{children}</>;
   }
 
-  // Client-side authentication guard
-  if (isClient && !isAuthenticated && !localStorage.getItem('gharowa_admin_token')) {
-    router.push('/admin/login');
-    return null;
+  // Client-side authentication check during render
+  const storedToken = isClient && typeof window !== 'undefined' ? localStorage.getItem('gharowa_admin_token') : null;
+  if (isClient && !isAuthenticated && !storedToken) {
+    return (
+      <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center text-xs text-slate-400 font-sans">
+        লগইন যাচাই করা হচ্ছে...
+      </div>
+    );
   }
 
   return (
