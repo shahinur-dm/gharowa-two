@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const DEFAULT_MONGODB_URI =
-  'mongodb+srv://nafieuislam_db_user:ceGww3v4VcJtrKRR@dit.ajxvstc.mongodb.net/Gharowa?appName=dit';
+  'mongodb+srv://efootballmadrid25_db_user:ljvpbVMGVJTQPVcH@dawatit.5hxbo9c.mongodb.net/Gharowa?appName=dawatit';
 
 const MONGODB_URI = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
 
@@ -25,8 +25,8 @@ export async function connectToDatabase(): Promise<typeof mongoose | null> {
   if (!cached.promise) {
     const opts = {
       maxPoolSize: 10,
-      serverSelectionTimeoutMS: 8000,
-      socketTimeoutMS: 45000,
+      serverSelectionTimeoutMS: 15000,
+      socketTimeoutMS: 60000,
     };
 
     cached.promise = mongoose

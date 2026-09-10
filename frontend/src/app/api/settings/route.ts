@@ -37,11 +37,21 @@ export async function PUT(request: Request) {
     try {
       const db = await connectToDatabase();
       if (db) {
-        const settings = await RestaurantSettings.findOneAndUpdate({}, body, {
-          new: true,
-          upsert: true,
-          setDefaultsOnInsert: true,
-        }).lean();
+        const updateData = { ...body };
+        delete updateData._id;
+        delete updateData.createdAt;
+        delete updateData.updatedAt;
+        delete updateData.__v;
+
+        const settings = await RestaurantSettings.findOneAndUpdate(
+          {},
+          { $set: updateData },
+          {
+            new: true,
+            upsert: true,
+            setDefaultsOnInsert: true,
+          }
+        ).lean();
 
         if (settings) {
           updateStoreSettings(body);
