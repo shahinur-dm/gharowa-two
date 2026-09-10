@@ -1,6 +1,8 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 class ApiClient {
+  private inFlightRequests = new Map<string, Promise<any>>();
+
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const token = typeof window !== 'undefined' ? localStorage.getItem('gharowa_admin_token') : null;
 
@@ -54,7 +56,22 @@ class ApiClient {
         url += `?${queryString}`;
       }
     }
-    return this.request<T>(url, { method: 'GET' });
+
+    // Deduplicate identical concurrent GET requests
+    const cacheKey = `GET:${url}`;
+    if (this.inFlightRequests.has(cacheKey)) {
+      return this.inFlightRequests.get(cacheKey)!;
+    }
+
+    const promise = this.request<T>(url, { method: 'GET' }).finally(() => {
+      // Clear from in-flight cache after request completes
+      setTimeout(() => {
+        this.inFlightRequests.delete(cacheKey);
+      }, 50);
+    });
+
+    this.inFlightRequests.set(cacheKey, promise);
+    return promise;
   }
 
   post<T = any>(endpoint: string, body?: any): Promise<T> {

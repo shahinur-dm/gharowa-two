@@ -8,6 +8,15 @@ import { getStoreMenuItems } from '@/lib/serverStore';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+let cachedMenuItems: any[] | null = null;
+let lastMenuItemsFetchTime = 0;
+const MENU_CACHE_TTL_MS = 30000;
+
+export function invalidateMenuItemsCache() {
+  cachedMenuItems = null;
+  lastMenuItemsFetchTime = 0;
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -15,6 +24,16 @@ export async function GET(request: Request) {
     const search = searchParams.get('search');
     const featured = searchParams.get('featured');
     const bestseller = searchParams.get('bestseller');
+
+    const isUnfiltered = !category && !search && !featured && !bestseller;
+    const now = Date.now();
+
+    if (isUnfiltered && cachedMenuItems && now - lastMenuItemsFetchTime < MENU_CACHE_TTL_MS) {
+      return NextResponse.json(
+        { success: true, count: cachedMenuItems.length, data: cachedMenuItems },
+        { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+      );
+    }
 
     try {
       const db = await connectToDatabase();
@@ -51,6 +70,11 @@ export async function GET(request: Request) {
         }
 
         const items = await MenuItem.find(query).populate('category').sort({ displayOrder: 1, createdAt: -1 }).lean();
+
+        if (isUnfiltered) {
+          cachedMenuItems = items || [];
+          lastMenuItemsFetchTime = now;
+        }
 
         return NextResponse.json(
           { success: true, count: items.length, data: items || [] },

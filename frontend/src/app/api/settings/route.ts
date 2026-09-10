@@ -7,12 +7,27 @@ import { getStoreSettings, updateStoreSettings, defaultSettings } from '@/lib/se
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+let cachedSettingsData: any = null;
+let lastSettingsFetchTime = 0;
+const SETTINGS_CACHE_TTL_MS = 60000;
+
 export async function GET() {
+  const now = Date.now();
+  if (cachedSettingsData && now - lastSettingsFetchTime < SETTINGS_CACHE_TTL_MS) {
+    return NextResponse.json(
+      { success: true, data: cachedSettingsData },
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+    );
+  }
+
   try {
     const db = await connectToDatabase();
     if (db) {
       const settings = await RestaurantSettings.findOne().lean();
       if (settings) {
+        cachedSettingsData = settings;
+        lastSettingsFetchTime = now;
+        updateStoreSettings(settings);
         return NextResponse.json(
           { success: true, data: settings },
           { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
@@ -21,6 +36,13 @@ export async function GET() {
     }
   } catch (error: any) {
     console.warn('MongoDB settings fetch notice:', error.message);
+  }
+
+  if (cachedSettingsData) {
+    return NextResponse.json(
+      { success: true, data: cachedSettingsData },
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+    );
   }
 
   const fallback = getStoreSettings();
@@ -54,7 +76,9 @@ export async function PUT(request: Request) {
         ).lean();
 
         if (settings) {
-          updateStoreSettings(body);
+          cachedSettingsData = settings;
+          lastSettingsFetchTime = Date.now();
+          updateStoreSettings(settings);
           try {
             revalidatePath('/', 'layout');
             revalidatePath('/');
@@ -78,6 +102,8 @@ export async function PUT(request: Request) {
     }
 
     const updated = updateStoreSettings(body);
+    cachedSettingsData = updated;
+    lastSettingsFetchTime = Date.now();
     return NextResponse.json(
       { success: true, message: 'Settings updated successfully', data: updated },
       { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }

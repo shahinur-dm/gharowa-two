@@ -130,6 +130,12 @@ export async function POST(request: Request) {
             _id: String(populated._id),
           });
 
+          try {
+            revalidatePath('/', 'layout');
+            revalidatePath('/');
+            revalidatePath('/menu');
+          } catch (revalErr) {}
+
           return NextResponse.json(
             { success: true, message: 'খাবার সফলভাবে তৈরি ও সংরক্ষণ করা হয়েছে', data: populated },
             { status: 201, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
