@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Star, ChevronLeft, ChevronRight, CheckCircle2, MessageSquarePlus } from 'lucide-react';
 import { CustomerReview } from '../types';
 import { api } from '../lib/api';
+import { instantReviews } from '../data/publicSnapshot';
 import GharowaLogo from './GharowaLogo';
 
 // Google Colored G Icon
@@ -50,15 +51,15 @@ function getAvatarColor(name: string): string {
 }
 
 export default function ReviewSection() {
-  const [reviews, setReviews] = useState<CustomerReview[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [reviews, setReviews] = useState<CustomerReview[]>(instantReviews as CustomerReview[]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchReviews = async () => {
       try {
         const res = await api.get('/reviews');
-        if (res.success && Array.isArray(res.data)) {
+        if (res.success && Array.isArray(res.data) && res.data.length) {
           setReviews(res.data);
         }
       } catch (err) {

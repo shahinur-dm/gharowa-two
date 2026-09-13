@@ -8,7 +8,7 @@ interface CacheItem<T> {
 class ApiClient {
   private inFlightRequests = new Map<string, Promise<any>>();
   private memoryCache = new Map<string, CacheItem<any>>();
-  private CACHE_TTL = 3000; // 3 seconds client-side cache for deduplication & fast renders
+  private CACHE_TTL = 60000;
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -26,8 +26,6 @@ class ApiClient {
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache',
-      'Pragma': 'no-cache',
       ...(options.headers as Record<string, string>),
     };
 
@@ -38,7 +36,7 @@ class ApiClient {
     try {
       const url = `${API_BASE_URL}${endpoint}`;
       const response = await fetch(url, {
-        cache: 'no-store',
+        cache: options.method && options.method !== 'GET' ? 'no-store' : 'force-cache',
         ...options,
         headers,
       });

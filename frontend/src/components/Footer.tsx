@@ -14,11 +14,12 @@ import {
 import { useLanguageStore } from '../store/languageStore';
 import { api } from '../lib/api';
 import { RestaurantSettings } from '../types';
+import { instantSettings } from '../data/publicSnapshot';
 import GharowaLogo from './GharowaLogo';
 
 export default function Footer() {
   const { language } = useLanguageStore();
-  const [settings, setSettings] = React.useState<RestaurantSettings | null>(null);
+  const [settings, setSettings] = React.useState<RestaurantSettings | null>(instantSettings as RestaurantSettings);
 
   React.useEffect(() => {
     const fetchSettings = async () => {

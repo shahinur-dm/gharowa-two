@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import { MenuItem, RestaurantSettings } from '../types';
+import { instantMenuItems, instantSettings } from '../data/publicSnapshot';
 import HeroSection from '../components/HeroSection';
 import FeaturedDishes from '../components/FeaturedDishes';
 import HomeMenuSection from '../components/HomeMenuSection';
@@ -15,9 +16,9 @@ import ChefAndOwnerSection from '../components/ChefAndOwnerSection';
 import ContactSection from '../components/ContactSection';
 
 export default function HomePage() {
-  const [dishes, setDishes] = useState<MenuItem[]>([]);
-  const [settings, setSettings] = useState<RestaurantSettings | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [dishes, setDishes] = useState<MenuItem[]>(instantMenuItems as MenuItem[]);
+  const [settings, setSettings] = useState<RestaurantSettings | null>(instantSettings as RestaurantSettings);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -27,7 +28,7 @@ export default function HomePage() {
           api.get('/settings'),
         ]);
 
-        if (dishesRes.success && dishesRes.data) {
+        if (dishesRes.success && dishesRes.data?.length) {
           setDishes(dishesRes.data);
         }
         if (settingsRes.success && settingsRes.data) {

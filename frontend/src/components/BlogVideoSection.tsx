@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Play, X, Video } from 'lucide-react';
 import { BlogVideo } from '../types';
 import { api } from '../lib/api';
+import { instantBlogs } from '../data/publicSnapshot';
 
 function getYouTubeEmbedUrl(url: string): string {
   if (!url) return '';
@@ -17,15 +18,15 @@ function getYouTubeEmbedUrl(url: string): string {
 }
 
 export default function BlogVideoSection() {
-  const [videos, setVideos] = useState<BlogVideo[]>([]);
+  const [videos, setVideos] = useState<BlogVideo[]>(instantBlogs as BlogVideo[]);
   const [selectedVideo, setSelectedVideo] = useState<BlogVideo | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchVideos = async () => {
       try {
         const res = await api.get('/blogs');
-        if (res.success && Array.isArray(res.data)) {
+        if (res.success && Array.isArray(res.data) && res.data.length) {
           setVideos(res.data);
         }
       } catch (err) {

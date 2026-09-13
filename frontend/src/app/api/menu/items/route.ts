@@ -18,15 +18,22 @@ export async function GET(request: Request) {
     const bestseller = searchParams.get('bestseller');
 
     const isUnfiltered = !category && !search && !featured && !bestseller;
+    const PUBLIC_CACHE = { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' };
 
     if (isUnfiltered) {
       const cached = getCachedMenuItems();
       if (cached) {
         return NextResponse.json(
           { success: true, count: cached.length, data: cached },
-          { headers: { 'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=59' } }
+          { headers: PUBLIC_CACHE }
         );
       }
+      const instant = getStoreMenuItems().filter((i) => i.isAvailable !== false);
+      setCachedMenuItems(instant);
+      return NextResponse.json(
+        { success: true, count: instant.length, data: instant },
+        { headers: PUBLIC_CACHE }
+      );
     }
 
     try {

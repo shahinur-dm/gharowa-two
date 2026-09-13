@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { BrandPartner } from '../types';
 import { api } from '../lib/api';
+import { instantBrands } from '../data/publicSnapshot';
 
 export default function TrustedBrandsSection() {
-  const [brands, setBrands] = useState<BrandPartner[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [brands, setBrands] = useState<BrandPartner[]>(instantBrands as BrandPartner[]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchBrands = async () => {

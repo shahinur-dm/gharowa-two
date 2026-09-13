@@ -1,5 +1,7 @@
 // Shared In-Memory / Serverless Store for Standalone Vercel & API Route Handlers
 
+import permanentCms from '../data/permanentCms.json';
+
 export interface CategoryData {
   _id: string;
   nameBn: string;
@@ -574,12 +576,13 @@ export const defaultSettings = {
   ogImageUrl: '',
 };
 
-// In-Memory Storage Instances
-let globalCategories: CategoryData[] = [...initialCategories];
-let globalMenuItems: MenuItemData[] = [...initialMenuItems];
-let globalBlogVideos: BlogVideoData[] = [...initialBlogVideos];
-let globalCustomerReviews: CustomerReviewData[] = [...initialCustomerReviews];
-let globalSettings: any = { ...defaultSettings };
+// In-Memory Storage Instances — hydrated from the production Vercel snapshot
+const cms = permanentCms as any;
+let globalCategories: CategoryData[] = (cms.categories?.length ? cms.categories : initialCategories) as CategoryData[];
+let globalMenuItems: MenuItemData[] = (cms.menuItems?.length ? cms.menuItems : initialMenuItems) as MenuItemData[];
+let globalBlogVideos: BlogVideoData[] = (cms.blogs?.length ? cms.blogs : initialBlogVideos) as BlogVideoData[];
+let globalCustomerReviews: CustomerReviewData[] = (cms.reviews?.length ? cms.reviews : initialCustomerReviews) as CustomerReviewData[];
+let globalSettings: any = { ...defaultSettings, ...(cms.settings || {}) };
 
 export const getStoreSettings = () => globalSettings;
 export const updateStoreSettings = (updates: any) => {
@@ -723,7 +726,7 @@ export const deleteStoreCustomerReview = (id: string) => {
 };
 
 // Brand Partners In-Memory Store
-let globalBrandPartners: BrandPartnerData[] = [...initialBrandPartners];
+let globalBrandPartners: BrandPartnerData[] = (cms.brandPartners?.length ? cms.brandPartners : initialBrandPartners) as BrandPartnerData[];
 
 export const getStoreBrandPartners = () => globalBrandPartners;
 export const addStoreBrandPartner = (brand: BrandPartnerData) => {
@@ -827,7 +830,7 @@ export const initialHeroSlides: HeroSlideData[] = [
 ];
 
 // Hero Slides In-Memory Store
-let globalHeroSlides: HeroSlideData[] = [...initialHeroSlides];
+let globalHeroSlides: HeroSlideData[] = (cms.heroSlides?.length ? cms.heroSlides : initialHeroSlides) as HeroSlideData[];
 
 export const getStoreHeroSlides = () => globalHeroSlides;
 export const addStoreHeroSlide = (slide: HeroSlideData) => {

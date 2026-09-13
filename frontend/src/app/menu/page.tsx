@@ -20,18 +20,19 @@ import { useLanguageStore } from '../../store/languageStore';
 import { useCartStore } from '../../store/cartStore';
 import DishCard from '../../components/DishCard';
 import { api } from '../../lib/api';
+import { instantMenuItems, instantCategories, instantSettings } from '../../data/publicSnapshot';
 
 export default function MenuPage() {
   const { language } = useLanguageStore();
   const { openCart } = useCartStore();
 
-  const [categories, setCategories] = useState<MenuCategory[]>([]);
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [settings, setSettings] = useState<RestaurantSettings | null>(null);
+  const [categories, setCategories] = useState<MenuCategory[]>(instantCategories as MenuCategory[]);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>(instantMenuItems as MenuItem[]);
+  const [settings, setSettings] = useState<RestaurantSettings | null>(instantSettings as RestaurantSettings);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortBy, setSortBy] = useState<'default' | 'price_asc' | 'price_desc' | 'rating'>('default');
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [visibleCount, setVisibleCount] = useState<number>(20);
   const [isMenuBoardModalOpen, setIsMenuBoardModalOpen] = useState<boolean>(false);
 
@@ -51,7 +52,6 @@ export default function MenuPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true);
         const [catRes, itemRes, setRes]: [any, any, any] = await Promise.all([
           api.get('/menu/categories'),
           api.get('/menu/items'),
@@ -63,11 +63,9 @@ export default function MenuPage() {
             { _id: 'all', nameBn: 'সব খাবার', nameEn: 'All', slug: 'all', displayOrder: 0, isActive: true },
             ...catRes.data,
           ]);
-        } else {
-          setCategories(defaultCategories);
         }
 
-        if (itemRes.success && Array.isArray(itemRes.data)) {
+        if (itemRes.success && Array.isArray(itemRes.data) && itemRes.data.length > 0) {
           setMenuItems(itemRes.data);
         }
 

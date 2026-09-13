@@ -1,5 +1,20 @@
 import type { Metadata } from 'next';
+import { Hind_Siliguri, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
+
+const hindSiliguri = Hind_Siliguri({
+  subsets: ['bengali', 'latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-hind',
+});
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-plus-jakarta',
+});
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import CartDrawer from '../components/CartDrawer';
@@ -41,9 +56,9 @@ export const metadata: Metadata = {
     type: 'website',
   },
   icons: {
-    icon: '/api/favicon',
-    shortcut: '/api/favicon',
-    apple: '/api/favicon',
+    icon: '/cms/favicon.jpg',
+    shortcut: '/cms/favicon.jpg',
+    apple: '/cms/favicon.jpg',
   },
   robots: {
     index: true,
@@ -89,24 +104,18 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="bn">
+    <html lang="bn" className={`${hindSiliguri.variable} ${plusJakarta.variable}`}>
       <head>
-        <link rel="icon" href="/api/favicon" />
-        <link rel="shortcut icon" href="/api/favicon" />
-        <link rel="apple-touch-icon" href="/api/favicon" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
+        <link rel="icon" href="/cms/favicon.jpg" />
+        <link rel="shortcut icon" href="/cms/favicon.jpg" />
+        <link rel="apple-touch-icon" href="/cms/favicon.jpg" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body
-        className="bg-[#FAFAF9] text-slate-800 antialiased selection:bg-traditional-700 selection:text-white"
+        className={`${plusJakarta.className} bg-[#FAFAF9] text-slate-800 antialiased selection:bg-traditional-700 selection:text-white`}
       >
         <DynamicFavicon />
         <Navbar />

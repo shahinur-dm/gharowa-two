@@ -22,7 +22,7 @@ export default function Navbar() {
   const { getItemCount, openCart } = useCartStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [logoUrl, setLogoUrl] = useState<string>('');
+  const [logoUrl, setLogoUrl] = useState<string>('/cms/logo.jpg');
 
   const itemCount = getItemCount();
 
