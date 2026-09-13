@@ -11,35 +11,8 @@ export const revalidate = 0;
 const PUBLIC_CACHE = { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' };
 
 export async function GET() {
-  const cached = getCachedSettings();
-  if (cached) {
-    return NextResponse.json({ success: true, data: cached }, { headers: PUBLIC_CACHE });
-  }
-
   const fallback = getStoreSettings();
   setCachedSettings(fallback);
-
-  void (async () => {
-    try {
-      const db = await connectToDatabase();
-      if (!db) return;
-      const settings = await RestaurantSettings.findOne().lean();
-      if (settings) {
-        const merged = { ...fallback, ...settings };
-        for (const key of Object.keys(merged)) {
-          const val = (merged as any)[key];
-          if (typeof val === 'string' && val.startsWith('data:image') && (fallback as any)[key]) {
-            (merged as any)[key] = (fallback as any)[key];
-          }
-        }
-        setCachedSettings(merged);
-        updateStoreSettings(merged);
-      }
-    } catch (error: any) {
-      console.warn('MongoDB settings fetch notice:', error.message);
-    }
-  })();
-
   return NextResponse.json({ success: true, data: fallback }, { headers: PUBLIC_CACHE });
 }
 

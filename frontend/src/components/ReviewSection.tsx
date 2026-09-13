@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Star, ChevronLeft, ChevronRight, CheckCircle2, MessageSquarePlus } from 'lucide-react';
 import { CustomerReview } from '../types';
-import { api } from '../lib/api';
 import { instantReviews } from '../data/publicSnapshot';
 import GharowaLogo from './GharowaLogo';
 
@@ -51,31 +50,9 @@ function getAvatarColor(name: string): string {
 }
 
 export default function ReviewSection() {
-  const [reviews, setReviews] = useState<CustomerReview[]>(instantReviews as CustomerReview[]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [reviews] = useState<CustomerReview[]>(instantReviews as CustomerReview[]);
+  const [isLoading] = useState<boolean>(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const res = await api.get('/reviews');
-        if (res.success && Array.isArray(res.data) && res.data.length) {
-          setReviews(res.data);
-        }
-      } catch (err) {
-        console.warn('Failed to fetch reviews', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchReviews();
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('gharowa_cms_updated', fetchReviews);
-      return () => window.removeEventListener('gharowa_cms_updated', fetchReviews);
-    }
-  }, []);
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {

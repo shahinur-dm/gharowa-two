@@ -1,56 +1,9 @@
-import { NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
-import { HeroSlide } from '@/models/HeroSlide';
 import { getStoreHeroSlides } from '@/lib/serverStore';
-import { getCachedHeroSlides, setCachedHeroSlides } from '@/lib/cacheManager';
+import { instantList } from '@/lib/publicJson';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const dynamic = 'force-static';
+export const revalidate = 3600;
 
 export async function GET() {
-  const cached = getCachedHeroSlides();
-  if (cached) {
-    return NextResponse.json(
-      { success: true, count: cached.length, data: cached },
-      { headers: { 'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=59' } }
-    );
-  }
-
-  try {
-    const db = await connectToDatabase();
-    if (db) {
-      const slides = await HeroSlide.find({ isActive: { $ne: false } })
-        .sort({ displayOrder: 1, createdAt: 1 })
-        .lean();
-
-      if (slides) {
-        setCachedHeroSlides(slides);
-      }
-
-      return NextResponse.json(
-        { success: true, count: slides.length, data: slides },
-        {
-          headers: {
-            'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=59',
-          },
-        }
-      );
-    }
-  } catch (error: any) {
-    console.warn('Database error in hero-slides GET, fallback to store:', error.message);
-  }
-
-  const liveStoreSlides = getStoreHeroSlides().filter((s) => s.isActive !== false);
-  return NextResponse.json(
-    {
-      success: true,
-      count: liveStoreSlides.length,
-      data: liveStoreSlides,
-    },
-    {
-      headers: {
-        'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=59',
-      },
-    }
-  );
+  return instantList(getStoreHeroSlides().filter((s) => s.isActive !== false));
 }

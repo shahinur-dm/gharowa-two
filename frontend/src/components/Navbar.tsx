@@ -13,7 +13,6 @@ import {
 import { useLanguageStore } from '../store/languageStore';
 import { useCartStore } from '../store/cartStore';
 import { toBanglaNumber } from '../lib/bangla';
-import { api } from '../lib/api';
 import GharowaLogo from './GharowaLogo';
 
 export default function Navbar() {
@@ -34,24 +33,6 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    const fetchLogo = async () => {
-      try {
-        const res: any = await api.get('/settings');
-        if (res.success && res.data) {
-          setLogoUrl(res.data.logoUrl || '');
-        }
-      } catch (e) {
-        // Fallback default
-      }
-    };
-    fetchLogo();
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('gharowa_cms_updated', fetchLogo);
-      return () => window.removeEventListener('gharowa_cms_updated', fetchLogo);
-    }
-  }, []);
 
   useEffect(() => {
     setMobileMenuOpen(false);

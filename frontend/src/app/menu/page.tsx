@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -19,74 +19,24 @@ import { MenuItem, MenuCategory, RestaurantSettings } from '../../types';
 import { useLanguageStore } from '../../store/languageStore';
 import { useCartStore } from '../../store/cartStore';
 import DishCard from '../../components/DishCard';
-import { api } from '../../lib/api';
 import { instantMenuItems, instantCategories, instantSettings } from '../../data/publicSnapshot';
 
 export default function MenuPage() {
   const { language } = useLanguageStore();
   const { openCart } = useCartStore();
 
-  const [categories, setCategories] = useState<MenuCategory[]>(instantCategories as MenuCategory[]);
-  const [menuItems, setMenuItems] = useState<MenuItem[]>(instantMenuItems as MenuItem[]);
-  const [settings, setSettings] = useState<RestaurantSettings | null>(instantSettings as RestaurantSettings);
+  const [categories] = useState<MenuCategory[]>([
+    { _id: 'all', nameBn: 'সব খাবার', nameEn: 'All', slug: 'all', displayOrder: 0, isActive: true } as MenuCategory,
+    ...(instantCategories as MenuCategory[]),
+  ]);
+  const [menuItems] = useState<MenuItem[]>(instantMenuItems as MenuItem[]);
+  const [settings] = useState<RestaurantSettings | null>(instantSettings as RestaurantSettings);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortBy, setSortBy] = useState<'default' | 'price_asc' | 'price_desc' | 'rating'>('default');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [visibleCount, setVisibleCount] = useState<number>(20);
   const [isMenuBoardModalOpen, setIsMenuBoardModalOpen] = useState<boolean>(false);
-
-  const defaultCategories = [
-    { _id: 'cat-all', nameBn: 'সব খাবার', nameEn: 'All', slug: 'all', displayOrder: 0, isActive: true },
-    { _id: 'cat-1', nameBn: 'খিচুড়ি ও বিরিয়ানি', nameEn: 'Khichuri & Biryani', slug: 'khichuri-biryani', displayOrder: 1, isActive: true },
-    { _id: 'cat-2', nameBn: 'সকালের নাস্তা', nameEn: 'Breakfast', slug: 'breakfast', displayOrder: 2, isActive: true },
-    { _id: 'cat-3', nameBn: 'দুপুর ও রাতের খাবার', nameEn: 'Lunch & Dinner', slug: 'main-course', displayOrder: 3, isActive: true },
-    { _id: 'cat-4', nameBn: 'মাছের পদ', nameEn: 'Fish Items', slug: 'fish', displayOrder: 4, isActive: true },
-    { _id: 'cat-5', nameBn: 'কাবাব ও শর্মা', nameEn: 'Kabab & Shawarma', slug: 'kabab-grill', displayOrder: 5, isActive: true },
-    { _id: 'cat-6', nameBn: 'শাক ও ভর্তা', nameEn: 'Vorta & Greens', slug: 'vorta-greens', displayOrder: 6, isActive: true },
-    { _id: 'cat-7', nameBn: 'নান, পরটা ও ভাত', nameEn: 'Breads & Rice', slug: 'breads-rice', displayOrder: 7, isActive: true },
-    { _id: 'cat-8', nameBn: 'ডেজার্ট ও মিষ্টি', nameEn: 'Desserts', slug: 'desserts', displayOrder: 8, isActive: true },
-    { _id: 'cat-9', nameBn: 'পানীয় ও বোরহানি', nameEn: 'Drinks & Juices', slug: 'drinks', displayOrder: 9, isActive: true },
-  ];
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [catRes, itemRes, setRes]: [any, any, any] = await Promise.all([
-          api.get('/menu/categories'),
-          api.get('/menu/items'),
-          api.get('/settings'),
-        ]);
-
-        if (catRes.success && Array.isArray(catRes.data) && catRes.data.length > 0) {
-          setCategories([
-            { _id: 'all', nameBn: 'সব খাবার', nameEn: 'All', slug: 'all', displayOrder: 0, isActive: true },
-            ...catRes.data,
-          ]);
-        }
-
-        if (itemRes.success && Array.isArray(itemRes.data) && itemRes.data.length > 0) {
-          setMenuItems(itemRes.data);
-        }
-
-        if (setRes.success && setRes.data) {
-          setSettings(setRes.data);
-        }
-      } catch (e) {
-        console.warn('Error fetching menu items', e);
-        setCategories(defaultCategories);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('gharowa_cms_updated', fetchData);
-      return () => window.removeEventListener('gharowa_cms_updated', fetchData);
-    }
-  }, []);
 
   const filteredItems = menuItems.filter((item) => {
     if (selectedCategory !== 'all') {

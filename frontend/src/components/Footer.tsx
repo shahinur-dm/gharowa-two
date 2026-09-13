@@ -12,33 +12,13 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { useLanguageStore } from '../store/languageStore';
-import { api } from '../lib/api';
 import { RestaurantSettings } from '../types';
 import { instantSettings } from '../data/publicSnapshot';
 import GharowaLogo from './GharowaLogo';
 
 export default function Footer() {
   const { language } = useLanguageStore();
-  const [settings, setSettings] = React.useState<RestaurantSettings | null>(instantSettings as RestaurantSettings);
-
-  React.useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const res: any = await api.get('/settings');
-        if (res.success && res.data) {
-          setSettings(res.data);
-        }
-      } catch (e) {
-        // Fallback
-      }
-    };
-    fetchSettings();
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('gharowa_cms_updated', fetchSettings);
-      return () => window.removeEventListener('gharowa_cms_updated', fetchSettings);
-    }
-  }, []);
+  const [settings] = React.useState<RestaurantSettings | null>(instantSettings as RestaurantSettings);
 
   const logoUrl = settings?.logoUrl || '';
   const restaurantName = language === 'bn' ? (settings?.restaurantNameBn || 'Gharowa') : (settings?.restaurantNameEn || 'Gharowa');

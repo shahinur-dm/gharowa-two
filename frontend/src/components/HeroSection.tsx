@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Sparkles, Flame, Clock, Star, ArrowRight, ShoppingBag } from 'lucide-react';
 import { RestaurantSettings, HeroSlide } from '../types';
 import { useLanguageStore } from '../store/languageStore';
-import { api } from '../lib/api';
+import { instantHeroSlides } from '../data/publicSnapshot';
 
 interface HeroSectionProps {
   settings?: RestaurantSettings | null;
@@ -73,7 +73,9 @@ const defaultHeroSlides: HeroSlide[] = [
 export default function HeroSection({ settings }: HeroSectionProps) {
   const { language } = useLanguageStore();
 
-  const [slides, setSlides] = useState<HeroSlide[]>(defaultHeroSlides);
+  const [slides, setSlides] = useState<HeroSlide[]>(
+    (instantHeroSlides?.length ? instantHeroSlides : defaultHeroSlides) as HeroSlide[]
+  );
   const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(0);
 
   // Fallback content from settings
@@ -99,46 +101,11 @@ export default function HeroSection({ settings }: HeroSectionProps) {
 
   const ctaLink = settings?.heroCtaLink || '/menu/mutton-khichuri';
 
-  // Fetch dynamic hero slides
   useEffect(() => {
-    const fetchHeroSlides = async () => {
-      try {
-        const res = await api.get('/hero-slides');
-        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
-          setSlides(res.data);
-        } else if (settings?.heroImageUrl || settings?.heroVideoUrl) {
-          // Fallback with custom settings media
-          setSlides([
-            {
-              _id: 'setting-hero',
-              title: settings.heroTitleEn || 'MUTTON KHICHURI',
-              titleBn: settings.heroTitleBn || 'ঐতিহ্যবাহী খাসির ভুনা খিচুড়ি',
-              subtitleEn: settings.heroSubtitleEn || 'Traditional taste, rich aroma and perfectly cooked mutton.',
-              subtitleBn: settings.heroSubtitleBn || 'আসল স্বাদ, মোহময় সুবাস ও নিপুণভাবে রান্না করা খাসির নরম মাংস।',
-              badgeText: settings.heroBadgeEn || 'AUTHENTIC',
-              badgeBn: settings.heroBadgeBn || 'খাঁটি ও ঐতিহ্যবাহী',
-              mediaType: settings.heroMediaType === 'video' ? 'video' : 'image',
-              mainImageUrl: settings.heroImageUrl || defaultHeroSlides[0].mainImageUrl,
-              videoUrl: settings.heroVideoUrl || '',
-              displayOrder: 1,
-              slideDurationSeconds: 4,
-              isActive: true,
-            },
-            ...defaultHeroSlides.slice(1),
-          ]);
-        }
-      } catch (err) {
-        console.warn('Failed to load dynamic hero slides:', err);
-      }
-    };
-
-    fetchHeroSlides();
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('gharowa_cms_updated', fetchHeroSlides);
-      return () => window.removeEventListener('gharowa_cms_updated', fetchHeroSlides);
+    if (instantHeroSlides?.length) {
+      setSlides(instantHeroSlides as HeroSlide[]);
     }
-  }, [settings?.heroImageUrl, settings?.heroVideoUrl, settings?.heroMediaType, settings?.heroTitleBn, settings?.heroTitleEn, settings?.heroSubtitleBn, settings?.heroSubtitleEn, settings?.heroBadgeBn, settings?.heroBadgeEn]);
+  }, []);
 
   // Automatic slide rotation (ONE at a time with smooth transition)
   useEffect(() => {

@@ -1,35 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { BrandPartner } from '../types';
-import { api } from '../lib/api';
 import { instantBrands } from '../data/publicSnapshot';
 
 export default function TrustedBrandsSection() {
-  const [brands, setBrands] = useState<BrandPartner[]>(instantBrands as BrandPartner[]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    const fetchBrands = async () => {
-      try {
-        const res = await api.get('/brands');
-        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
-          setBrands(res.data);
-        }
-      } catch (err) {
-        console.warn('Failed to fetch brands', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchBrands();
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('gharowa_cms_updated', fetchBrands);
-      return () => window.removeEventListener('gharowa_cms_updated', fetchBrands);
-    }
-  }, []);
+  const [brands] = useState<BrandPartner[]>(instantBrands as BrandPartner[]);
+  const [isLoading] = useState<boolean>(false);
 
   // Duplicate brands for seamless infinite right-to-left marquee
   const displayBrands = brands.length > 0 ? [...brands, ...brands, ...brands, ...brands] : [];

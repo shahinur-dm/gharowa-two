@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { MenuItem, MenuCategory } from '../types';
 import DishCard from './DishCard';
 import { useLanguageStore } from '../store/languageStore';
-import { api } from '../lib/api';
+import { instantCategories } from '../data/publicSnapshot';
 
 interface HomeMenuProps {
   dishes: MenuItem[];
@@ -14,28 +14,9 @@ interface HomeMenuProps {
 
 export default function HomeMenuSection({ dishes }: HomeMenuProps) {
   const { language } = useLanguageStore();
-  const [categories, setCategories] = useState<MenuCategory[]>([]);
+  const [categories] = useState<MenuCategory[]>(instantCategories as MenuCategory[]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [visibleCount, setVisibleCount] = useState<number>(12);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res: any = await api.get('/menu/categories');
-        if (res.success && res.data) {
-          setCategories(res.data);
-        }
-      } catch (e) {
-        console.warn('Failed to fetch categories for home menu', e);
-      }
-    };
-    fetchCategories();
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('gharowa_cms_updated', fetchCategories);
-      return () => window.removeEventListener('gharowa_cms_updated', fetchCategories);
-    }
-  }, []);
 
   const filteredDishes = useMemo(() => {
     if (activeCategory === 'all') return dishes;
